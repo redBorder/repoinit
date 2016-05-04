@@ -1,7 +1,7 @@
 #!/bin/bash
 
 f_usage() {
-    echo "$0 [-h] -f isofile -d directory"
+    echo "$0 [-h] -d directory -f isofile"
     echo "  -f isofile   : Path to ISO file containing a CentOS 7 minimal image (mandatory)"
     echo "  -d directory : Create all sdk structure under this directory (mandatory)"
     echo "  -h           : Print this help"
@@ -9,6 +9,8 @@ f_usage() {
 
 opt_file=""
 opt_directory=""
+cache_dir="/tmp/sdk7_cache"
+ret=0
 
 while getopts "hf:d:" opt; do
     case $opt in
@@ -56,11 +58,34 @@ fi
 
 # Create directories
 mkdir -p ${opt_directory}/isolinux/{images,ks,LiveOS,Packages}
-mkdir -p ${opt_directory}/{minimal_rpms,extra_rpms,custom_rpms}
+mkdir -p ${cache_dir}/{minimal_rpms,extra_rpms,custom_rpms}
 
 # Create mount point and mount iso file
 mount_point=$(mktemp -d /tmp/XXXXX)
-sudo mount -o loop ${opt_file} ${mount_point}
+sudo mount -o loop ${opt_file} ${mount_point} &>/dev/null
+
+# Cache packages for minimal_rpms
+for rpmfile in $(find ${mount_point}/Packages/ -name *.rpm -exec basename {} \;); do
+    if [ -f ${cache_dir}/minimal_rpms/${rpmfile} ]; then
+        file --mime-type -b ${cache_dir}/minimal_rpms/${rpmfile} | grep -q "application/x-rpm"
+        if [ $? -eq 0 ]; then
+            continue
+        fi
+    fi
+    cp ${mount_point}/Packages/${rpmfile} ${cache_dir}/minimal_rpms/
+done
+
+# Cache packages for extra_rpms
+while read rpmlink; do
+    rpmfile=$(basename ${rpmlink})
+    if [ -f ${cache_dir}/extra_rpms/${rpmfile} ]; then
+        file --mime-type -b ${cache_dir}/extra_rpms/${rpmfile} | grep -q "application/x-rpm"
+        if [ $? -eq 0 ]; then
+            continue
+        fi
+    fi
+    wget -q ${rpmlink} -O ${cache_dir}/extra_rpms/${rpmfile}
+done < list_of_rpms_for_download.txt
 
 # Copy needed files
 rsync -a ${mount_point}/isolinux/* ${opt_directory}/isolinux/
@@ -69,25 +94,30 @@ rsync -a ${mount_point}/LiveOS/* ${opt_directory}/isolinux/LiveOS/
 cp ${mount_point}/.discinfo ${opt_directory}/isolinux/
 cp ${mount_point}/repodata/*-c7-x86_64-comps.xml.gz ${opt_directory}/comps.xml.gz
 gunzip ${opt_directory}/comps.xml.gz
-rsync -a ${mount_point}/Packages/* ${opt_directory}/minimal_rpms/
 cp ks-base.cfg ${opt_directory}/isolinux/ks/ks.cfg
 cp splash.png ${opt_directory}/isolinux/
 
-# download some needed packages
-wget -q https://dl.fedoraproject.org/pub/epel/7/x86_64/a/atop-2.1-1.el7.x86_64.rpm -O ${opt_directory}/custom_rpms/atop-2.1-1.el7.x86_64.rpm
-wget -q http://mirror.centos.org/centos-7/7/os/x86_64/Packages/wget-1.14-10.el7_0.1.x86_64.rpm -O ${opt_directory}/extra_rpms/wget-1.14-10.el7_0.1.x86_64.rpm
-
 # Sync packages from ISO to custom ISO
-#rsync -a ${opt_directory}/minimal_rpms/*.rpm ${opt_directory}/isolinux/Packages/
-#rsync -a ${opt_directory}/extra_rpms/*.rpm ${opt_directory}/isolinux/Packages/
-#rsync -a ${opt_directory}/custom_rpms/*.rpm ${opt_directory}/isolinux/Packages/
+rsync -a ${cache_dir}/minimal_rpms/. ${opt_directory}/isolinux/Packages/
+rsync -a ${cache_dir}/extra_rpms/. ${opt_directory}/isolinux/Packages/
+rsync -a ${cache_dir}/custom_rpms/. ${opt_directory}/isolinux/Packages/
 
-
-#pushd ${opt_directory} &>/dev/null
-
-#popd &>/dev/null
-
+# Umount ISO and remove temporary directory
 sudo umount ${mount_point}
 rmdir ${mount_point}
+
+# Test rpm depencies
+rpmdb_dir=$(mktemp -d /tmp/XXXXX)
+pushd ${opt_directory}/isolinux/Packages/ &>/dev/null
+rpm --initdb --dbpath ${rpmdb_dir} &>/dev/null
+rpm --test --dbpath ${rpmdb_dir} -Uvh *.rpm &>/dev/null
+if [ $? -ne 0 ]; then
+    echo "Error in rpm dependencies. Please, check the output:"
+    rpm --test --dbpath ${rpmdb_dir} -Uvh *.rpm
+    ret=1
+fi
+rm -rf ${rpmdb_dir}
+
+exit $ret
 
 ## vim:ts=4:sw=4:expandtab:ai:nowrap:formatoptions=croqln:
