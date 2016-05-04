@@ -94,6 +94,7 @@ rsync -a ${mount_point}/LiveOS/* ${opt_directory}/isolinux/LiveOS/
 cp ${mount_point}/.discinfo ${opt_directory}/isolinux/
 cp ${mount_point}/repodata/*-c7-x86_64-comps.xml.gz ${opt_directory}/comps.xml.gz
 gunzip ${opt_directory}/comps.xml.gz
+cp isolinux-base.cfg ${opt_directory}/isolinux/isolinux.cfg
 cp ks-base.cfg ${opt_directory}/isolinux/ks/ks.cfg
 cp splash.png ${opt_directory}/isolinux/
 
@@ -115,7 +116,13 @@ if [ $? -ne 0 ]; then
     echo "Error in rpm dependencies. Please, check the output:"
     rpm --test --dbpath ${rpmdb_dir} -Uvh *.rpm
     ret=1
+else
+    # deps are ok, creating repo
+    pushd ${opt_directory}/isolinux
+    createrepo -g ${opt_directory}/comps.xml .
+    popd &>/dev/null
 fi
+popd &>/dev/null
 rm -rf ${rpmdb_dir}
 
 exit $ret

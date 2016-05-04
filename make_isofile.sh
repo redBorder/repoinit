@@ -51,30 +51,17 @@ fi
 opt_directory=$(mktemp -d /tmp/XXXXX)
 ./build_minimal_structure.sh -f ${opt_infile} -d ${opt_directory}
 
-
-dirtmp=$(mktemp -d /tmp/XXXXX)
-rsync -a ${opt_directory}/isolinux ${dirtmp}
-cp isolinux-base.cfg ${dirtmp}/isolinux/isolinux.cfg
-cp splash.png ${dirtmp}/isolinux/splash.png
-cp ks-base.cfg ${dirtmp}/isolinux/ks/ks.cfg
-
-pushd ${dirtmp}/isolinux &>/dev/null
+# Add ks files to initrd bootstrap
+pushd ${opt_directory}/isolinux/ks &>/dev/null
 for ksfile in $(ls ks*.cfg 2>/dev/null); do
     echo ${ksfile} | cpio -c -o >> ../initrd.img 
 done
 popd &>/dev/null
 
-# Sync packages from ISO to custom ISO
-rsync -a ${opt_directory}/minimal_rpms/*.rpm ${dirtmp}/isolinux/Packages/
-rsync -a ${opt_directory}/extra_rpms/*.rpm ${dirtmp}/isolinux/Packages/
-rsync -a ${opt_directory}/custom_rpms/*.rpm ${dirtmp}/isolinux/Packages/
-
-pushd ${dirtmp} &>/dev/null
-mkisofs -o ${opt_file} -b isolinux.bin -c boot.cat -no-emul-boot -V 'CentOS 7 x86_64' -boot-load-size 4 -boot-info-table -R -J -v -T isolinux/
+pushd ${opt_directory} &>/dev/null
+mkisofs -o ${opt_outfile} -b isolinux.bin -c boot.cat -no-emul-boot -V 'CentOS 7 x86_64' -boot-load-size 4 -boot-info-table -R -J -v -T isolinux/
 popd &>/dev/null
 
-#rm -rf ${dirtmp}
-
-
+#rm -rf ${opt_directory}
 
 ## vim:ts=4:sw=4:expandtab:ai:nowrap:formatoptions=croqln:
