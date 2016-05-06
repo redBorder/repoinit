@@ -62,6 +62,6 @@ pushd ${opt_directory} &>/dev/null
 mkisofs -o ${opt_outfile} -b isolinux.bin -c boot.cat -no-emul-boot -V 'CentOS 7 x86_64' -boot-load-size 4 -boot-info-table -R -J -v -T isolinux/
 popd &>/dev/null
 
-#rm -rf ${opt_directory}
+rm -rf ${opt_directory}
 
 ## vim:ts=4:sw=4:expandtab:ai:nowrap:formatoptions=croqln:
