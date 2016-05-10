@@ -25,3 +25,6 @@ rsync -a pkgs/${PACKNAME}*.el7.centos.x86_64.rpm ${CACHEDIR}
 rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
 rm -rf pkgs
 
+# Update sdk7 repo
+f_updaterepo ${REPODIR}
+

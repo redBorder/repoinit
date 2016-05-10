@@ -17,3 +17,6 @@ rsync -a pkgs/libcurl-${VERSION}-1.0.cf.rhel7.x86_64.rpm ${CACHEDIR}
 rsync -a pkgs/*.rpm ${REPODIR}
 rm -rf pkgs
 
+# Update sdk7 repo
+f_updaterepo ${REPODIR}
+
