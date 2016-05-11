@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source build_common.sh
+
 COMMIT=${COMMIT:="3a0441ca2123b3f89d879669b7ca9c047e62c8a8"}
 VERSION=${VERSION:="0.1.0"}
 PACKNAME=${PACKNAME:="librd"}
