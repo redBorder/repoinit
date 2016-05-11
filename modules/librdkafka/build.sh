@@ -10,10 +10,10 @@ mkdir SOURCES
 wget https://github.com/edenhill/librdkafka/archive/${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r default --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+/usr/bin/mock -r sdk7 --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r default --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
+/usr/bin/mock -r sdk7 --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 # cleaning
 rm -rf SOURCES
