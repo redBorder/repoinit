@@ -13,10 +13,10 @@ mkdir SOURCES
 wget http://ftp.gnu.org/gnu/${PACKNAME}/${PACKNAME}-${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r default --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+/usr/bin/mock -r sdk7 --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r default --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
+/usr/bin/mock -r sdk7 --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 # cleaning
 rm -rf SOURCES
