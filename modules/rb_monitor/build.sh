@@ -1,25 +1,32 @@
 #!/bin/bash
 
-VERSION=1.0
-PACKNAME=rb_monitor
+source build_common.sh
+
+#COMMIT=${COMMIT:="89fe893f63d4ce0f5fc32c3f8dab75fa94497d08"}
+VERSION=${VERSION:="1.0"}
+PACKNAME=${PACKNAME:="rb_monitor"}
+CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
+REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+#VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
 # First we need to download source
 mkdir SOURCES
-wget https://github.com/redBorder/rb_monitor/archive/80c18729508174ea0776a0ddc5eb76ce544a8967/1.0.tar.gz -O SOURCES/${PACKNAME}-1.0.tar.gz
-
-# rebuild tarball
-cd SOURCES
-tar xzf ${PACKNAME}-1.0.tar.gz
-mv ${PACKNAME}-80c18729508174ea0776a0ddc5eb76ce544a8967 ${PACKNAME}-1.0
-tar czf ${PACKNAME}-1.0.tar.gz rb_monitor-1.0
-rm -rf ${PACKNAME}-1.0
+wget --no-check-certificate https://gitlab.redborder.lan/dfernandez.ext/redBorder-monitor/repository/archive.tar.gz?ref=redborder --header='PRIVATE-TOKEN:oDRezN5gFLgBB6nWsMZU' -O SOURCES/${PACKNAME}-1.0.tar.gz
 
 # Now it is time to create the source rpm
-#/usr/bin/mock -r default --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+/usr/bin/mock -r sdk7 --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-#/usr/bin/mock -r default --define "__version ${VERSION}" --define "__release 1" --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
+/usr/bin/mock -r sdk7 --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 # cleaning
-#rm -rf SOURCES
+rm -rf SOURCES
+
+# sync to cache and repo
+rsync -a pkgs/${PACKNAME}*.el7.centos.x86_64.rpm ${CACHEDIR}
+rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
+rm -rf pkgs
+
+# Update sdk7 repo
+f_updaterepo ${REPODIR}
 
