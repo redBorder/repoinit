@@ -278,23 +278,6 @@ mv %{buildroot}%{_includedir}/curl/curlbuild{,-32}.h
 %endif
 install -p -m 644 %{SOURCE100} %{buildroot}%{_includedir}/curl
 
-%check
-%global ssh_tests 600 to 637 700 to 707 2004
-%global rlimit_tests 518
-%global s390_issue_tests 513 514
-%global ipv6local_tests 241 1083
-# Skip the (lengthy) checks on EOL Fedora releases (over ~400 days old)
-if [ -z "$(find /etc/fedora-release -mtime +400)" -o "%{__distinit}" = "rhel" ]; then
-	export LD_LIBRARY_PATH=%{buildroot}%{_libdir}
-	cd tests
-	make %{?_smp_mflags} V=1
-
-	# Use different ports for different builds, so they can run in parallel
-	#./runtests.pl -a -b%{test_port_base}0 -n -p -v %{ssh_tests} %{rlimit_tests} %{s390_issue_tests} %{ipv6local_tests}
-	./runtests.pl -a -b%{test_port_base}0 -n -p -v '!flaky'
-	cd -
-fi
-
 %clean
 rm -rf %{buildroot}
 
@@ -357,6 +340,9 @@ rm -rf %{buildroot}
 %exclude %{_libdir}/libcurl.la
 
 %changelog
+* Wed May 11 2016 Juan J. Prieto <jjprieto@redborder.com> - 7.48.0-1
+- Deleted checks and adapted to redBorder
+
 * Wed Mar 23 2016 Paul Howarth <paul@city-fan.org> - 7.48.0-1.0.cf
 - Update to 7.48.0
   - configure: --with-ca-fallback: Use built-in TLS CA fallback
