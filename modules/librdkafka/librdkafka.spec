@@ -1,7 +1,7 @@
 Name:    librdkafka
 Version: %{__version}
 Release: %{__release}%{?dist}
-%define soname 1
+%define soname %{__libver}
 
 Summary: The Apache Kafka C library
 Group:   Development/Libraries/C and C++

@@ -43,9 +43,9 @@
 # Build with Posix threaded DNS lookups rather than using c-ares from Fedora 12, RHEL-7
 %global use_threads_posix %([ "%{__distinit}" == "fc" -a %{__distvers} -gt 11 -o "%{__distinit}" == "rhel" -a %{__distvers} -gt 6 ] && echo 1 || echo 0)
 
-Version:	7.48.0
+Version:	%{__version}
 #Release:	1.0.%{__distinit}%{__distvers}
-Release:	1%{?dist}
+Release: 	%{__release}%{?dist}
 %if %{compat}
 Summary:	Curl library for compatibility with old applications
 Name:		libcurl%(echo %{version} | tr -d .)

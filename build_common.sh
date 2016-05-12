@@ -30,3 +30,22 @@ f_updaterepo() {
 	fi
 	return $ret
 }
+
+f_check() {
+	# need to check if the packages exist
+	local list_of_packages="$@"
+	local create_rpms=0
+	for package in ${list_of_packages}; do
+		if [ -e ${package} ]; then
+        		file --mime-type -b ${package} | grep -q "application/x-rpm"
+        		if [ $? -ne 0 ]; then
+				create_rpms=1
+				break
+        	        fi
+		else
+			create_rpms=1
+			break
+		fi
+	done
+	return ${create_rpms}
+}
