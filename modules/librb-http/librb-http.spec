@@ -6,9 +6,9 @@
 
 Name:    librb-http
 Summary: Rapid Development C library
-Version: 1.2.0
-Release: 1%{?dist}
-%define soname 0
+Version: %{__version}
+Release: %{__release}%{?dist}
+%define soname %{__libver}
 
 License: BSD-2-Clause
 URL: https://gitlab.redborder.lan/core-developers/librb-http/repository/archive.tar.gz?ref=1.2.0
