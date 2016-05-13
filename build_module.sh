@@ -43,7 +43,7 @@ f_build() {
             if [ -x ${opt_dir}/$module/build.sh ]; then
                 pushd ${opt_dir}/$module &>/dev/null
                 echo "Building module: $module"
-                #./build.sh
+                ./build.sh
                 if [ $? -ne 0 ]; then
                     echo "Something was wrong ... exiting"
                     ret=1
