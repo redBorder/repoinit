@@ -12,6 +12,8 @@ REPODIR=${REPODIR:="/tmp/sdk7_repo"}
 # First we need to download source
 mkdir SOURCES
 wget --no-check-certificate https://gitlab.redborder.lan/dfernandez.ext/redBorder-monitor/repository/archive.tar.gz?ref=redborder --header='PRIVATE-TOKEN:oDRezN5gFLgBB6nWsMZU' -O SOURCES/${PACKNAME}-1.0.tar.gz
+cp patches/*.patch SOURCES
+
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk7 --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES

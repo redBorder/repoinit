@@ -1,0 +1,17 @@
+diff -Nru a/config.json b/config.json
+--- a/config.json	1970-01-01 01:00:00.000000000 +0100
++++ b/config.json	2016-05-13 03:44:48.525248586 +0200
+@@ -0,0 +1,13 @@
++{
++  "conf": {
++    "debug": 0,
++    "threads": 4,
++    "timeout": 5,
++    "max_fails": 2,
++    "sleep_main_thread": 10,
++    "sleep_worker_thread": 2,
++    "kafka_broker": "127.0.0.1",
++    "kafka_topic": "rb_monitor",
++    "kafka_partition": 0
++  }
++}
