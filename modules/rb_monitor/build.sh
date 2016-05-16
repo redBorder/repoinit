@@ -41,8 +41,15 @@ cp patches/*.patch SOURCES
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
+ret=$?
+
 # cleaning
 rm -rf SOURCES
+
+if [ $ret -ne 0 ]; then
+        echo "Error in mock stage ... exiting"
+        exit 1
+fi
 
 # sync to cache and repo
 rsync -a pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
