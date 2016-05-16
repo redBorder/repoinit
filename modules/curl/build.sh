@@ -43,8 +43,15 @@ popd &>/dev/null
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/curl*.src.rpm
 
+ret=$?
+
 # cleaning
 rm -rf SOURCES
+
+if [ $ret -ne 0 ]; then
+        echo "Error in mock stage ... exiting"
+        exit 1
+fi
 
 # sync to cache and repo
 rsync -a pkgs/curl-${VERSION}*.el7.centos.x86_64.rpm ${CACHEDIR}
