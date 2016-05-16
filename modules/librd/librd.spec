@@ -6,9 +6,9 @@
 
 Name:    librd
 Summary: Rapid Development C library
-Version: 0.1.0
-Release: 1%{?dist}
-%define soname 0
+Version: %{__version}
+Release: %{__release}%{?dist}
+%define soname %{__libver}
 
 License: BSD-2-Clause
 Source0: https://github.com/%{gh_owner}/%{gh_project}/archive/%{gh_commit}/%{gh_project}-%{version}-%{gh_short}.tar.gz
