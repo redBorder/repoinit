@@ -27,6 +27,7 @@ fi
 
 # First we need to download source
 mkdir SOURCES
+# wget http://{{your_host}}/api/v3/projects/{{project_id}}/repository/archive?sha={{commit_sha}} --header='PRIVATE-TOKEN: {{private_token}}'
 wget --no-check-certificate https://gitlab.redborder.lan/core-developers/${PACKNAME}/repository/archive.tar.gz?ref=${VERSION} --header='PRIVATE-TOKEN:oDRezN5gFLgBB6nWsMZU' -O SOURCES/${PACKNAME}-${VERSION}-${VSHORT}.tar.gz
 
 # Now it is time to create the source rpm
@@ -43,8 +44,15 @@ wget --no-check-certificate https://gitlab.redborder.lan/core-developers/${PACKN
         --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
+ret=$?
+
 # cleaning
 rm -rf SOURCES
+
+if [ $ret -ne 0 ]; then
+	echo "Error in mock stage ... exiting"
+	exit 1
+fi
 
 # sync to cache and repo
 rsync -a pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}

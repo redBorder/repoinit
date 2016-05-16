@@ -15,7 +15,7 @@ URL: https://gitlab.redborder.lan/core-developers/librb-http/repository/archive.
 Source0: %{gh_project}-%{version}-%{gh_short}.tar.gz
 #Source0: https://github.com/%{gh_owner}/%{gh_project}/archive/%{gh_commit}/%{gh_project}-%{version}-%{gh_short}.tar.gz
 
-BuildRequires: gcc librd-devel libcurl-devel
+BuildRequires: gcc librd-devel libcurl-devel >= 7.48.0
 
 Summary: Non-blocking high-level wrapper for libcurl
 Group:   Development/Libraries/C and C++
