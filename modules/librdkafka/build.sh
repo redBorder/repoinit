@@ -13,8 +13,7 @@ list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rp
 		${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
 		${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
 		${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-		${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
-		${CACHEDIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm"
+		${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm" 
 
 if [ "x$1" != "xforce" ]; then
 	f_check "${list_of_packages}"
@@ -42,11 +41,18 @@ wget https://github.com/edenhill/librdkafka/archive/${VERSION}.tar.gz -O SOURCES
 	--define "__libver ${LIBVER}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
+ret=$?
+
 # cleaning
 rm -rf SOURCES
 
+if [ $ret -ne 0 ]; then
+        echo "Error in mock stage ... exiting"
+        exit 1
+fi
+
 # sync to cache and repo
-rsync -a pkgs/${PACKNAME}*.el7.centos.x86_64.rpm ${CACHEDIR}
+rsync -a pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
 rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
 rm -rf pkgs
 
