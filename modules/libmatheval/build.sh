@@ -27,13 +27,28 @@ mkdir SOURCES
 wget http://ftp.gnu.org/gnu/${PACKNAME}/${PACKNAME}-${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+/usr/bin/mock -r sdk7 \
+        --define "__version ${VERSION}" \
+        --define "__release ${RELEASE}" \
+        --define "__libver ${LIBVER}" \
+	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 --resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
+/usr/bin/mock -r sdk7 \
+        --define "__version ${VERSION}" \
+        --define "__release ${RELEASE}" \
+        --define "__libver ${LIBVER}" \
+	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
+
+ret=$?
 
 # cleaning
 rm -rf SOURCES
+
+if [ $ret -ne 0 ]; then
+        echo "Error in mock stage ... exiting"
+        exit 1
+fi
 
 # sync to cache and repo
 rsync -a pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}

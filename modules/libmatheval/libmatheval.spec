@@ -1,6 +1,6 @@
 Name:           libmatheval
-Version:        1.1.11
-Release:        3%{?dist}
+Version:        %{__version}
+Release:        %{__release}%{?dist}
 Summary:        Library for parsing and evaluating symbolic expressions input as text
 
 Group:          System Environment/Libraries
