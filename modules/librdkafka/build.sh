@@ -2,7 +2,8 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.8.4"}
+#VERSION=${VERSION:="0.8.4"}
+VERSION=${VERSION:="0.9.1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="librdkafka"}
 LIBVER=${LIBVER:="1"}
