@@ -1,15 +1,15 @@
 f_ssh_rbrepo() {
-	ssh root@rbrepo.redborder.lan "$@"
+	ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@rbrepo.redborder.lan "$@"
 }
 
 f_rsync_repo() {
 	local LIST="$@"
-	rsync -av ${LIST} root@rbrepo.redborder.lan:/repos/redBorder
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/redBorder
 }
 
 f_rsync_iso() {
 	local LIST="$@"
-	rsync -av ${LIST} root@rbrepo.redborder.lan:/isos/redBorder
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/isos/redBorder
 }
 
 f_updaterepo() {
