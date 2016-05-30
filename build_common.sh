@@ -85,7 +85,7 @@ f_check() {
 	local create_rpms=0
 	for package in ${list_of_packages}; do
 		if [ -e ${package} ]; then
-        		file --mime-type -b ${package} | grep -q "application/x-rpm"
+        		f_ssh_rbrepo file --mime-type -b ${package} | grep -q "application/x-rpm"
         		if [ $? -ne 0 ]; then
 				create_rpms=1
 				break
