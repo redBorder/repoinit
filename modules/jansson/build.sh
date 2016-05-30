@@ -47,10 +47,12 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-rsync -a pkgs/${PACKNAME}-${VERSION}*.el7.centos.x86_64.rpm ${CACHEDIR}
-rsync -a pkgs/*.rpm ${REPODIR}
+#rsync -a pkgs/${PACKNAME}-${VERSION}*.el7.centos.x86_64.rpm ${CACHEDIR}
+#rsync -a pkgs/*.rpm ${REPODIR}
+f_rsync_repo pkgs/*.rpm
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}*.el7.centos.x86_64.rpm
 rm -rf pkgs
 
 # Update sdk7 repo
-f_updaterepo ${REPODIR}
+f_rupdaterepo
 

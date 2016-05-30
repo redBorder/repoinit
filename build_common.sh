@@ -1,3 +1,17 @@
+f_ssh_rbrepo() {
+	ssh root@rbrepo.redborder.lan "$@"
+}
+
+f_rsync_repo() {
+	local LIST="$@"
+	rsync -av ${LIST} root@rbrepo.redborder.lan:/repos/redBorder
+}
+
+f_rsync_iso() {
+	local LIST="$@"
+	rsync -av ${LIST} root@rbrepo.redborder.lan:/isos/redBorder
+}
+
 f_updaterepo() {
 	local REPODIR=$1
 	local count ret
@@ -30,6 +44,40 @@ f_updaterepo() {
 	fi
 	return $ret
 }
+
+f_rupdaterepo() {
+	local REPODIR=/repos/redBorder
+	local count ret
+	echo "Updating repo ${REPODIR}"
+	count=300
+	ret=0
+	while : ;do
+		f_ssh_rbrepo test -e /var/lock/sdk7_createrepo
+		if [ $? -ne 0 ]; then
+			# No lock file, go on
+			break
+		else
+			count=$(($count-1))
+			if [ $count -eq 0 ]; then
+				# reached final count
+				ret=1
+				break
+			fi
+		fi
+		# waiting 1 second (max 5 minutes)
+		sleep 1
+	done
+	if [ $ret -eq 0 ]; then
+		# it is time to update repo
+		f_ssh_rbrepo touch /var/lock/sdk7_createrepo
+		f_ssh_rbrepo createrepo ${REPODIR}
+		f_ssh_rbrepo rm -f /var/lock/sdk7_createrepo
+	else
+		echo "Error updating repo ${REPODIR}"
+	fi
+	return $ret
+}
+
 
 f_check() {
 	# need to check if the packages exist
