@@ -7,8 +7,8 @@ VERSION=${VERSION:="0.1.0"}
 RELEASE=${RELEASE:="1"}
 LIBVER=${LIBVER:="0"}
 PACKNAME=${PACKNAME:="librd"}
-CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
-REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+REPODIR=${REPODIR:="/repos/redBorder"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 

@@ -7,8 +7,8 @@ VERSION=${VERSION:="0.9.1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="librdkafka"}
 LIBVER=${LIBVER:="1"}
-CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
-REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+REPODIR=${REPODIR:="/repos/redBorder"}
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
 		${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 

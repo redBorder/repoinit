@@ -5,8 +5,8 @@ source build_common.sh
 VERSION=${VERSION:="2.7"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="jansson"}
-CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
-REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+REPODIR=${REPODIR:="/repos/redBorder"}
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
                 ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
