@@ -1,6 +1,0 @@
-[sdk7]
-name=CentOS-$releasever - sdk7 packages for $basearch
-baseurl=file:///tmp/sdk7_repo
-enabled=0
-gpgcheck=0
-protect=1
