@@ -5,8 +5,8 @@ source build_common.sh
 VERSION=${VERSION:="1.1.11"}
 RELEASE=${RELEASE:="3"}
 PACKNAME=${PACKNAME:="libmatheval"}
-CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
-REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+REPODIR=${REPODIR:="/repos/redBorder"}
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
                 ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
@@ -30,14 +30,12 @@ wget http://ftp.gnu.org/gnu/${PACKNAME}/${PACKNAME}-${VERSION}.tar.gz -O SOURCES
 /usr/bin/mock -r sdk7 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
-        --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
 /usr/bin/mock -r sdk7 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
-        --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
