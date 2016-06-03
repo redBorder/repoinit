@@ -1,5 +1,5 @@
 f_ssh_rbrepo() {
-	ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@rbrepo.redborder.lan "$@"
+	ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@rbrepo.redborder.lan "$@"
 }
 
 f_rsync_repo() {
@@ -84,7 +84,8 @@ f_check() {
 	local list_of_packages="$@"
 	local create_rpms=0
 	for package in ${list_of_packages}; do
-		if [ -e ${package} ]; then
+		f_ssh_rbrepo test -e ${package}
+		if [ $? -eq 0 ]; then
         		f_ssh_rbrepo file --mime-type -b ${package} | grep -q "application/x-rpm"
         		if [ $? -ne 0 ]; then
 				create_rpms=1
