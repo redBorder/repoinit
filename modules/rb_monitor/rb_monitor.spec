@@ -7,6 +7,7 @@ Name:    rb_monitor
 Summary: Get data events via SNMP or scripting and send results in json over kafka.
 Version: %{__version}
 Release: %{__release}%{?dist}
+Commit: %{gh_commit}
 
 License: GNU AGPLv3
 URL: https://github.com/redBorder/rb_monitor/archive/${gh_commit}/${gh_project}-${version}-${gh_short}.tar.gz
