@@ -5,10 +5,9 @@ source build_common.sh
 COMMIT=${COMMIT:="77fd6ca17de64470ff7295db24b27eef0daba0cd"}
 VERSION=${VERSION:="1.0.0"}
 RELEASE=${RELEASE:="1"}
-LIBVER=${LIBVER:="0"}
 PACKNAME=${PACKNAME:="n2kafka"}
-CACHEDIR=${CACHEDIR:="/tmp/sdk7_cache/custom_rpms"}
-REPODIR=${REPODIR:="/tmp/sdk7_repo"}
+CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+REPODIR=${REPODIR:="/repos/redBorder"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
@@ -35,14 +34,12 @@ exit 0
 /usr/bin/mock -r sdk7 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
-        --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
 /usr/bin/mock -r sdk7 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
-        --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
@@ -56,8 +53,6 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#rsync -a pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
-#rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
 f_rsync_repo pkgs/${PACKNAME}*.rpm
 f_rsyn_iso pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
 rm -rf pkgs
