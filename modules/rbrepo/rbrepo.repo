@@ -1,0 +1,6 @@
+[rbrepo]
+name=redBorder-repo
+baseurl=http://rbrepo.redborder.lan/redBorder
+gpgcheck=0
+enabled=1
+sslcheck=0
