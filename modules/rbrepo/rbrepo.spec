@@ -7,6 +7,7 @@ Group: System Environment/Base
 License: GPLv2
 URL: http://rbrepo.redborder.lan/redBorder	
 Source0: rbrepo.repo
+Requires: epel-release
 
 %description
 This package contains the Extra Packages for redBorder repository
