@@ -25,12 +25,13 @@ fi
 mkdir SOURCES
 URL=$(curl -s https://www.apache.org/dyn/closer.cgi/zookeeper/zookeeper-${VERSION}/zookeeper-${VERSION}.tar.gz?asjson=1 | python -c 'import sys,json; data=json.load(sys.stdin); print data["preferred"] + data["path_info"]')
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
-wget https://github.com/id/zookeeper-el7-rpm/archive/master.tar.gz -O SOURCES/zookeeper-el7-rpm.tar.gz
+wget https://github.com/redBorder/zookeeper-el7-rpm/archive/master.tar.gz -O SOURCES/zookeeper-el7-rpm.tar.gz
 pushd SOURCES &>/dev/null
 tar xzf zookeeper-el7-rpm.tar.gz
 mv ${PACKNAME}-${VERSION}.tar.gz zookeeper-el7-rpm-master
 popd &>/dev/null
 
+exit 0
 # Now it is time to create the source rpm
 /usr/bin/mock -r default \
         --define "__version ${VERSION}" \
@@ -45,6 +46,7 @@ popd &>/dev/null
 
 ret=$?
 
+exit 0
 # cleaning
 rm -rf SOURCES
 

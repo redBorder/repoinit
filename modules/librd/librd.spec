@@ -30,7 +30,7 @@ Requires: zlib
 %package -n %{name}-devel
 Summary: Development files for %{name}
 Group:   Development/Libraries/C and C++
-Requires: %{name}%{soname} = %{version}-%{release}
+Requires: %{name}%{soname} = %{version}-%{release} zlib-devel
 %description -n %{name}-devel
 %{summary}.
 
