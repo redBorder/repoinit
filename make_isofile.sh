@@ -6,8 +6,8 @@ f_usage() {
     echo "This script must be executed in the SDK7 project directory"
 }
 
-if [ ! -e .sdk7_project ]; then
-    echo "You are not in the SDK7 project directory"
+if [ ! -e .repoinit_project ]; then
+    echo "You are not in the REPOINIT project directory"
     f_usage
     exit 1
 fi
