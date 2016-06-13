@@ -4,7 +4,7 @@ declare -A modules
 program=$0
 opt_module=""
 opt_dir="./modules"
-cache_dir="/tmp/sdk7_cache"
+cache_dir="/tmp/rbrepo_cache"
 
 f_usage() {
     echo "$0 [-h] [-p /path/to/modules] -m module"

@@ -9,7 +9,7 @@ f_usage() {
 
 opt_file=""
 opt_directory=""
-cache_dir="/tmp/sdk7_cache"
+cache_dir="/tmp/rbrepo_cache"
 ret=0
 
 while getopts "hf:d:" opt; do

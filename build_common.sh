@@ -20,7 +20,7 @@ f_updaterepo() {
 	count=300
 	ret=0
 	while : ;do
-		if [ ! -e /var/lock/sdk7_createrepo ]; then
+		if [ ! -e /var/lock/rbrepo_createrepo ]; then
 			# No lock file, go on
 			break
 		else
@@ -36,9 +36,9 @@ f_updaterepo() {
 	done
 	if [ $ret -eq 0 ]; then
 		# it is time to update repo
-		touch /var/lock/sdk7_createrepo
+		touch /var/lock/rbrepo_createrepo
 		createrepo ${REPODIR}
-		rm -f /var/lock/sdk7_createrepo
+		rm -f /var/lock/rbrepo_createrepo
 	else
 		echo "Error updating repo ${REPODIR}"
 	fi
@@ -52,7 +52,7 @@ f_rupdaterepo() {
 	count=300
 	ret=0
 	while : ;do
-		f_ssh_rbrepo test -e /var/lock/sdk7_createrepo
+		f_ssh_rbrepo test -e /var/lock/rbrepo_createrepo
 		if [ $? -ne 0 ]; then
 			# No lock file, go on
 			break
@@ -69,9 +69,9 @@ f_rupdaterepo() {
 	done
 	if [ $ret -eq 0 ]; then
 		# it is time to update repo
-		f_ssh_rbrepo touch /var/lock/sdk7_createrepo
+		f_ssh_rbrepo touch /var/lock/rbrepo_createrepo
 		f_ssh_rbrepo createrepo ${REPODIR}
-		f_ssh_rbrepo rm -f /var/lock/sdk7_createrepo
+		f_ssh_rbrepo rm -f /var/lock/rbrepo_createrepo
 	else
 		echo "Error updating repo ${REPODIR}"
 	fi
