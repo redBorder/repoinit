@@ -1,0 +1,2238 @@
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/aclocal.m4 xml-coreutils-0.8.1/aclocal.m4
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/aclocal.m4	2011-04-16 03:44:34.000000000 +0200
++++ xml-coreutils-0.8.1/aclocal.m4	2012-11-15 19:51:16.000000000 +0100
+@@ -13,8 +13,8 @@
+ 
+ m4_ifndef([AC_AUTOCONF_VERSION],
+   [m4_copy([m4_PACKAGE_VERSION], [AC_AUTOCONF_VERSION])])dnl
+-m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.67],,
+-[m4_warning([this file was generated for autoconf 2.67.
++m4_if(m4_defn([AC_AUTOCONF_VERSION]), [2.68],,
++[m4_warning([this file was generated for autoconf 2.68.
+ You have another version of autoconf.  It may work, but is not guaranteed to.
+ If you have problems, you may need to regenerate the build system entirely.
+ To do so, use the procedure documented by the package, typically `autoreconf'.])])
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/config/config.guess xml-coreutils-0.8.1/config/config.guess
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/config/config.guess	2011-04-16 03:44:45.000000000 +0200
++++ xml-coreutils-0.8.1/config/config.guess	2012-11-15 19:51:19.000000000 +0100
+@@ -1,10 +1,10 @@
+ #! /bin/sh
+ # Attempt to guess a canonical system name.
+ #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+-#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
++#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
+ #   Free Software Foundation, Inc.
+ 
+-timestamp='2009-12-30'
++timestamp='2009-11-20'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -56,9 +56,8 @@ version="\
+ GNU config.guess ($timestamp)
+ 
+ Originally written by Per Bothner.
+-Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Free
+-Software Foundation, Inc.
++Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
++2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -140,6 +139,16 @@ UNAME_RELEASE=`(uname -r) 2>/dev/null` |
+ UNAME_SYSTEM=`(uname -s) 2>/dev/null`  || UNAME_SYSTEM=unknown
+ UNAME_VERSION=`(uname -v) 2>/dev/null` || UNAME_VERSION=unknown
+ 
++case "${UNAME_MACHINE}" in
++    i?86)
++	test -z "$VENDOR" && VENDOR=pc
++	;;
++    *)
++	test -z "$VENDOR" && VENDOR=unknown
++	;;
++esac
++test -f /etc/SuSE-release -o -f /.buildenv && VENDOR=suse
++
+ # Note: order is significant - the case branches are not exclusive.
+ 
+ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+@@ -204,19 +213,19 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:$
+ 	exit ;;
+     *:OpenBSD:*:*)
+ 	UNAME_MACHINE_ARCH=`arch | sed 's/OpenBSD.//'`
+-	echo ${UNAME_MACHINE_ARCH}-unknown-openbsd${UNAME_RELEASE}
++	echo ${UNAME_MACHINE_ARCH}-${VENDOR}-openbsd${UNAME_RELEASE}
+ 	exit ;;
+     *:ekkoBSD:*:*)
+-	echo ${UNAME_MACHINE}-unknown-ekkobsd${UNAME_RELEASE}
++	echo ${UNAME_MACHINE}-${VENDOR}-ekkobsd${UNAME_RELEASE}
+ 	exit ;;
+     *:SolidBSD:*:*)
+-	echo ${UNAME_MACHINE}-unknown-solidbsd${UNAME_RELEASE}
++	echo ${UNAME_MACHINE}-${VENDOR}-solidbsd${UNAME_RELEASE}
+ 	exit ;;
+     macppc:MirBSD:*:*)
+-	echo powerpc-unknown-mirbsd${UNAME_RELEASE}
++	echo powerpc-${VENDOR}-mirbsd${UNAME_RELEASE}
+ 	exit ;;
+     *:MirBSD:*:*)
+-	echo ${UNAME_MACHINE}-unknown-mirbsd${UNAME_RELEASE}
++	echo ${UNAME_MACHINE}-${VENDOR}-mirbsd${UNAME_RELEASE}
+ 	exit ;;
+     alpha:OSF1:*:*)
+ 	case $UNAME_RELEASE in
+@@ -281,13 +290,13 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:$
+ 	echo alpha-dec-winnt3.5
+ 	exit ;;
+     Amiga*:UNIX_System_V:4.0:*)
+-	echo m68k-unknown-sysv4
++	echo m68k-${VENDOR}-sysv4
+ 	exit ;;
+     *:[Aa]miga[Oo][Ss]:*:*)
+-	echo ${UNAME_MACHINE}-unknown-amigaos
++	echo ${UNAME_MACHINE}-${VENDOR}-amigaos
+ 	exit ;;
+     *:[Mm]orph[Oo][Ss]:*:*)
+-	echo ${UNAME_MACHINE}-unknown-morphos
++	echo ${UNAME_MACHINE}-${VENDOR}-morphos
+ 	exit ;;
+     *:OS/390:*:*)
+ 	echo i370-ibm-openedition
+@@ -302,7 +311,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:$
+ 	echo arm-acorn-riscix${UNAME_RELEASE}
+ 	exit ;;
+     arm:riscos:*:*|arm:RISCOS:*:*)
+-	echo arm-unknown-riscos
++	echo arm-${VENDOR}-riscos
+ 	exit ;;
+     SR2?01:HI-UX/MPP:*:* | SR8000:HI-UX/MPP:*:*)
+ 	echo hppa1.1-hitachi-hiuxmpp
+@@ -410,7 +419,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:$
+         echo m68k-hades-mint${UNAME_RELEASE}
+         exit ;;
+     *:*MiNT:*:* | *:*mint:*:* | *:*TOS:*:*)
+-        echo m68k-unknown-mint${UNAME_RELEASE}
++        echo m68k-${VENDOR}-mint${UNAME_RELEASE}
+         exit ;;
+     m68k:machten:*:*)
+ 	echo m68k-apple-machten${UNAME_RELEASE}
+@@ -721,9 +730,9 @@ EOF
+ 	exit ;;
+     i*86:OSF1:*:*)
+ 	if [ -x /usr/sbin/sysversion ] ; then
+-	    echo ${UNAME_MACHINE}-unknown-osf1mk
++	    echo ${UNAME_MACHINE}-${VENDOR}-osf1mk
+ 	else
+-	    echo ${UNAME_MACHINE}-unknown-osf1
++	    echo ${UNAME_MACHINE}-${VENDOR}-osf1
+ 	fi
+ 	exit ;;
+     parisc*:Lites*:*:*)
+@@ -783,19 +792,19 @@ EOF
+ 	echo ${UNAME_MACHINE}-pc-bsdi${UNAME_RELEASE}
+ 	exit ;;
+     sparc*:BSD/OS:*:*)
+-	echo sparc-unknown-bsdi${UNAME_RELEASE}
++	echo sparc-${VENDOR}-bsdi${UNAME_RELEASE}
+ 	exit ;;
+     *:BSD/OS:*:*)
+-	echo ${UNAME_MACHINE}-unknown-bsdi${UNAME_RELEASE}
++	echo ${UNAME_MACHINE}-${VENDOR}-bsdi${UNAME_RELEASE}
+ 	exit ;;
+     *:FreeBSD:*:*)
+ 	case ${UNAME_MACHINE} in
+ 	    pc98)
+-		echo i386-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
++		echo i386-${VENDOR}-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+ 	    amd64)
+-		echo x86_64-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
++		echo x86_64-${VENDOR}-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+ 	    *)
+-		echo ${UNAME_MACHINE}-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
++		echo ${UNAME_MACHINE}-${VENDOR}-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+ 	esac
+ 	exit ;;
+     i*:CYGWIN*:*)
+@@ -817,10 +826,10 @@ EOF
+ 		echo i586-pc-interix${UNAME_RELEASE}
+ 		exit ;;
+ 	    authenticamd | genuineintel | EM64T)
+-		echo x86_64-unknown-interix${UNAME_RELEASE}
++		echo x86_64-${VENDOR}-interix${UNAME_RELEASE}
+ 		exit ;;
+ 	    IA64)
+-		echo ia64-unknown-interix${UNAME_RELEASE}
++		echo ia64-${VENDOR}-interix${UNAME_RELEASE}
+ 		exit ;;
+ 	esac ;;
+     [345]86:Windows_95:* | [345]86:Windows_98:* | [345]86:Windows_NT:*)
+@@ -839,21 +848,21 @@ EOF
+ 	echo ${UNAME_MACHINE}-pc-uwin
+ 	exit ;;
+     amd64:CYGWIN*:*:* | x86_64:CYGWIN*:*:*)
+-	echo x86_64-unknown-cygwin
++	echo x86_64-${VENDOR}-cygwin
+ 	exit ;;
+     p*:CYGWIN*:*)
+-	echo powerpcle-unknown-cygwin
++	echo powerpcle-${VENDOR}-cygwin
+ 	exit ;;
+     prep*:SunOS:5.*:*)
+-	echo powerpcle-unknown-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
++	echo powerpcle-${VENDOR}-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+ 	exit ;;
+     *:GNU:*:*)
+ 	# the GNU system
+-	echo `echo ${UNAME_MACHINE}|sed -e 's,[-/].*$,,'`-unknown-gnu`echo ${UNAME_RELEASE}|sed -e 's,/.*$,,'`
++	echo `echo ${UNAME_MACHINE}|sed -e 's,[-/].*$,,'`-${VENDOR}-gnu`echo ${UNAME_RELEASE}|sed -e 's,/.*$,,'`
+ 	exit ;;
+     *:GNU/*:*:*)
+ 	# other systems with GNU libc and userland
+-	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr '[A-Z]' '[a-z]'``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr '[A-Z]' '[a-z]'``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-gnu
+ 	exit ;;
+     i*86:Minix:*:*)
+ 	echo ${UNAME_MACHINE}-pc-minix
+@@ -870,20 +879,20 @@ EOF
+         esac
+ 	objdump --private-headers /bin/sh | grep -q ld.so.1
+ 	if test "$?" = 0 ; then LIBC="libc1" ; else LIBC="" ; fi
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu${LIBC}
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu${LIBC}
+ 	exit ;;
+     arm*:Linux:*:*)
+ 	eval $set_cc_for_build
+ 	if echo __ARM_EABI__ | $CC_FOR_BUILD -E - 2>/dev/null \
+ 	    | grep -q __ARM_EABI__
+ 	then
+-	    echo ${UNAME_MACHINE}-unknown-linux-gnu
++	    echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	else
+-	    echo ${UNAME_MACHINE}-unknown-linux-gnueabi
++	    echo ${UNAME_MACHINE}-${VENDOR}-linux-gnueabi
+ 	fi
+ 	exit ;;
+     avr32*:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     cris:Linux:*:*)
+ 	echo cris-axis-linux-gnu
+@@ -892,7 +901,7 @@ EOF
+ 	echo crisv32-axis-linux-gnu
+ 	exit ;;
+     frv:Linux:*:*)
+-    	echo frv-unknown-linux-gnu
++    	echo frv-${VENDOR}-linux-gnu
+ 	exit ;;
+     i*86:Linux:*:*)
+ 	LIBC=gnu
+@@ -903,16 +912,16 @@ EOF
+ 	#endif
+ EOF
+ 	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^LIBC'`
+-	echo "${UNAME_MACHINE}-pc-linux-${LIBC}"
++	echo "${UNAME_MACHINE}-${VENDOR}-linux-${LIBC}"
+ 	exit ;;
+     ia64:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     m32r*:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     m68*:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     mips:Linux:*:* | mips64:Linux:*:*)
+ 	eval $set_cc_for_build
+@@ -931,51 +940,51 @@ EOF
+ 	#endif
+ EOF
+ 	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^CPU'`
+-	test x"${CPU}" != x && { echo "${CPU}-unknown-linux-gnu"; exit; }
++	test x"${CPU}" != x && { echo "${CPU}-${VENDOR}-linux-gnu"; exit; }
+ 	;;
+     or32:Linux:*:*)
+-	echo or32-unknown-linux-gnu
++	echo or32-${VENDOR}-linux-gnu
+ 	exit ;;
+     padre:Linux:*:*)
+-	echo sparc-unknown-linux-gnu
++	echo sparc-${VENDOR}-linux-gnu
+ 	exit ;;
+     parisc64:Linux:*:* | hppa64:Linux:*:*)
+-	echo hppa64-unknown-linux-gnu
++	echo hppa64-${VENDOR}-linux-gnu
+ 	exit ;;
+     parisc:Linux:*:* | hppa:Linux:*:*)
+ 	# Look for CPU level
+ 	case `grep '^cpu[^a-z]*:' /proc/cpuinfo 2>/dev/null | cut -d' ' -f2` in
+-	  PA7*) echo hppa1.1-unknown-linux-gnu ;;
+-	  PA8*) echo hppa2.0-unknown-linux-gnu ;;
+-	  *)    echo hppa-unknown-linux-gnu ;;
++	  PA7*) echo hppa1.1-${VENDOR}-linux-gnu ;;
++	  PA8*) echo hppa2.0-${VENDOR}-linux-gnu ;;
++	  *)    echo hppa-${VENDOR}-linux-gnu ;;
+ 	esac
+ 	exit ;;
+     ppc64:Linux:*:*)
+-	echo powerpc64-unknown-linux-gnu
++	echo powerpc64-${VENDOR}-linux-gnu
+ 	exit ;;
+     ppc:Linux:*:*)
+-	echo powerpc-unknown-linux-gnu
++	echo powerpc-${VENDOR}-linux-gnu
+ 	exit ;;
+     s390:Linux:*:* | s390x:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-ibm-linux
+ 	exit ;;
+     sh64*:Linux:*:*)
+-    	echo ${UNAME_MACHINE}-unknown-linux-gnu
++    	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     sh*:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     sparc:Linux:*:* | sparc64:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-gnu
++	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     vax:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-dec-linux-gnu
+ 	exit ;;
+     x86_64:Linux:*:*)
+-	echo x86_64-unknown-linux-gnu
++	echo x86_64-${VENDOR}-linux-gnu
+ 	exit ;;
+     xtensa*:Linux:*:*)
+-    	echo ${UNAME_MACHINE}-unknown-linux-gnu
++    	echo ${UNAME_MACHINE}-${VENDOR}-linux-gnu
+ 	exit ;;
+     i*86:DYNIX/ptx:4*:*)
+ 	# ptx 4.0 does uname -s correctly, with DYNIX/ptx in there.
+@@ -997,16 +1006,16 @@ EOF
+ 	echo ${UNAME_MACHINE}-pc-os2-emx
+ 	exit ;;
+     i*86:XTS-300:*:STOP)
+-	echo ${UNAME_MACHINE}-unknown-stop
++	echo ${UNAME_MACHINE}-${VENDOR}-stop
+ 	exit ;;
+     i*86:atheos:*:*)
+-	echo ${UNAME_MACHINE}-unknown-atheos
++	echo ${UNAME_MACHINE}-${VENDOR}-atheos
+ 	exit ;;
+     i*86:syllable:*:*)
+ 	echo ${UNAME_MACHINE}-pc-syllable
+ 	exit ;;
+     i*86:LynxOS:2.*:* | i*86:LynxOS:3.[01]*:* | i*86:LynxOS:4.[02]*:*)
+-	echo i386-unknown-lynxos${UNAME_RELEASE}
++	echo i386-${VENDOR}-lynxos${UNAME_RELEASE}
+ 	exit ;;
+     i*86:*DOS:*:*)
+ 	echo ${UNAME_MACHINE}-pc-msdosdjgpp
+@@ -1026,7 +1035,7 @@ EOF
+ 	    *Pentium)	     UNAME_MACHINE=i586 ;;
+ 	    *Pent*|*Celeron) UNAME_MACHINE=i686 ;;
+ 	esac
+-	echo ${UNAME_MACHINE}-unknown-sysv${UNAME_RELEASE}${UNAME_SYSTEM}${UNAME_VERSION}
++	echo ${UNAME_MACHINE}-${VENDOR}-sysv${UNAME_RELEASE}${UNAME_SYSTEM}${UNAME_VERSION}
+ 	exit ;;
+     i*86:*:3.2:*)
+ 	if test -f /usr/options/cb.name; then
+@@ -1065,7 +1074,7 @@ EOF
+ 	if grep Stardent /usr/include/sys/uadmin.h >/dev/null 2>&1 ; then
+ 	  echo i860-stardent-sysv${UNAME_RELEASE} # Stardent Vistra i860-SVR4
+ 	else # Add other i860-SVR4 vendors below as they are discovered.
+-	  echo i860-unknown-sysv${UNAME_RELEASE}  # Unknown i860-SVR4
++	  echo i860-${VENDOR}-sysv${UNAME_RELEASE}  # Unknown i860-SVR4
+ 	fi
+ 	exit ;;
+     mini*:CTIX:SYS*5:*)
+@@ -1102,19 +1111,19 @@ EOF
+ 	/bin/uname -p 2>/dev/null | /bin/grep pteron >/dev/null \
+ 	    && { echo i586-ncr-sysv4.3${OS_REL}; exit; } ;;
+     m68*:LynxOS:2.*:* | m68*:LynxOS:3.0*:*)
+-	echo m68k-unknown-lynxos${UNAME_RELEASE}
++	echo m68k-${VENDOR}-lynxos${UNAME_RELEASE}
+ 	exit ;;
+     mc68030:UNIX_System_V:4.*:*)
+ 	echo m68k-atari-sysv4
+ 	exit ;;
+     TSUNAMI:LynxOS:2.*:*)
+-	echo sparc-unknown-lynxos${UNAME_RELEASE}
++	echo sparc-${VENDOR}-lynxos${UNAME_RELEASE}
+ 	exit ;;
+     rs6000:LynxOS:2.*:*)
+-	echo rs6000-unknown-lynxos${UNAME_RELEASE}
++	echo rs6000-${VENDOR}-lynxos${UNAME_RELEASE}
+ 	exit ;;
+     PowerPC:LynxOS:2.*:* | PowerPC:LynxOS:3.[01]*:* | PowerPC:LynxOS:4.[02]*:*)
+-	echo powerpc-unknown-lynxos${UNAME_RELEASE}
++	echo powerpc-${VENDOR}-lynxos${UNAME_RELEASE}
+ 	exit ;;
+     SM[BE]S:UNIX_SV:*:*)
+ 	echo mips-dde-sysv${UNAME_RELEASE}
+@@ -1164,7 +1173,7 @@ EOF
+ 	if [ -d /usr/nec ]; then
+ 	        echo mips-nec-sysv${UNAME_RELEASE}
+ 	else
+-	        echo mips-unknown-sysv${UNAME_RELEASE}
++	        echo mips-${VENDOR}-sysv${UNAME_RELEASE}
+ 	fi
+         exit ;;
+     BeBox:BeOS:*:*)	# BeOS running on hardware made by Be, PPC only.
+@@ -1255,13 +1264,13 @@ EOF
+ 	else
+ 	    UNAME_MACHINE="$cputype"
+ 	fi
+-	echo ${UNAME_MACHINE}-unknown-plan9
++	echo ${UNAME_MACHINE}-${VENDOR}-plan9
+ 	exit ;;
+     *:TOPS-10:*:*)
+-	echo pdp10-unknown-tops10
++	echo pdp10-${VENDOR}-tops10
+ 	exit ;;
+     *:TENEX:*:*)
+-	echo pdp10-unknown-tenex
++	echo pdp10-${VENDOR}-tenex
+ 	exit ;;
+     KS10:TOPS-20:*:* | KL10:TOPS-20:*:* | TYPE4:TOPS-20:*:*)
+ 	echo pdp10-dec-tops20
+@@ -1270,16 +1279,16 @@ EOF
+ 	echo pdp10-xkl-tops20
+ 	exit ;;
+     *:TOPS-20:*:*)
+-	echo pdp10-unknown-tops20
++	echo pdp10-${VENDOR}-tops20
+ 	exit ;;
+     *:ITS:*:*)
+-	echo pdp10-unknown-its
++	echo pdp10-${VENDOR}-its
+ 	exit ;;
+     SEI:*:*:SEIUX)
+         echo mips-sei-seiux${UNAME_RELEASE}
+ 	exit ;;
+     *:DragonFly:*:*)
+-	echo ${UNAME_MACHINE}-unknown-dragonfly`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
++	echo ${UNAME_MACHINE}-${VENDOR}-dragonfly`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
+ 	exit ;;
+     *:*VMS:*:*)
+     	UNAME_MACHINE=`(uname -p) 2>/dev/null`
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/config/config.sub xml-coreutils-0.8.1/config/config.sub
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/config/config.sub	2011-04-16 03:44:45.000000000 +0200
++++ xml-coreutils-0.8.1/config/config.sub	2012-11-15 19:51:19.000000000 +0100
+@@ -1,10 +1,10 @@
+ #! /bin/sh
+ # Configuration validation subroutine script.
+ #   Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999,
+-#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010
++#   2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009
+ #   Free Software Foundation, Inc.
+ 
+-timestamp='2010-01-22'
++timestamp='2009-11-20'
+ 
+ # This file is (in principle) common to ALL GNU software.
+ # The presence of a machine in this file suggests that SOME GNU software
+@@ -75,9 +75,8 @@ Report bugs and patches to <config-patch
+ version="\
+ GNU config.sub ($timestamp)
+ 
+-Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
+-2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010 Free
+-Software Foundation, Inc.
++Copyright (C) 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
++2002, 2003, 2004, 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -381,8 +380,7 @@ case $basic_machine in
+ 	| sparclite-* \
+ 	| sparcv8-* | sparcv9-* | sparcv9b-* | sparcv9v-* | strongarm-* | sv1-* | sx?-* \
+ 	| tahoe-* | thumb-* \
+-	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
+-	| tile-* | tilegx-* \
++	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* | tile-* \
+ 	| tron-* \
+ 	| ubicom32-* \
+ 	| v850-* | v850e-* | vax-* \
+@@ -1087,11 +1085,6 @@ case $basic_machine in
+ 		basic_machine=tic6x-unknown
+ 		os=-coff
+ 		;;
+-        # This must be matched before tile*.
+-        tilegx*)
+-		basic_machine=tilegx-unknown
+-		os=-linux-gnu
+-		;;
+ 	tile*)
+ 		basic_machine=tile-unknown
+ 		os=-linux-gnu
+@@ -1442,8 +1435,6 @@ case $os in
+ 	-dicos*)
+ 		os=-dicos
+ 		;;
+-        -nacl*)
+-	        ;;
+ 	-none)
+ 		;;
+ 	*)
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/configure xml-coreutils-0.8.1/configure
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/configure	2011-04-16 03:44:36.000000000 +0200
++++ xml-coreutils-0.8.1/configure	2012-11-15 19:51:17.000000000 +0100
+@@ -1,6 +1,6 @@
+ #! /bin/sh
+ # Guess values for system-dependent variables and create Makefiles.
+-# Generated by GNU Autoconf 2.67 for xml-coreutils 0.8.1.
++# Generated by GNU Autoconf 2.68 for xml-coreutils 0.8.1.
+ #
+ # Report bugs to <laird@lbreyer.com>.
+ #
+@@ -91,6 +91,7 @@ fi
+ IFS=" ""	$as_nl"
+ 
+ # Find who we are.  Look in the path if we contain no directory separator.
++as_myself=
+ case $0 in #((
+   *[\\/]* ) as_myself=$0 ;;
+   *) as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+@@ -216,11 +217,18 @@ IFS=$as_save_IFS
+   # We cannot yet assume a decent shell, so we have to provide a
+ 	# neutralization value for shells without unset; and this also
+ 	# works around shells that cannot unset nonexistent variables.
++	# Preserve -v and -x to the replacement shell.
+ 	BASH_ENV=/dev/null
+ 	ENV=/dev/null
+ 	(unset BASH_ENV) >/dev/null 2>&1 && unset BASH_ENV ENV
+ 	export CONFIG_SHELL
+-	exec "$CONFIG_SHELL" "$as_myself" ${1+"$@"}
++	case $- in # ((((
++	  *v*x* | *x*v* ) as_opts=-vx ;;
++	  *v* ) as_opts=-v ;;
++	  *x* ) as_opts=-x ;;
++	  * ) as_opts= ;;
++	esac
++	exec "$CONFIG_SHELL" $as_opts "$as_myself" ${1+"$@"}
+ fi
+ 
+     if test x$as_have_required = xno; then :
+@@ -597,6 +605,8 @@ ac_subst_vars='am__EXEEXT_FALSE
+ am__EXEEXT_TRUE
+ LTLIBOBJS
+ LIBOBJS
++WITH_SLANG_FALSE
++WITH_SLANG_TRUE
+ YFLAGS
+ YACC
+ LEXLIB
+@@ -1114,7 +1124,7 @@ Try \`$0 --help' for more information"
+     $as_echo "$as_me: WARNING: you should use --build, --host, --target" >&2
+     expr "x$ac_option" : ".*[^-._$as_cr_alnum]" >/dev/null &&
+       $as_echo "$as_me: WARNING: invalid host type: $ac_option" >&2
+-    : ${build_alias=$ac_option} ${host_alias=$ac_option} ${target_alias=$ac_option}
++    : "${build_alias=$ac_option} ${host_alias=$ac_option} ${target_alias=$ac_option}"
+     ;;
+ 
+   esac
+@@ -1343,8 +1353,9 @@ Some influential environment variables:
+   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
+               you have headers in a nonstandard directory <include dir>
+   CPP         C preprocessor
+-  YACC        The `Yet Another C Compiler' implementation to use. Defaults to
+-              the first program found out of: `bison -y', `byacc', `yacc'.
++  YACC        The `Yet Another Compiler Compiler' implementation to use.
++              Defaults to the first program found out of: `bison -y', `byacc',
++              `yacc'.
+   YFLAGS      The list of arguments that will be passed by default to $YACC.
+               This script will default YFLAGS to the empty string to avoid a
+               default value of `-d' given by some make applications.
+@@ -1416,7 +1427,7 @@ test -n "$ac_init_help" && exit $ac_stat
+ if $ac_init_version; then
+   cat <<\_ACEOF
+ xml-coreutils configure 0.8.1
+-generated by GNU Autoconf 2.67
++generated by GNU Autoconf 2.68
+ 
+ Copyright (C) 2010 Free Software Foundation, Inc.
+ This configure script is free software; the Free Software Foundation
+@@ -1462,7 +1473,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+ 	ac_retval=1
+ fi
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+   as_fn_set_status $ac_retval
+ 
+ } # ac_fn_c_try_compile
+@@ -1499,7 +1510,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
+ 
+     ac_retval=1
+ fi
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+   as_fn_set_status $ac_retval
+ 
+ } # ac_fn_c_try_cpp
+@@ -1512,10 +1523,10 @@ fi
+ ac_fn_c_check_header_mongrel ()
+ {
+   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+-  if eval "test \"\${$3+set}\"" = set; then :
++  if eval \${$3+:} false; then :
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+ $as_echo_n "checking for $2... " >&6; }
+-if eval "test \"\${$3+set}\"" = set; then :
++if eval \${$3+:} false; then :
+   $as_echo_n "(cached) " >&6
+ fi
+ eval ac_res=\$$3
+@@ -1582,7 +1593,7 @@ $as_echo "$as_me: WARNING: $2: proceedin
+ esac
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+ $as_echo_n "checking for $2... " >&6; }
+-if eval "test \"\${$3+set}\"" = set; then :
++if eval \${$3+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   eval "$3=\$ac_header_compiler"
+@@ -1591,7 +1602,7 @@ eval ac_res=\$$3
+ 	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+ $as_echo "$ac_res" >&6; }
+ fi
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+ 
+ } # ac_fn_c_check_header_mongrel
+ 
+@@ -1632,7 +1643,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
+        ac_retval=$ac_status
+ fi
+   rm -rf conftest.dSYM conftest_ipa8_conftest.oo
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+   as_fn_set_status $ac_retval
+ 
+ } # ac_fn_c_try_run
+@@ -1646,7 +1657,7 @@ ac_fn_c_check_header_compile ()
+   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+ $as_echo_n "checking for $2... " >&6; }
+-if eval "test \"\${$3+set}\"" = set; then :
++if eval \${$3+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -1664,7 +1675,7 @@ fi
+ eval ac_res=\$$3
+ 	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+ $as_echo "$ac_res" >&6; }
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+ 
+ } # ac_fn_c_check_header_compile
+ 
+@@ -1709,7 +1720,7 @@ fi
+   # interfere with the next link command; also delete a directory that is
+   # left behind by Apple's compiler.  We do this before executing the actions.
+   rm -rf conftest.dSYM conftest_ipa8_conftest.oo
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+   as_fn_set_status $ac_retval
+ 
+ } # ac_fn_c_try_link
+@@ -1723,7 +1734,7 @@ ac_fn_c_check_type ()
+   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+ $as_echo_n "checking for $2... " >&6; }
+-if eval "test \"\${$3+set}\"" = set; then :
++if eval \${$3+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   eval "$3=no"
+@@ -1764,7 +1775,7 @@ fi
+ eval ac_res=\$$3
+ 	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+ $as_echo "$ac_res" >&6; }
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+ 
+ } # ac_fn_c_check_type
+ 
+@@ -1776,7 +1787,7 @@ ac_fn_c_check_func ()
+   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+ $as_echo_n "checking for $2... " >&6; }
+-if eval "test \"\${$3+set}\"" = set; then :
++if eval \${$3+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -1831,7 +1842,7 @@ fi
+ eval ac_res=\$$3
+ 	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+ $as_echo "$ac_res" >&6; }
+-  eval $as_lineno_stack; test "x$as_lineno_stack" = x && { as_lineno=; unset as_lineno;}
++  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+ 
+ } # ac_fn_c_check_func
+ cat >config.log <<_ACEOF
+@@ -1839,7 +1850,7 @@ This file contains any messages produced
+ running configure, to aid debugging if configure makes a mistake.
+ 
+ It was created by xml-coreutils $as_me 0.8.1, which was
+-generated by GNU Autoconf 2.67.  Invocation command line was
++generated by GNU Autoconf 2.68.  Invocation command line was
+ 
+   $ $0 $@
+ 
+@@ -2097,7 +2108,7 @@ $as_echo "$as_me: loading site script $a
+       || { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "failed to load site script $ac_site_file
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+   fi
+ done
+ 
+@@ -2221,7 +2232,7 @@ $SHELL "$ac_aux_dir/config.sub" sun4 >/d
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+ $as_echo_n "checking build system type... " >&6; }
+-if test "${ac_cv_build+set}" = set; then :
++if ${ac_cv_build+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_build_alias=$build_alias
+@@ -2237,7 +2248,7 @@ fi
+ $as_echo "$ac_cv_build" >&6; }
+ case $ac_cv_build in
+ *-*-*) ;;
+-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5 ;;
++*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+ esac
+ build=$ac_cv_build
+ ac_save_IFS=$IFS; IFS='-'
+@@ -2255,7 +2266,7 @@ case $build_os in *\ *) build_os=`echo "
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+ $as_echo_n "checking host system type... " >&6; }
+-if test "${ac_cv_host+set}" = set; then :
++if ${ac_cv_host+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test "x$host_alias" = x; then
+@@ -2270,7 +2281,7 @@ fi
+ $as_echo "$ac_cv_host" >&6; }
+ case $ac_cv_host in
+ *-*-*) ;;
+-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5 ;;
++*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+ esac
+ host=$ac_cv_host
+ ac_save_IFS=$IFS; IFS='-'
+@@ -2288,7 +2299,7 @@ case $host_os in *\ *) host_os=`echo "$h
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking target system type" >&5
+ $as_echo_n "checking target system type... " >&6; }
+-if test "${ac_cv_target+set}" = set; then :
++if ${ac_cv_target+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test "x$target_alias" = x; then
+@@ -2303,7 +2314,7 @@ fi
+ $as_echo "$ac_cv_target" >&6; }
+ case $ac_cv_target in
+ *-*-*) ;;
+-*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5 ;;
++*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5;;
+ esac
+ target=$ac_cv_target
+ ac_save_IFS=$IFS; IFS='-'
+@@ -2336,7 +2347,7 @@ if test -n "$ac_tool_prefix"; then
+ set dummy ${ac_tool_prefix}gcc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -2376,7 +2387,7 @@ if test -z "$ac_cv_prog_CC"; then
+ set dummy gcc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_ac_ct_CC+set}" = set; then :
++if ${ac_cv_prog_ac_ct_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$ac_ct_CC"; then
+@@ -2429,7 +2440,7 @@ if test -z "$CC"; then
+ set dummy ${ac_tool_prefix}cc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -2469,7 +2480,7 @@ if test -z "$CC"; then
+ set dummy cc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -2528,7 +2539,7 @@ if test -z "$CC"; then
+ set dummy $ac_tool_prefix$ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -2572,7 +2583,7 @@ do
+ set dummy $ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_ac_ct_CC+set}" = set; then :
++if ${ac_cv_prog_ac_ct_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$ac_ct_CC"; then
+@@ -2627,7 +2638,7 @@ fi
+ test -z "$CC" && { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "no acceptable C compiler found in \$PATH
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ 
+ # Provide some information about the compiler.
+ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C compiler version" >&5
+@@ -2742,7 +2753,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
+ { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error 77 "C compiler cannot create executables
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ else
+   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ $as_echo "yes" >&6; }
+@@ -2785,7 +2796,7 @@ else
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot compute suffix of executables: cannot compile and link
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ fi
+ rm -f conftest conftest$ac_cv_exeext
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_exeext" >&5
+@@ -2844,7 +2855,7 @@ $as_echo "$ac_try_echo"; } >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot run C compiled programs.
+ If you meant to cross compile, use \`--host'.
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+     fi
+   fi
+ fi
+@@ -2855,7 +2866,7 @@ rm -f conftest.$ac_ext conftest$ac_cv_ex
+ ac_clean_files=$ac_clean_files_save
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for suffix of object files" >&5
+ $as_echo_n "checking for suffix of object files... " >&6; }
+-if test "${ac_cv_objext+set}" = set; then :
++if ${ac_cv_objext+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -2896,7 +2907,7 @@ sed 's/^/| /' conftest.$ac_ext >&5
+ { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "cannot compute suffix of object files: cannot compile
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ fi
+ rm -f conftest.$ac_cv_objext conftest.$ac_ext
+ fi
+@@ -2906,7 +2917,7 @@ OBJEXT=$ac_cv_objext
+ ac_objext=$OBJEXT
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we are using the GNU C compiler" >&5
+ $as_echo_n "checking whether we are using the GNU C compiler... " >&6; }
+-if test "${ac_cv_c_compiler_gnu+set}" = set; then :
++if ${ac_cv_c_compiler_gnu+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -2943,7 +2954,7 @@ ac_test_CFLAGS=${CFLAGS+set}
+ ac_save_CFLAGS=$CFLAGS
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC accepts -g" >&5
+ $as_echo_n "checking whether $CC accepts -g... " >&6; }
+-if test "${ac_cv_prog_cc_g+set}" = set; then :
++if ${ac_cv_prog_cc_g+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_save_c_werror_flag=$ac_c_werror_flag
+@@ -3021,7 +3032,7 @@ else
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $CC option to accept ISO C89" >&5
+ $as_echo_n "checking for $CC option to accept ISO C89... " >&6; }
+-if test "${ac_cv_prog_cc_c89+set}" = set; then :
++if ${ac_cv_prog_cc_c89+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_cv_prog_cc_c89=no
+@@ -3129,7 +3140,7 @@ if test -n "$CPP" && test -d "$CPP"; the
+   CPP=
+ fi
+ if test -z "$CPP"; then
+-  if test "${ac_cv_prog_CPP+set}" = set; then :
++  if ${ac_cv_prog_CPP+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+       # Double quotes because CPP needs to be expanded
+@@ -3245,7 +3256,7 @@ else
+   { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "C preprocessor \"$CPP\" fails sanity check
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ fi
+ 
+ ac_ext=c
+@@ -3257,7 +3268,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
+ $as_echo_n "checking for grep that handles long lines and -e... " >&6; }
+-if test "${ac_cv_path_GREP+set}" = set; then :
++if ${ac_cv_path_GREP+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -z "$GREP"; then
+@@ -3320,7 +3331,7 @@ $as_echo "$ac_cv_path_GREP" >&6; }
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for egrep" >&5
+ $as_echo_n "checking for egrep... " >&6; }
+-if test "${ac_cv_path_EGREP+set}" = set; then :
++if ${ac_cv_path_EGREP+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if echo a | $GREP -E '(a|b)' >/dev/null 2>&1
+@@ -3387,7 +3398,7 @@ $as_echo "$ac_cv_path_EGREP" >&6; }
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
+ $as_echo_n "checking for ANSI C header files... " >&6; }
+-if test "${ac_cv_header_stdc+set}" = set; then :
++if ${ac_cv_header_stdc+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -3516,7 +3527,7 @@ done
+ 
+ 
+   ac_fn_c_check_header_mongrel "$LINENO" "minix/config.h" "ac_cv_header_minix_config_h" "$ac_includes_default"
+-if test "x$ac_cv_header_minix_config_h" = x""yes; then :
++if test "x$ac_cv_header_minix_config_h" = xyes; then :
+   MINIX=yes
+ else
+   MINIX=
+@@ -3538,7 +3549,7 @@ $as_echo "#define _MINIX 1" >>confdefs.h
+ 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether it is safe to define __EXTENSIONS__" >&5
+ $as_echo_n "checking whether it is safe to define __EXTENSIONS__... " >&6; }
+-if test "${ac_cv_safe_to_define___extensions__+set}" = set; then :
++if ${ac_cv_safe_to_define___extensions__+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -3595,7 +3606,7 @@ am__api_version='1.11'
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a BSD-compatible install" >&5
+ $as_echo_n "checking for a BSD-compatible install... " >&6; }
+ if test -z "$INSTALL"; then
+-if test "${ac_cv_path_install+set}" = set; then :
++if ${ac_cv_path_install+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+@@ -3682,11 +3693,11 @@ am_lf='
+ '
+ case `pwd` in
+   *[\\\"\#\$\&\'\`$am_lf]*)
+-    as_fn_error $? "unsafe absolute working directory name" "$LINENO" 5 ;;
++    as_fn_error $? "unsafe absolute working directory name" "$LINENO" 5;;
+ esac
+ case $srcdir in
+   *[\\\"\#\$\&\'\`$am_lf\ \	]*)
+-    as_fn_error $? "unsafe srcdir value: \`$srcdir'" "$LINENO" 5 ;;
++    as_fn_error $? "unsafe srcdir value: \`$srcdir'" "$LINENO" 5;;
+ esac
+ 
+ # Do `set' in a subshell so we don't clobber the current shell's
+@@ -3772,7 +3783,7 @@ if test "$cross_compiling" != no; then
+ set dummy ${ac_tool_prefix}strip; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_STRIP+set}" = set; then :
++if ${ac_cv_prog_STRIP+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$STRIP"; then
+@@ -3812,7 +3823,7 @@ if test -z "$ac_cv_prog_STRIP"; then
+ set dummy strip; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_ac_ct_STRIP+set}" = set; then :
++if ${ac_cv_prog_ac_ct_STRIP+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$ac_ct_STRIP"; then
+@@ -3865,7 +3876,7 @@ INSTALL_STRIP_PROGRAM="\$(install_sh) -c
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for a thread-safe mkdir -p" >&5
+ $as_echo_n "checking for a thread-safe mkdir -p... " >&6; }
+ if test -z "$MKDIR_P"; then
+-  if test "${ac_cv_path_mkdir+set}" = set; then :
++  if ${ac_cv_path_mkdir+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+@@ -3916,7 +3927,7 @@ do
+ set dummy $ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_AWK+set}" = set; then :
++if ${ac_cv_prog_AWK+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$AWK"; then
+@@ -3956,7 +3967,7 @@ done
+ $as_echo_n "checking whether ${MAKE-make} sets \$(MAKE)... " >&6; }
+ set x ${MAKE-make}
+ ac_make=`$as_echo "$2" | sed 's/+/p/g; s/[^a-zA-Z0-9_]/_/g'`
+-if eval "test \"\${ac_cv_prog_make_${ac_make}_set+set}\"" = set; then :
++if eval \${ac_cv_prog_make_${ac_make}_set+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat >conftest.make <<\_ACEOF
+@@ -4110,7 +4121,7 @@ depcc="$CC"   am_compiler_list=
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking dependency style of $depcc" >&5
+ $as_echo_n "checking dependency style of $depcc... " >&6; }
+-if test "${am_cv_CC_dependencies_compiler_type+set}" = set; then :
++if ${am_cv_CC_dependencies_compiler_type+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -z "$AMDEP_TRUE" && test -f "$am_depcomp"; then
+@@ -4248,7 +4259,7 @@ if test -n "$ac_tool_prefix"; then
+ set dummy ${ac_tool_prefix}gcc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -4288,7 +4299,7 @@ if test -z "$ac_cv_prog_CC"; then
+ set dummy gcc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_ac_ct_CC+set}" = set; then :
++if ${ac_cv_prog_ac_ct_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$ac_ct_CC"; then
+@@ -4341,7 +4352,7 @@ if test -z "$CC"; then
+ set dummy ${ac_tool_prefix}cc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -4381,7 +4392,7 @@ if test -z "$CC"; then
+ set dummy cc; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -4440,7 +4451,7 @@ if test -z "$CC"; then
+ set dummy $ac_tool_prefix$ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_CC+set}" = set; then :
++if ${ac_cv_prog_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$CC"; then
+@@ -4484,7 +4495,7 @@ do
+ set dummy $ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_ac_ct_CC+set}" = set; then :
++if ${ac_cv_prog_ac_ct_CC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$ac_ct_CC"; then
+@@ -4539,7 +4550,7 @@ fi
+ test -z "$CC" && { { $as_echo "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+ $as_echo "$as_me: error: in \`$ac_pwd':" >&2;}
+ as_fn_error $? "no acceptable C compiler found in \$PATH
+-See \`config.log' for more details" "$LINENO" 5 ; }
++See \`config.log' for more details" "$LINENO" 5; }
+ 
+ # Provide some information about the compiler.
+ $as_echo "$as_me:${as_lineno-$LINENO}: checking for C compiler version" >&5
+@@ -4568,7 +4579,7 @@ done
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we are using the GNU C compiler" >&5
+ $as_echo_n "checking whether we are using the GNU C compiler... " >&6; }
+-if test "${ac_cv_c_compiler_gnu+set}" = set; then :
++if ${ac_cv_c_compiler_gnu+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -4605,7 +4616,7 @@ ac_test_CFLAGS=${CFLAGS+set}
+ ac_save_CFLAGS=$CFLAGS
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether $CC accepts -g" >&5
+ $as_echo_n "checking whether $CC accepts -g... " >&6; }
+-if test "${ac_cv_prog_cc_g+set}" = set; then :
++if ${ac_cv_prog_cc_g+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_save_c_werror_flag=$ac_c_werror_flag
+@@ -4683,7 +4694,7 @@ else
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $CC option to accept ISO C89" >&5
+ $as_echo_n "checking for $CC option to accept ISO C89... " >&6; }
+-if test "${ac_cv_prog_cc_c89+set}" = set; then :
++if ${ac_cv_prog_cc_c89+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_cv_prog_cc_c89=no
+@@ -4785,7 +4796,7 @@ do
+ set dummy $ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_LEX+set}" = set; then :
++if ${ac_cv_prog_LEX+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$LEX"; then
+@@ -4855,7 +4866,7 @@ $as_echo "$ac_try_echo"; } >&5
+   test $ac_status = 0; }
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking lex output file root" >&5
+ $as_echo_n "checking lex output file root... " >&6; }
+-if test "${ac_cv_prog_lex_root+set}" = set; then :
++if ${ac_cv_prog_lex_root+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+ 
+@@ -4874,7 +4885,7 @@ LEX_OUTPUT_ROOT=$ac_cv_prog_lex_root
+ if test -z "${LEXLIB+set}"; then
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking lex library" >&5
+ $as_echo_n "checking lex library... " >&6; }
+-if test "${ac_cv_lib_lex+set}" = set; then :
++if ${ac_cv_lib_lex+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+ 
+@@ -4904,7 +4915,7 @@ fi
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether yytext is a pointer" >&5
+ $as_echo_n "checking whether yytext is a pointer... " >&6; }
+-if test "${ac_cv_prog_lex_yytext_pointer+set}" = set; then :
++if ${ac_cv_prog_lex_yytext_pointer+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   # POSIX says lex can declare yytext either as a pointer or an array; the
+@@ -4915,7 +4926,8 @@ ac_save_LIBS=$LIBS
+ LIBS="$LEXLIB $ac_save_LIBS"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+-#define YYTEXT_POINTER 1
++
++  #define YYTEXT_POINTER 1
+ `cat $LEX_OUTPUT_ROOT.c`
+ _ACEOF
+ if ac_fn_c_try_link "$LINENO"; then :
+@@ -4945,7 +4957,7 @@ do
+ set dummy $ac_prog; ac_word=$2
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+ $as_echo_n "checking for $ac_word... " >&6; }
+-if test "${ac_cv_prog_YACC+set}" = set; then :
++if ${ac_cv_prog_YACC+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   if test -n "$YACC"; then
+@@ -4984,54 +4996,9 @@ test -n "$YACC" || YACC="yacc"
+ 
+ 
+ ## Checks for libraries.
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for log in -lm" >&5
+-$as_echo_n "checking for log in -lm... " >&6; }
+-if test "${ac_cv_lib_m_log+set}" = set; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lm  $LIBS"
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-char log ();
+-int
+-main ()
+-{
+-return log ();
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_m_log=yes
+-else
+-  ac_cv_lib_m_log=no
+-fi
+-rm -f core conftest.err conftest.$ac_objext \
+-    conftest$ac_exeext conftest.$ac_ext
+-LIBS=$ac_check_lib_save_LIBS
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_m_log" >&5
+-$as_echo "$ac_cv_lib_m_log" >&6; }
+-if test "x$ac_cv_lib_m_log" = x""yes; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define HAVE_LIBM 1
+-_ACEOF
+-
+-  LIBS="-lm $LIBS"
+-
+-fi
+-
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for XML_ParseBuffer in -lexpat" >&5
+ $as_echo_n "checking for XML_ParseBuffer in -lexpat... " >&6; }
+-if test "${ac_cv_lib_expat_XML_ParseBuffer+set}" = set; then :
++if ${ac_cv_lib_expat_XML_ParseBuffer+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+@@ -5065,7 +5032,7 @@ LIBS=$ac_check_lib_save_LIBS
+ fi
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_expat_XML_ParseBuffer" >&5
+ $as_echo "$ac_cv_lib_expat_XML_ParseBuffer" >&6; }
+-if test "x$ac_cv_lib_expat_XML_ParseBuffer" = x""yes; then :
++if test "x$ac_cv_lib_expat_XML_ParseBuffer" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+ #define HAVE_LIBEXPAT 1
+ _ACEOF
+@@ -5076,104 +5043,11 @@ else
+   as_fn_error $? "Missing libexpat" "$LINENO" 5
+ fi
+ 
+-# (these two go together in this order)
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for initscr in -lncurses" >&5
+-$as_echo_n "checking for initscr in -lncurses... " >&6; }
+-if test "${ac_cv_lib_ncurses_initscr+set}" = set; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lncurses  $LIBS"
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-char initscr ();
+-int
+-main ()
+-{
+-return initscr ();
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_ncurses_initscr=yes
+-else
+-  ac_cv_lib_ncurses_initscr=no
+-fi
+-rm -f core conftest.err conftest.$ac_objext \
+-    conftest$ac_exeext conftest.$ac_ext
+-LIBS=$ac_check_lib_save_LIBS
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ncurses_initscr" >&5
+-$as_echo "$ac_cv_lib_ncurses_initscr" >&6; }
+-if test "x$ac_cv_lib_ncurses_initscr" = x""yes; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define HAVE_LIBNCURSES 1
+-_ACEOF
+-
+-  LIBS="-lncurses $LIBS"
+-
+-fi
+-
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SLsmg_init_smg in -lslang" >&5
+-$as_echo_n "checking for SLsmg_init_smg in -lslang... " >&6; }
+-if test "${ac_cv_lib_slang_SLsmg_init_smg+set}" = set; then :
+-  $as_echo_n "(cached) " >&6
+-else
+-  ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lslang  $LIBS"
+-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+-/* end confdefs.h.  */
+-
+-/* Override any GCC internal prototype to avoid an error.
+-   Use char because int might match the return type of a GCC
+-   builtin and then its argument prototype would still apply.  */
+-#ifdef __cplusplus
+-extern "C"
+-#endif
+-char SLsmg_init_smg ();
+-int
+-main ()
+-{
+-return SLsmg_init_smg ();
+-  ;
+-  return 0;
+-}
+-_ACEOF
+-if ac_fn_c_try_link "$LINENO"; then :
+-  ac_cv_lib_slang_SLsmg_init_smg=yes
+-else
+-  ac_cv_lib_slang_SLsmg_init_smg=no
+-fi
+-rm -f core conftest.err conftest.$ac_objext \
+-    conftest$ac_exeext conftest.$ac_ext
+-LIBS=$ac_check_lib_save_LIBS
+-fi
+-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_slang_SLsmg_init_smg" >&5
+-$as_echo "$ac_cv_lib_slang_SLsmg_init_smg" >&6; }
+-if test "x$ac_cv_lib_slang_SLsmg_init_smg" = x""yes; then :
+-  cat >>confdefs.h <<_ACEOF
+-#define HAVE_LIBSLANG 1
+-_ACEOF
+-
+-  LIBS="-lslang $LIBS"
+-
+-else
+-  as_fn_error $? "Missing libslang2" "$LINENO" 5
+-fi
+-
+ 
+ ## Checks for header files.
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for ANSI C header files" >&5
+ $as_echo_n "checking for ANSI C header files... " >&6; }
+-if test "${ac_cv_header_stdc+set}" = set; then :
++if ${ac_cv_header_stdc+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -5314,26 +5188,93 @@ fi
+ 
+ done
+ 
+-for ac_header in expat.h slang.h
++for ac_header in expat.h
+ do :
+-  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+-ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+-if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
++  ac_fn_c_check_header_mongrel "$LINENO" "expat.h" "ac_cv_header_expat_h" "$ac_includes_default"
++if test "x$ac_cv_header_expat_h" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+-#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
++#define HAVE_EXPAT_H 1
+ _ACEOF
+ 
+ else
+-  as_fn_error $? "Missing expat.h or slang.h" "$LINENO" 5
++  as_fn_error $? "Missing expat.h" "$LINENO" 5
+ fi
+ 
+ done
+ 
+ 
++## Check for slang
++{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for SLsmg_init_smg in -lslang" >&5
++$as_echo_n "checking for SLsmg_init_smg in -lslang... " >&6; }
++if ${ac_cv_lib_slang_SLsmg_init_smg+:} false; then :
++  $as_echo_n "(cached) " >&6
++else
++  ac_check_lib_save_LIBS=$LIBS
++LIBS="-lslang  $LIBS"
++cat confdefs.h - <<_ACEOF >conftest.$ac_ext
++/* end confdefs.h.  */
++
++/* Override any GCC internal prototype to avoid an error.
++   Use char because int might match the return type of a GCC
++   builtin and then its argument prototype would still apply.  */
++#ifdef __cplusplus
++extern "C"
++#endif
++char SLsmg_init_smg ();
++int
++main ()
++{
++return SLsmg_init_smg ();
++  ;
++  return 0;
++}
++_ACEOF
++if ac_fn_c_try_link "$LINENO"; then :
++  ac_cv_lib_slang_SLsmg_init_smg=yes
++else
++  ac_cv_lib_slang_SLsmg_init_smg=no
++fi
++rm -f core conftest.err conftest.$ac_objext \
++    conftest$ac_exeext conftest.$ac_ext
++LIBS=$ac_check_lib_save_LIBS
++fi
++{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_slang_SLsmg_init_smg" >&5
++$as_echo "$ac_cv_lib_slang_SLsmg_init_smg" >&6; }
++if test "x$ac_cv_lib_slang_SLsmg_init_smg" = xyes; then :
++  for ac_header in slang.h
++do :
++  ac_fn_c_check_header_mongrel "$LINENO" "slang.h" "ac_cv_header_slang_h" "$ac_includes_default"
++if test "x$ac_cv_header_slang_h" = xyes; then :
++  cat >>confdefs.h <<_ACEOF
++#define HAVE_SLANG_H 1
++_ACEOF
++
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Missing slang.h" >&5
++$as_echo "$as_me: WARNING: Missing slang.h" >&2;}
++fi
++
++done
++
++else
++  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Missing libslang2" >&5
++$as_echo "$as_me: WARNING: Missing libslang2" >&2;}
++fi
++
++ if test "$ac_cv_header_slang_h" = "yes"; then
++  WITH_SLANG_TRUE=
++  WITH_SLANG_FALSE='#'
++else
++  WITH_SLANG_TRUE='#'
++  WITH_SLANG_FALSE=
++fi
++
++
++
+ ## Checks for typedefs, structures, and compiler characteristics.
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
+ $as_echo_n "checking for an ANSI C-conforming const... " >&6; }
+-if test "${ac_cv_c_const+set}" = set; then :
++if ${ac_cv_c_const+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -5412,7 +5353,7 @@ $as_echo "#define const /**/" >>confdefs
+ fi
+ 
+ ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"
+-if test "x$ac_cv_type_size_t" = x""yes; then :
++if test "x$ac_cv_type_size_t" = xyes; then :
+ 
+ else
+ 
+@@ -5423,7 +5364,7 @@ _ACEOF
+ fi
+ 
+ ac_fn_c_check_type "$LINENO" "off_t" "ac_cv_type_off_t" "$ac_includes_default"
+-if test "x$ac_cv_type_off_t" = x""yes; then :
++if test "x$ac_cv_type_off_t" = xyes; then :
+ 
+ else
+ 
+@@ -5438,13 +5379,13 @@ fi
+ for ac_func in vprintf
+ do :
+   ac_fn_c_check_func "$LINENO" "vprintf" "ac_cv_func_vprintf"
+-if test "x$ac_cv_func_vprintf" = x""yes; then :
++if test "x$ac_cv_func_vprintf" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+ #define HAVE_VPRINTF 1
+ _ACEOF
+ 
+ ac_fn_c_check_func "$LINENO" "_doprnt" "ac_cv_func__doprnt"
+-if test "x$ac_cv_func__doprnt" = x""yes; then :
++if test "x$ac_cv_func__doprnt" = xyes; then :
+ 
+ $as_echo "#define HAVE_DOPRNT 1" >>confdefs.h
+ 
+@@ -5469,7 +5410,7 @@ done
+ 
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for DOS-style setmode" >&5
+ $as_echo_n "checking for DOS-style setmode... " >&6; }
+-if test "${ac_cv_func_setmode_dos+set}" = set; then :
++if ${ac_cv_func_setmode_dos+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -5507,7 +5448,7 @@ $as_echo "#define HAVE_SETMODE_DOS 1" >>
+ 
+   { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether mbrtowc and mbstate_t are properly declared" >&5
+ $as_echo_n "checking whether mbrtowc and mbstate_t are properly declared... " >&6; }
+-if test "${ac_cv_func_mbrtowc+set}" = set; then :
++if ${ac_cv_func_mbrtowc+:} false; then :
+   $as_echo_n "(cached) " >&6
+ else
+   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+@@ -5544,7 +5485,7 @@ $as_echo "#define HAVE_MBRTOWC 1" >>conf
+ for ac_func in sigaction
+ do :
+   ac_fn_c_check_func "$LINENO" "sigaction" "ac_cv_func_sigaction"
+-if test "x$ac_cv_func_sigaction" = x""yes; then :
++if test "x$ac_cv_func_sigaction" = xyes; then :
+   cat >>confdefs.h <<_ACEOF
+ #define HAVE_SIGACTION 1
+ _ACEOF
+@@ -5619,10 +5560,21 @@ $as_echo "$as_me: WARNING: cache variabl
+      :end' >>confcache
+ if diff "$cache_file" confcache >/dev/null 2>&1; then :; else
+   if test -w "$cache_file"; then
+-    test "x$cache_file" != "x/dev/null" &&
++    if test "x$cache_file" != "x/dev/null"; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: updating cache $cache_file" >&5
+ $as_echo "$as_me: updating cache $cache_file" >&6;}
+-    cat confcache >$cache_file
++      if test ! -f "$cache_file" || test -h "$cache_file"; then
++	cat confcache >"$cache_file"
++      else
++        case $cache_file in #(
++        */* | ?:*)
++	  mv -f confcache "$cache_file"$$ &&
++	  mv -f "$cache_file"$$ "$cache_file" ;; #(
++        *)
++	  mv -f confcache "$cache_file" ;;
++	esac
++      fi
++    fi
+   else
+     { $as_echo "$as_me:${as_lineno-$LINENO}: not updating unwritable cache $cache_file" >&5
+ $as_echo "$as_me: not updating unwritable cache $cache_file" >&6;}
+@@ -5669,8 +5621,12 @@ else
+   am__EXEEXT_FALSE=
+ fi
+ 
++if test -z "${WITH_SLANG_TRUE}" && test -z "${WITH_SLANG_FALSE}"; then
++  as_fn_error $? "conditional \"WITH_SLANG\" was never defined.
++Usually this means the macro was only invoked conditionally." "$LINENO" 5
++fi
+ 
+-: ${CONFIG_STATUS=./config.status}
++: "${CONFIG_STATUS=./config.status}"
+ ac_write_fail=0
+ ac_clean_files_save=$ac_clean_files
+ ac_clean_files="$ac_clean_files $CONFIG_STATUS"
+@@ -5771,6 +5727,7 @@ fi
+ IFS=" ""	$as_nl"
+ 
+ # Find who we are.  Look in the path if we contain no directory separator.
++as_myself=
+ case $0 in #((
+   *[\\/]* ) as_myself=$0 ;;
+   *) as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+@@ -6078,7 +6035,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_wri
+ # values after options handling.
+ ac_log="
+ This file was extended by xml-coreutils $as_me 0.8.1, which was
+-generated by GNU Autoconf 2.67.  Invocation command line was
++generated by GNU Autoconf 2.68.  Invocation command line was
+ 
+   CONFIG_FILES    = $CONFIG_FILES
+   CONFIG_HEADERS  = $CONFIG_HEADERS
+@@ -6144,7 +6101,7 @@ cat >>$CONFIG_STATUS <<_ACEOF || ac_writ
+ ac_cs_config="`$as_echo "$ac_configure_args" | sed 's/^ //; s/[\\""\`\$]/\\\\&/g'`"
+ ac_cs_version="\\
+ xml-coreutils config.status 0.8.1
+-configured by $0, generated by GNU Autoconf 2.67,
++configured by $0, generated by GNU Autoconf 2.68,
+   with options \\"\$ac_cs_config\\"
+ 
+ Copyright (C) 2010 Free Software Foundation, Inc.
+@@ -6280,7 +6237,7 @@ do
+     "src/tests/Makefile") CONFIG_FILES="$CONFIG_FILES src/tests/Makefile" ;;
+     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
+ 
+-  *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5 ;;
++  *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
+   esac
+ done
+ 
+@@ -6303,9 +6260,10 @@ fi
+ # after its creation but before its name has been assigned to `$tmp'.
+ $debug ||
+ {
+-  tmp=
++  tmp= ac_tmp=
+   trap 'exit_status=$?
+-  { test -z "$tmp" || test ! -d "$tmp" || rm -fr "$tmp"; } && exit $exit_status
++  : "${ac_tmp:=$tmp}"
++  { test ! -d "$ac_tmp" || rm -fr "$ac_tmp"; } && exit $exit_status
+ ' 0
+   trap 'as_fn_exit 1' 1 2 13 15
+ }
+@@ -6313,12 +6271,13 @@ $debug ||
+ 
+ {
+   tmp=`(umask 077 && mktemp -d "./confXXXXXX") 2>/dev/null` &&
+-  test -n "$tmp" && test -d "$tmp"
++  test -d "$tmp"
+ }  ||
+ {
+   tmp=./conf$$-$RANDOM
+   (umask 077 && mkdir "$tmp")
+ } || as_fn_error $? "cannot create a temporary directory in ." "$LINENO" 5
++ac_tmp=$tmp
+ 
+ # Set up the scripts for CONFIG_FILES section.
+ # No need to generate them if there are no CONFIG_FILES.
+@@ -6340,7 +6299,7 @@ else
+   ac_cs_awk_cr=$ac_cr
+ fi
+ 
+-echo 'BEGIN {' >"$tmp/subs1.awk" &&
++echo 'BEGIN {' >"$ac_tmp/subs1.awk" &&
+ _ACEOF
+ 
+ 
+@@ -6368,7 +6327,7 @@ done
+ rm -f conf$$subs.sh
+ 
+ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
+-cat >>"\$tmp/subs1.awk" <<\\_ACAWK &&
++cat >>"\$ac_tmp/subs1.awk" <<\\_ACAWK &&
+ _ACEOF
+ sed -n '
+ h
+@@ -6416,7 +6375,7 @@ t delim
+ rm -f conf$$subs.awk
+ cat >>$CONFIG_STATUS <<_ACEOF || ac_write_fail=1
+ _ACAWK
+-cat >>"\$tmp/subs1.awk" <<_ACAWK &&
++cat >>"\$ac_tmp/subs1.awk" <<_ACAWK &&
+   for (key in S) S_is_set[key] = 1
+   FS = ""
+ 
+@@ -6448,7 +6407,7 @@ if sed "s/$ac_cr//" < /dev/null > /dev/n
+   sed "s/$ac_cr\$//; s/$ac_cr/$ac_cs_awk_cr/g"
+ else
+   cat
+-fi < "$tmp/subs1.awk" > "$tmp/subs.awk" \
++fi < "$ac_tmp/subs1.awk" > "$ac_tmp/subs.awk" \
+   || as_fn_error $? "could not setup config files machinery" "$LINENO" 5
+ _ACEOF
+ 
+@@ -6482,7 +6441,7 @@ fi # test -n "$CONFIG_FILES"
+ # No need to generate them if there are no CONFIG_HEADERS.
+ # This happens for instance with `./config.status Makefile'.
+ if test -n "$CONFIG_HEADERS"; then
+-cat >"$tmp/defines.awk" <<\_ACAWK ||
++cat >"$ac_tmp/defines.awk" <<\_ACAWK ||
+ BEGIN {
+ _ACEOF
+ 
+@@ -6494,8 +6453,8 @@ _ACEOF
+ # handling of long lines.
+ ac_delim='%!_!# '
+ for ac_last_try in false false :; do
+-  ac_t=`sed -n "/$ac_delim/p" confdefs.h`
+-  if test -z "$ac_t"; then
++  ac_tt=`sed -n "/$ac_delim/p" confdefs.h`
++  if test -z "$ac_tt"; then
+     break
+   elif $ac_last_try; then
+     as_fn_error $? "could not make $CONFIG_HEADERS" "$LINENO" 5
+@@ -6596,7 +6555,7 @@ do
+   esac
+   case $ac_mode$ac_tag in
+   :[FHL]*:*);;
+-  :L* | :C*:*) as_fn_error $? "invalid tag \`$ac_tag'" "$LINENO" 5 ;;
++  :L* | :C*:*) as_fn_error $? "invalid tag \`$ac_tag'" "$LINENO" 5;;
+   :[FH]-) ac_tag=-:-;;
+   :[FH]*) ac_tag=$ac_tag:$ac_tag.in;;
+   esac
+@@ -6615,7 +6574,7 @@ do
+     for ac_f
+     do
+       case $ac_f in
+-      -) ac_f="$tmp/stdin";;
++      -) ac_f="$ac_tmp/stdin";;
+       *) # Look for the file first in the build tree, then in the source tree
+ 	 # (if the path is not absolute).  The absolute path cannot be DOS-style,
+ 	 # because $ac_f cannot contain `:'.
+@@ -6624,7 +6583,7 @@ do
+ 	   [\\/$]*) false;;
+ 	   *) test -f "$srcdir/$ac_f" && ac_f="$srcdir/$ac_f";;
+ 	   esac ||
+-	   as_fn_error 1 "cannot find input file: \`$ac_f'" "$LINENO" 5 ;;
++	   as_fn_error 1 "cannot find input file: \`$ac_f'" "$LINENO" 5;;
+       esac
+       case $ac_f in *\'*) ac_f=`$as_echo "$ac_f" | sed "s/'/'\\\\\\\\''/g"`;; esac
+       as_fn_append ac_file_inputs " '$ac_f'"
+@@ -6650,8 +6609,8 @@ $as_echo "$as_me: creating $ac_file" >&6
+     esac
+ 
+     case $ac_tag in
+-    *:-:* | *:-) cat >"$tmp/stdin" \
+-      || as_fn_error $? "could not create $ac_file" "$LINENO" 5  ;;
++    *:-:* | *:-) cat >"$ac_tmp/stdin" \
++      || as_fn_error $? "could not create $ac_file" "$LINENO" 5 ;;
+     esac
+     ;;
+   esac
+@@ -6787,21 +6746,22 @@ s&@INSTALL@&$ac_INSTALL&;t t
+ s&@MKDIR_P@&$ac_MKDIR_P&;t t
+ $ac_datarootdir_hack
+ "
+-eval sed \"\$ac_sed_extra\" "$ac_file_inputs" | $AWK -f "$tmp/subs.awk" >$tmp/out \
+-  || as_fn_error $? "could not create $ac_file" "$LINENO" 5
++eval sed \"\$ac_sed_extra\" "$ac_file_inputs" | $AWK -f "$ac_tmp/subs.awk" \
++  >$ac_tmp/out || as_fn_error $? "could not create $ac_file" "$LINENO" 5
+ 
+ test -z "$ac_datarootdir_hack$ac_datarootdir_seen" &&
+-  { ac_out=`sed -n '/\${datarootdir}/p' "$tmp/out"`; test -n "$ac_out"; } &&
+-  { ac_out=`sed -n '/^[	 ]*datarootdir[	 ]*:*=/p' "$tmp/out"`; test -z "$ac_out"; } &&
++  { ac_out=`sed -n '/\${datarootdir}/p' "$ac_tmp/out"`; test -n "$ac_out"; } &&
++  { ac_out=`sed -n '/^[	 ]*datarootdir[	 ]*:*=/p' \
++      "$ac_tmp/out"`; test -z "$ac_out"; } &&
+   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: $ac_file contains a reference to the variable \`datarootdir'
+ which seems to be undefined.  Please make sure it is defined" >&5
+ $as_echo "$as_me: WARNING: $ac_file contains a reference to the variable \`datarootdir'
+ which seems to be undefined.  Please make sure it is defined" >&2;}
+ 
+-  rm -f "$tmp/stdin"
++  rm -f "$ac_tmp/stdin"
+   case $ac_file in
+-  -) cat "$tmp/out" && rm -f "$tmp/out";;
+-  *) rm -f "$ac_file" && mv "$tmp/out" "$ac_file";;
++  -) cat "$ac_tmp/out" && rm -f "$ac_tmp/out";;
++  *) rm -f "$ac_file" && mv "$ac_tmp/out" "$ac_file";;
+   esac \
+   || as_fn_error $? "could not create $ac_file" "$LINENO" 5
+  ;;
+@@ -6812,20 +6772,20 @@ which seems to be undefined.  Please mak
+   if test x"$ac_file" != x-; then
+     {
+       $as_echo "/* $configure_input  */" \
+-      && eval '$AWK -f "$tmp/defines.awk"' "$ac_file_inputs"
+-    } >"$tmp/config.h" \
++      && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs"
++    } >"$ac_tmp/config.h" \
+       || as_fn_error $? "could not create $ac_file" "$LINENO" 5
+-    if diff "$ac_file" "$tmp/config.h" >/dev/null 2>&1; then
++    if diff "$ac_file" "$ac_tmp/config.h" >/dev/null 2>&1; then
+       { $as_echo "$as_me:${as_lineno-$LINENO}: $ac_file is unchanged" >&5
+ $as_echo "$as_me: $ac_file is unchanged" >&6;}
+     else
+       rm -f "$ac_file"
+-      mv "$tmp/config.h" "$ac_file" \
++      mv "$ac_tmp/config.h" "$ac_file" \
+ 	|| as_fn_error $? "could not create $ac_file" "$LINENO" 5
+     fi
+   else
+     $as_echo "/* $configure_input  */" \
+-      && eval '$AWK -f "$tmp/defines.awk"' "$ac_file_inputs" \
++      && eval '$AWK -f "$ac_tmp/defines.awk"' "$ac_file_inputs" \
+       || as_fn_error $? "could not create -" "$LINENO" 5
+   fi
+ # Compute "$ac_file"'s index in $config_headers.
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/doc/Makefile.in xml-coreutils-0.8.1/doc/Makefile.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/doc/Makefile.in	2011-04-16 03:44:35.000000000 +0200
++++ xml-coreutils-0.8.1/doc/Makefile.in	2012-11-15 19:51:19.000000000 +0100
+@@ -194,9 +194,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefi
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnits doc/Makefile'; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu doc/Makefile'; \
+ 	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --gnits doc/Makefile
++	  $(AUTOMAKE) --gnu doc/Makefile
+ .PRECIOUS: Makefile
+ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+ 	@case '$?' in \
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/Makefile.in xml-coreutils-0.8.1/Makefile.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/Makefile.in	2011-04-16 03:44:35.000000000 +0200
++++ xml-coreutils-0.8.1/Makefile.in	2012-11-15 19:51:20.000000000 +0100
+@@ -104,7 +104,7 @@ DIST_ARCHIVES = $(distdir).tar.gz
+ GZIP_ENV = --best
+ distuninstallcheck_listfiles = find . -type f -print
+ distcleancheck_listfiles = find . -type f -print
+-ACLOCAL = -I config
++ACLOCAL = @ACLOCAL@
+ AMTAR = @AMTAR@
+ AUTOCONF = @AUTOCONF@
+ AUTOHEADER = @AUTOHEADER@
+@@ -209,12 +209,6 @@ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+ AUTOMAKE_OPTIONS = 1.4 gnits
+ ACLOCAL_AMFLAGS = -I m4 --install
+-AUX_DIST = config/config.guess \
+-	config/config.sub \
+-	config/depcomp \
+-	config/install-sh \
+-	config/missing
+-
+ SUBDIRS = doc src man
+ EXTRA_DIST = SFX
+ all: all-recursive
+@@ -456,9 +450,6 @@ distdir: $(DISTFILES)
+ 	      || exit 1; \
+ 	  fi; \
+ 	done
+-	$(MAKE) $(AM_MAKEFLAGS) \
+-	  top_distdir="$(top_distdir)" distdir="$(distdir)" \
+-	  dist-hook
+ 	-test -n "$(am__skip_mode_fix)" \
+ 	|| find "$(distdir)" -type d ! -perm -755 \
+ 		-exec chmod u+rwx,go+rx {} \; -o \
+@@ -679,26 +670,20 @@ uninstall-am:
+ .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
+ 	all all-am am--refresh check check-am clean clean-generic \
+ 	ctags ctags-recursive dist dist-all dist-bzip2 dist-gzip \
+-	dist-hook dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
+-	distcheck distclean distclean-generic distclean-tags \
+-	distcleancheck distdir distuninstallcheck dvi dvi-am html \
+-	html-am info info-am install install-am install-data \
+-	install-data-am install-dvi install-dvi-am install-exec \
+-	install-exec-am install-html install-html-am install-info \
+-	install-info-am install-man install-pdf install-pdf-am \
+-	install-ps install-ps-am install-strip installcheck \
+-	installcheck-am installdirs installdirs-am maintainer-clean \
++	dist-lzma dist-shar dist-tarZ dist-xz dist-zip distcheck \
++	distclean distclean-generic distclean-tags distcleancheck \
++	distdir distuninstallcheck dvi dvi-am html html-am info \
++	info-am install install-am install-data install-data-am \
++	install-dvi install-dvi-am install-exec install-exec-am \
++	install-html install-html-am install-info install-info-am \
++	install-man install-pdf install-pdf-am install-ps \
++	install-ps-am install-strip installcheck installcheck-am \
++	installdirs installdirs-am maintainer-clean \
+ 	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+ 	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
+ 
+ datarootdir ?= $(prefix)/share
+ 
+-dist-hook:
+-	(cd $(distdir) && mkdir -p config)
+-	for file in $(AUX_DIST); do \
+-		cp $$file $(distdir)/$$file; \
+-	done
+-
+ sfx:
+ 	make dist && (cat SFX $(distdir).tar.gz > $(distdir).sfx.sh)
+ 	test -e $(distdir).sfx.sh && chmod +x $(distdir).sfx.sh
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/man/Makefile.in xml-coreutils-0.8.1/man/Makefile.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/man/Makefile.in	2011-04-16 03:44:35.000000000 +0200
++++ xml-coreutils-0.8.1/man/Makefile.in	2012-11-15 19:51:19.000000000 +0100
+@@ -209,9 +209,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefi
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnits man/Makefile'; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu man/Makefile'; \
+ 	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --gnits man/Makefile
++	  $(AUTOMAKE) --gnu man/Makefile
+ .PRECIOUS: Makefile
+ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+ 	@case '$?' in \
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/awkl.c xml-coreutils-0.8.1/src/awkl.c
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/awkl.c	2010-05-02 12:34:49.000000000 +0200
++++ xml-coreutils-0.8.1/src/awkl.c	2012-11-15 19:51:43.000000000 +0100
+@@ -53,6 +53,7 @@ typedef int flex_int32_t;
+ typedef unsigned char flex_uint8_t; 
+ typedef unsigned short int flex_uint16_t;
+ typedef unsigned int flex_uint32_t;
++#endif /* ! C99 */
+ 
+ /* Limits of integral types. */
+ #ifndef INT8_MIN
+@@ -83,8 +84,6 @@ typedef unsigned int flex_uint32_t;
+ #define UINT32_MAX             (4294967295U)
+ #endif
+ 
+-#endif /* ! C99 */
+-
+ #endif /* ! FLEXINT_H */
+ 
+ #ifdef __cplusplus
+@@ -141,15 +140,7 @@ typedef unsigned int flex_uint32_t;
+ 
+ /* Size of default input buffer. */
+ #ifndef YY_BUF_SIZE
+-#ifdef __ia64__
+-/* On IA-64, the buffer size is 16k, not 8k.
+- * Moreover, YY_BUF_SIZE is 2*YY_READ_BUF_SIZE in the general case.
+- * Ditto for the __ia64__ case accordingly.
+- */
+-#define YY_BUF_SIZE 32768
+-#else
+ #define YY_BUF_SIZE 16384
+-#endif /* __ia64__ */
+ #endif
+ 
+ /* The state buf must be large enough to hold one state per character in the main buffer.
+@@ -614,7 +605,7 @@ char *yytext;
+ int current_lineno = 1;
+ YY_BUFFER_STATE handle;
+ 
+-#line 618 "awkl.c"
++#line 609 "awkl.c"
+ 
+ #define INITIAL 0
+ 
+@@ -695,12 +686,7 @@ static int input (void );
+ 
+ /* Amount of stuff to slurp up with each read. */
+ #ifndef YY_READ_BUF_SIZE
+-#ifdef __ia64__
+-/* On IA-64, the buffer size is 16k, not 8k */
+-#define YY_READ_BUF_SIZE 16384
+-#else
+ #define YY_READ_BUF_SIZE 8192
+-#endif /* __ia64__ */
+ #endif
+ 
+ /* Copy whatever the last rule matched to the standard output. */
+@@ -708,7 +694,7 @@ static int input (void );
+ /* This used to be an fputs(), but since the string might contain NUL's,
+  * we now use fwrite().
+  */
+-#define ECHO do { if (fwrite( yytext, yyleng, 1, yyout )) {} } while (0)
++#define ECHO fwrite( yytext, yyleng, 1, yyout )
+ #endif
+ 
+ /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
+@@ -719,7 +705,7 @@ static int input (void );
+ 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
+ 		{ \
+ 		int c = '*'; \
+-		size_t n; \
++		int n; \
+ 		for ( n = 0; n < max_size && \
+ 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
+ 			buf[n] = (char) c; \
+@@ -804,7 +790,7 @@ YY_DECL
+ #line 35 "awkl.l"
+ 
+ 
+-#line 808 "awkl.c"
++#line 794 "awkl.c"
+ 
+ 	if ( !(yy_init) )
+ 		{
+@@ -1168,7 +1154,7 @@ YY_RULE_SETUP
+ #line 96 "awkl.l"
+ ECHO;
+ 	YY_BREAK
+-#line 1172 "awkl.c"
++#line 1158 "awkl.c"
+ case YY_STATE_EOF(INITIAL):
+ 	yyterminate();
+ 
+@@ -1926,8 +1912,8 @@ YY_BUFFER_STATE yy_scan_string (yyconst
+ 
+ /** Setup the input buffer state to scan the given bytes. The next call to yylex() will
+  * scan from a @e copy of @a bytes.
+- * @param yybytes the byte buffer to scan
+- * @param _yybytes_len the number of bytes in the buffer pointed to by @a bytes.
++ * @param bytes the byte buffer to scan
++ * @param len the number of bytes in the buffer pointed to by @a bytes.
+  * 
+  * @return the newly allocated buffer state object.
+  */
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/config.h.in xml-coreutils-0.8.1/src/config.h.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/config.h.in	2011-04-16 03:44:44.000000000 +0200
++++ xml-coreutils-0.8.1/src/config.h.in	2012-11-15 19:51:18.000000000 +0100
+@@ -21,15 +21,6 @@
+ /* Define to 1 if you have the `expat' library (-lexpat). */
+ #undef HAVE_LIBEXPAT
+ 
+-/* Define to 1 if you have the `m' library (-lm). */
+-#undef HAVE_LIBM
+-
+-/* Define to 1 if you have the `ncurses' library (-lncurses). */
+-#undef HAVE_LIBNCURSES
+-
+-/* Define to 1 if you have the `slang' library (-lslang). */
+-#undef HAVE_LIBSLANG
+-
+ /* Define to 1 if mbrtowc and mbstate_t are properly declared. */
+ #undef HAVE_MBRTOWC
+ 
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/Makefile.in xml-coreutils-0.8.1/src/Makefile.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/Makefile.in	2011-04-16 03:44:35.000000000 +0200
++++ xml-coreutils-0.8.1/src/Makefile.in	2012-11-15 19:51:20.000000000 +0100
+@@ -36,12 +36,13 @@ build_triplet = @build@
+ host_triplet = @host@
+ target_triplet = @target@
+ bin_PROGRAMS = xml-cat$(EXEEXT) xml-printf$(EXEEXT) xml-echo$(EXEEXT) \
+-	xml-less$(EXEEXT) xml-strings$(EXEEXT) xml-ls$(EXEEXT) \
+-	xml-file$(EXEEXT) xml-find$(EXEEXT) xml-grep$(EXEEXT) \
+-	xml-fmt$(EXEEXT) xml-wc$(EXEEXT) xml-cut$(EXEEXT) \
+-	xml-head$(EXEEXT) xml-unecho$(EXEEXT) xml-sed$(EXEEXT) \
+-	xml-rm$(EXEEXT) xml-cp$(EXEEXT) xml-mv$(EXEEXT) \
+-	xml-fixtags$(EXEEXT) xml-paste$(EXEEXT) xml-awk$(EXEEXT)
++	xml-strings$(EXEEXT) xml-ls$(EXEEXT) xml-file$(EXEEXT) \
++	xml-find$(EXEEXT) xml-grep$(EXEEXT) xml-fmt$(EXEEXT) \
++	xml-wc$(EXEEXT) xml-cut$(EXEEXT) xml-head$(EXEEXT) \
++	xml-unecho$(EXEEXT) xml-sed$(EXEEXT) xml-rm$(EXEEXT) \
++	xml-cp$(EXEEXT) xml-mv$(EXEEXT) xml-fixtags$(EXEEXT) \
++	xml-paste$(EXEEXT) xml-awk$(EXEEXT) $(am__EXEEXT_1)
++@WITH_SLANG_TRUE@am__append_1 = xml-less
+ check_PROGRAMS =
+ subdir = src
+ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+@@ -55,6 +56,7 @@ mkinstalldirs = $(install_sh) -d
+ CONFIG_HEADER = config.h
+ CONFIG_CLEAN_FILES =
+ CONFIG_CLEAN_VPATH_FILES =
++@WITH_SLANG_TRUE@am__EXEEXT_1 = xml-less$(EXEEXT)
+ am__installdirs = "$(DESTDIR)$(bindir)"
+ PROGRAMS = $(bin_PROGRAMS)
+ am__objects_1 = myerror.$(OBJEXT) mysignal.$(OBJEXT) common.$(OBJEXT)
+@@ -158,15 +160,27 @@ am_xml_head_OBJECTS = xml-head.$(OBJEXT)
+ 	$(am__objects_19) $(am__objects_27)
+ xml_head_OBJECTS = $(am_xml_head_OBJECTS)
+ xml_head_LDADD = $(LDADD)
++am__xml_less_SOURCES_DIST = xml-less.c myerror.h myerror.c mysignal.h \
++	mysignal.c common.h common.c io.h io.c mem.h mem.c blockmgr.h \
++	blockmgr.c fbreader.h fbreader.c fbparser.h fbparser.c \
++	stdout.h stdout.c cursor.h cursor.c cursormgr.h cursormgr.c \
++	skip.h skip.c cursorrep.h cursorrep.c parser.h parser.c \
++	lessui.h lessui.c lessdisp.h lessdisp.c lessrend.h lessrend.c \
++	entities.h entities.c attlist.h attlist.c jenkins.c xpath.h \
++	xpath.c cstring.h cstring.c tempfile.h tempfile.c stringlist.h \
++	stringlist.c
+ am__objects_39 = lessui.$(OBJEXT) lessdisp.$(OBJEXT) \
+ 	lessrend.$(OBJEXT)
+ am__objects_40 = attlist.$(OBJEXT)
+-am_xml_less_OBJECTS = xml-less.$(OBJEXT) $(am__objects_1) \
+-	$(am__objects_4) $(am__objects_6) $(am__objects_38) \
+-	$(am__objects_5) $(am__objects_36) $(am__objects_2) \
+-	$(am__objects_39) $(am__objects_7) $(am__objects_40) \
+-	$(am__objects_16) $(am__objects_12) $(am__objects_8) \
+-	$(am__objects_30) $(am__objects_31)
++@WITH_SLANG_TRUE@am_xml_less_OBJECTS = xml-less.$(OBJEXT) \
++@WITH_SLANG_TRUE@	$(am__objects_1) $(am__objects_4) \
++@WITH_SLANG_TRUE@	$(am__objects_6) $(am__objects_38) \
++@WITH_SLANG_TRUE@	$(am__objects_5) $(am__objects_36) \
++@WITH_SLANG_TRUE@	$(am__objects_2) $(am__objects_39) \
++@WITH_SLANG_TRUE@	$(am__objects_7) $(am__objects_40) \
++@WITH_SLANG_TRUE@	$(am__objects_16) $(am__objects_12) \
++@WITH_SLANG_TRUE@	$(am__objects_8) $(am__objects_30) \
++@WITH_SLANG_TRUE@	$(am__objects_31)
+ xml_less_OBJECTS = $(am_xml_less_OBJECTS)
+ xml_less_DEPENDENCIES =
+ am_xml_ls_OBJECTS = xml-ls.$(OBJEXT) $(am__objects_9) \
+@@ -243,10 +257,11 @@ SOURCES = $(xml_awk_SOURCES) $(xml_cat_S
+ DIST_SOURCES = $(xml_awk_SOURCES) $(xml_cat_SOURCES) $(xml_cp_SOURCES) \
+ 	$(xml_cut_SOURCES) $(xml_echo_SOURCES) $(xml_file_SOURCES) \
+ 	$(xml_find_SOURCES) $(xml_fixtags_SOURCES) $(xml_fmt_SOURCES) \
+-	$(xml_grep_SOURCES) $(xml_head_SOURCES) $(xml_less_SOURCES) \
+-	$(xml_ls_SOURCES) $(xml_mv_SOURCES) $(xml_paste_SOURCES) \
+-	$(xml_printf_SOURCES) $(xml_rm_SOURCES) $(xml_sed_SOURCES) \
+-	$(xml_strings_SOURCES) $(xml_unecho_SOURCES) $(xml_wc_SOURCES)
++	$(xml_grep_SOURCES) $(xml_head_SOURCES) \
++	$(am__xml_less_SOURCES_DIST) $(xml_ls_SOURCES) \
++	$(xml_mv_SOURCES) $(xml_paste_SOURCES) $(xml_printf_SOURCES) \
++	$(xml_rm_SOURCES) $(xml_sed_SOURCES) $(xml_strings_SOURCES) \
++	$(xml_unecho_SOURCES) $(xml_wc_SOURCES)
+ RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
+ 	html-recursive info-recursive install-data-recursive \
+ 	install-dvi-recursive install-exec-recursive \
+@@ -446,8 +461,8 @@ LEAFPARSING = $(LFPARSE) $(STDSEL) $(XPA
+ xml_cat_SOURCES = xml-cat.c $(STDCOMMON) $(WRAP)
+ xml_printf_SOURCES = xml-printf.c $(STDCOMMON) $(STDPARSING) $(COLLECT) $(STRLST) $(FORMAT) $(VAR)
+ xml_echo_SOURCES = xml-echo.c $(COMMON) $(WRAP) $(IO) $(STDOUT) $(FORMAT) $(XPATH) $(MEM) $(PARSER) $(ECHOC) $(ENTITIES) $(HASH) $(COLLECT) $(VAR) $(CSTRING)
+-xml_less_SOURCES = xml-less.c $(COMMON) $(IO) $(MEM) $(BLOCKS) $(STDOUT) $(CURSOR) $(PARSER) $(LESSUI) $(ENTITIES) $(ATTLST) $(HASH) $(XPATH) $(CSTRING) $(TEMPF) $(STRLST)
+-xml_less_LDADD = -lslang -lncurses
++@WITH_SLANG_TRUE@xml_less_SOURCES = xml-less.c $(COMMON) $(IO) $(MEM) $(BLOCKS) $(STDOUT) $(CURSOR) $(PARSER) $(LESSUI) $(ENTITIES) $(ATTLST) $(HASH) $(XPATH) $(CSTRING) $(TEMPF) $(STRLST)
++@WITH_SLANG_TRUE@xml_less_LDADD = -lslang -lm
+ xml_strings_SOURCES = xml-strings.c $(STDCOMMON) $(STDPARSING)
+ xml_ls_SOURCES = xml-ls.c $(STDCOMMON) $(STDPARSING) $(WRAP)  
+ xml_find_SOURCES = xml-find.c $(STDCOMMON) $(STDPARSING) $(STRLST) $(COLLECT) $(WRAP) $(TEMPF)
+@@ -466,7 +481,8 @@ xml_file_SOURCES = xml-file.c $(STDCOMMO
+ xml_paste_SOURCES = xml-paste.c $(STDCOMMON) $(STDPARSING) $(COLLECT) $(TEMPF) $(STRLST) $(WRAP)
+ xml_awk_SOURCES = xml-awk.c $(STDCOMMON) $(STDPARSING) $(VAR) $(COLLECT) $(AWKVM) $(AWKMEM) $(AWKAST) $(SYM)
+ xml_awk_LDADD = @LEXLIB@
+-all: config.h
++BUILT_SOURCES = awkl.c awkp.c awkp.h
++all: $(BUILT_SOURCES) config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
+ .SUFFIXES:
+@@ -480,9 +496,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefi
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnits src/Makefile'; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/Makefile'; \
+ 	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --gnits src/Makefile
++	  $(AUTOMAKE) --gnu src/Makefile
+ .PRECIOUS: Makefile
+ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+ 	@case '$?' in \
+@@ -556,22 +572,6 @@ uninstall-binPROGRAMS:
+ clean-binPROGRAMS:
+ 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+ 
+-installcheck-binPROGRAMS: $(bin_PROGRAMS)
+-	bad=0; pid=$$$$; list="$(bin_PROGRAMS)"; for p in $$list; do \
+-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
+-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
+-	  esac; \
+-	  f=`echo "$$p" | \
+-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+-	  for opt in --help --version; do \
+-	    if "$(DESTDIR)$(bindir)/$$f" $$opt >c$${pid}_.out \
+-	         2>c$${pid}_.err </dev/null \
+-		 && test -n "`cat c$${pid}_.out`" \
+-		 && test -z "`cat c$${pid}_.err`"; then :; \
+-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
+-	  done; \
+-	done; rm -f c$${pid}_.???; exit $$bad
+-
+ clean-checkPROGRAMS:
+ 	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+ awkp.h: awkp.c
+@@ -939,14 +939,16 @@ distdir: $(DISTFILES)
+ 	done
+ check-am: all-am
+ 	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+-check: check-recursive
++check: $(BUILT_SOURCES)
++	$(MAKE) $(AM_MAKEFLAGS) check-recursive
+ all-am: Makefile $(PROGRAMS) config.h
+ installdirs: installdirs-recursive
+ installdirs-am:
+ 	for dir in "$(DESTDIR)$(bindir)"; do \
+ 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+ 	done
+-install: install-recursive
++install: $(BUILT_SOURCES)
++	$(MAKE) $(AM_MAKEFLAGS) install-recursive
+ install-exec: install-exec-recursive
+ install-data: install-data-recursive
+ uninstall: uninstall-recursive
+@@ -974,6 +976,7 @@ maintainer-clean-generic:
+ 	-rm -f awkl.c
+ 	-rm -f awkp.c
+ 	-rm -f awkp.h
++	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+ clean: clean-recursive
+ 
+ clean-am: clean-binPROGRAMS clean-checkPROGRAMS clean-generic \
+@@ -1023,7 +1026,7 @@ install-ps: install-ps-recursive
+ 
+ install-ps-am:
+ 
+-installcheck-am: installcheck-binPROGRAMS
++installcheck-am:
+ 
+ maintainer-clean: maintainer-clean-recursive
+ 	-rm -rf ./$(DEPDIR)
+@@ -1044,8 +1047,9 @@ ps-am:
+ 
+ uninstall-am: uninstall-binPROGRAMS
+ 
+-.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check-am \
+-	ctags-recursive install-am install-strip tags-recursive
++.MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all check \
++	check-am ctags-recursive install install-am install-strip \
++	tags-recursive
+ 
+ .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
+ 	all all-am check check-am clean clean-binPROGRAMS \
+@@ -1057,11 +1061,10 @@ uninstall-am: uninstall-binPROGRAMS
+ 	install-exec-am install-html install-html-am install-info \
+ 	install-info-am install-man install-pdf install-pdf-am \
+ 	install-ps install-ps-am install-strip installcheck \
+-	installcheck-am installcheck-binPROGRAMS installdirs \
+-	installdirs-am maintainer-clean maintainer-clean-generic \
+-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+-	ps ps-am tags tags-recursive uninstall uninstall-am \
+-	uninstall-binPROGRAMS
++	installcheck-am installdirs installdirs-am maintainer-clean \
++	maintainer-clean-generic mostlyclean mostlyclean-compile \
++	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
++	uninstall uninstall-am uninstall-binPROGRAMS
+ 
+ datarootdir ?= $(prefix)/share
+ 
+diff -rupN /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/tests/Makefile.in xml-coreutils-0.8.1/src/tests/Makefile.in
+--- /home/rudi/devel/osc/home:rudi_m/xml-coreutils/xml-coreutils-0.8.1.new/src/tests/Makefile.in	2011-04-16 03:44:35.000000000 +0200
++++ xml-coreutils-0.8.1/src/tests/Makefile.in	2012-11-15 19:51:20.000000000 +0100
+@@ -55,7 +55,7 @@ am__tty_colors = \
+ red=; grn=; lgn=; blu=; std=
+ am__EXEEXT_1 =
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+-ACLOCAL = -I ../../config
++ACLOCAL = @ACLOCAL@
+ AMTAR = @AMTAR@
+ AUTOCONF = @AUTOCONF@
+ AUTOHEADER = @AUTOHEADER@
+@@ -160,7 +160,6 @@ target_vendor = @target_vendor@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-AUTOMAKE_OPTIONS = 1.4 gnits
+ CAT = cat01.sh cat02.sh cat03.sh
+ CP = cp01.sh cp02.sh cp03.sh cp04.sh \
+ 	cp05.sh cp06.sh cp07.sh cp08.sh \
+@@ -194,7 +193,7 @@ STRINGS = strings01.sh strings02.sh stri
+ UNECHO = unecho01.sh unecho02.sh unecho03.sh
+ WC = wc01.sh
+ IDIOMS = 
+-TESTS_ENVIRONMENT = TESTBIN=$(CURDIR)/.. DOCDIR=$(srcdir)/../../doc sourcedir=$(srcdir)
++TESTS_ENVIRONMENT = TESTBIN=$(builddir)/.. DOCDIR=$(srcdir)/../../doc sourcedir=$(srcdir)
+ check_SCRIPTS = $(TESTS)
+ CLEANFILES = $(TESTS)
+ EXTRA_DIST = compile_test.sh \
+@@ -242,9 +241,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefi
+ 	      exit 1;; \
+ 	  esac; \
+ 	done; \
+-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnits src/tests/Makefile'; \
++	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu src/tests/Makefile'; \
+ 	$(am__cd) $(top_srcdir) && \
+-	  $(AUTOMAKE) --gnits src/tests/Makefile
++	  $(AUTOMAKE) --gnu src/tests/Makefile
+ .PRECIOUS: Makefile
+ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+ 	@case '$?' in \
+@@ -504,10 +503,8 @@ uninstall-am:
+ 	uninstall-am
+ 
+ datarootdir ?= $(prefix)/share
+-
+-CURDIR ?= $(.CURDIR)
+ .testin.sh:
+-	cat $< | /bin/sh $(CURDIR)/compile_test.sh > $@
++	cat $< | /bin/sh $(srcdir)/compile_test.sh > $@
+ 	chmod +x $@
+ 
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.

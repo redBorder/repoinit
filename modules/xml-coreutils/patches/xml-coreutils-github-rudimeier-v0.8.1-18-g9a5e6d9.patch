@@ -1,0 +1,530 @@
+diff -rupN xml-coreutils-0.8.1.old/configure.ac xml-coreutils-0.8.1.new/configure.ac
+--- xml-coreutils-0.8.1.old/configure.ac	2011-04-16 03:43:34.000000000 +0200
++++ xml-coreutils-0.8.1.new/configure.ac	2012-11-15 20:47:54.212965100 +0100
+@@ -13,11 +13,7 @@ AM_PROG_LEX
+ AC_PROG_YACC
+ 
+ ## Checks for libraries.
+-AC_CHECK_LIB([m],[log])
+ AC_CHECK_LIB([expat],[XML_ParseBuffer],,[AC_MSG_ERROR([Missing libexpat])])
+-# (these two go together in this order)
+-AC_CHECK_LIB([ncurses],[initscr])
+-AC_CHECK_LIB([slang],[SLsmg_init_smg],,[AC_MSG_ERROR([Missing libslang2])])
+ 
+ ## Checks for header files.
+ AC_HEADER_STDC
+@@ -26,7 +22,14 @@ AC_CHECK_HEADERS([wchar.h wctype.h],,
+ [
+ 	AC_MSG_WARN([No wide character headers, disabling full internationalization.])
+ ])
+-AC_CHECK_HEADERS([expat.h slang.h],,[AC_MSG_ERROR([Missing expat.h or slang.h])])
++AC_CHECK_HEADERS([expat.h],,[AC_MSG_ERROR([Missing expat.h])])
++
++## Check for slang
++AC_CHECK_LIB([slang],[SLsmg_init_smg],
++  AC_CHECK_HEADERS([slang.h],,[AC_MSG_WARN([Missing slang.h])]),
++  [AC_MSG_WARN([Missing libslang2])])
++AM_CONDITIONAL([WITH_SLANG],[test "$ac_cv_header_slang_h" = "yes"])
++
+ 
+ ## Checks for typedefs, structures, and compiler characteristics.
+ AC_C_CONST
+diff -rupN xml-coreutils-0.8.1.old/Makefile.am xml-coreutils-0.8.1.new/Makefile.am
+--- xml-coreutils-0.8.1.old/Makefile.am	2010-05-16 00:11:02.000000000 +0200
++++ xml-coreutils-0.8.1.new/Makefile.am	2012-11-15 20:47:54.082956515 +0100
+@@ -1,23 +1,10 @@
+ AUTOMAKE_OPTIONS = 1.4 gnits
+-ACLOCAL = -I config
+ datarootdir ?= $(prefix)/share
+ 
+ ACLOCAL_AMFLAGS = -I m4 --install
+ 
+-AUX_DIST = config/config.guess \
+-	config/config.sub \
+-	config/depcomp \
+-	config/install-sh \
+-	config/missing
+-
+ SUBDIRS = doc src man
+ 
+-dist-hook:
+-	(cd $(distdir) && mkdir -p config)
+-	for file in $(AUX_DIST); do \
+-		cp $$file $(distdir)/$$file; \
+-	done
+-
+ EXTRA_DIST = SFX
+ 
+ sfx:
+diff -rupN xml-coreutils-0.8.1.old/src/Makefile.am xml-coreutils-0.8.1.new/src/Makefile.am
+--- xml-coreutils-0.8.1.old/src/Makefile.am	2011-04-15 01:34:20.000000000 +0200
++++ xml-coreutils-0.8.1.new/src/Makefile.am	2012-11-15 20:47:54.216965365 +0100
+@@ -54,9 +54,12 @@ STDCOMMON = $(COMMON) $(PARSER) $(FILELS
+ STDPARSING = $(STDPARSE) $(STDSEL) $(XPATH) $(XMATCH) $(XPRED) $(XATT) $(HASH) $(OBJSTACK) $(NHIST)
+ LEAFPARSING = $(LFPARSE) $(STDSEL) $(XPATH) $(XMATCH) $(XPRED) $(XATT) $(LF) $(HASH) $(OBJSTACK) $(NHIST) 
+ 
+-bin_PROGRAMS = xml-cat xml-printf xml-echo xml-less xml-strings xml-ls \
++bin_PROGRAMS = xml-cat xml-printf xml-echo xml-strings xml-ls \
+ 	xml-file xml-find xml-grep xml-fmt xml-wc xml-cut xml-head \
+ 	xml-unecho xml-sed xml-rm xml-cp xml-mv xml-fixtags xml-paste xml-awk
++if WITH_SLANG
++bin_PROGRAMS += xml-less
++endif
+ 
+ xml_cat_SOURCES = xml-cat.c $(STDCOMMON) $(WRAP)
+ 
+@@ -64,8 +67,10 @@ xml_printf_SOURCES = xml-printf.c $(STDC
+ 
+ xml_echo_SOURCES = xml-echo.c $(COMMON) $(WRAP) $(IO) $(STDOUT) $(FORMAT) $(XPATH) $(MEM) $(PARSER) $(ECHOC) $(ENTITIES) $(HASH) $(COLLECT) $(VAR) $(CSTRING)
+ 
++if WITH_SLANG
+ xml_less_SOURCES = xml-less.c $(COMMON) $(IO) $(MEM) $(BLOCKS) $(STDOUT) $(CURSOR) $(PARSER) $(LESSUI) $(ENTITIES) $(ATTLST) $(HASH) $(XPATH) $(CSTRING) $(TEMPF) $(STRLST)
+-xml_less_LDADD = -lslang -lncurses
++xml_less_LDADD = -lslang -lm
++endif
+ 
+ xml_strings_SOURCES = xml-strings.c $(STDCOMMON) $(STDPARSING)
+ 
+@@ -102,5 +107,6 @@ xml_paste_SOURCES = xml-paste.c $(STDCOM
+ xml_awk_SOURCES = xml-awk.c $(STDCOMMON) $(STDPARSING) $(VAR) $(COLLECT) $(AWKVM) $(AWKMEM) $(AWKAST) $(SYM)
+ xml_awk_LDADD = @LEXLIB@
+ 
++BUILT_SOURCES = awkl.c awkp.c awkp.h
+ check_PROGRAMS = 
+ 
+diff -rupN xml-coreutils-0.8.1.old/src/symbols.c xml-coreutils-0.8.1.new/src/symbols.c
+--- xml-coreutils-0.8.1.old/src/symbols.c	2010-02-09 01:44:17.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/symbols.c	2012-11-15 20:47:54.186963383 +0100
+@@ -112,9 +112,9 @@ bool_t grow_jumptable(jumptable_t *jt) {
+ 	  if( i != &jt->hash[c] ) {
+ 	    if( MARKEDP(i) ) {
+ 	      /* swap */
+-	      memcpy(&temp_item, i, sizeof(jump_t));
++	      memcpy(temp_item, i, sizeof(jump_t));
+ 	      memcpy(i, &jt->hash[c], sizeof(jump_t));
+-	      memcpy(&jt->hash[c], &temp_item, sizeof(jump_t));
++	      memcpy(&jt->hash[c], temp_item, sizeof(jump_t));
+ 	    } else {
+ 	      /* copy and clear */
+ 	      memcpy(i, &jt->hash[c], sizeof(jump_t));
+diff -rupN xml-coreutils-0.8.1.old/src/tests/cp02.testin xml-coreutils-0.8.1.new/src/tests/cp02.testin
+--- xml-coreutils-0.8.1.old/src/tests/cp02.testin	2010-01-11 09:52:47.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/cp02.testin	2012-11-15 20:47:54.119958959 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --append "$TMP_PATH/input" :/a/b/c
++cat >/dev/null; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --append "$TMP_PATH/input" :/a/b/c
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -46,4 +46,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/cp03.testin xml-coreutils-0.8.1.new/src/tests/cp03.testin
+--- xml-coreutils-0.8.1.old/src/tests/cp03.testin	2010-01-11 09:53:50.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/cp03.testin	2012-11-15 20:47:54.123959223 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --prepend "$TMP_PATH/input" :/a/b/c
++cat >/dev/null; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --prepend "$TMP_PATH/input" :/a/b/c
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -46,4 +46,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/cp04.testin xml-coreutils-0.8.1.new/src/tests/cp04.testin
+--- xml-coreutils-0.8.1.old/src/tests/cp04.testin	2010-01-11 09:54:56.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/cp04.testin	2012-11-15 20:47:54.128959553 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --replace "$TMP_PATH/input" :/a/b/c
++cat >/dev/null; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --replace "$TMP_PATH/input" :/a/b/c
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -41,4 +41,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/cp05.testin xml-coreutils-0.8.1.new/src/tests/cp05.testin
+--- xml-coreutils-0.8.1.old/src/tests/cp05.testin	2010-01-11 09:58:53.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/cp05.testin	2012-11-15 20:47:54.131959751 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --multi --replace "$TMP_PATH/input" :/a/b/c
++cat >/dev/null; xml-echo -ne "[x]abc[y]def" | xml-cp :/x/ --multi --replace "$TMP_PATH/input" :/a/b/c
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -36,4 +36,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/cp06.testin xml-coreutils-0.8.1.new/src/tests/cp06.testin
+--- xml-coreutils-0.8.1.old/src/tests/cp06.testin	2010-01-11 12:32:19.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/cp06.testin	2012-11-15 20:47:54.135960015 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -ne "[x]abc[y]def" | xml-cp --write-files :/x/ --replace "$TMP_PATH/input" :/a/b/c ; cat "$TMP_PATH/input"
++cat >/dev/null; xml-echo -ne "[x]abc[y]def" | xml-cp --write-files :/x/ --replace "$TMP_PATH/input" :/a/b/c ; cat "$TMP_PATH/input"
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -41,4 +41,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/find05.testin xml-coreutils-0.8.1.new/src/tests/find05.testin
+--- xml-coreutils-0.8.1.old/src/tests/find05.testin	2010-01-11 08:09:36.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/find05.testin	2012-11-15 20:47:54.096957439 +0100
+@@ -1,5 +1,5 @@
+ _PURPOSE_
+-xml-find EXEC test with {}, assumes "which echo" works.
++xml-find EXEC test with {}
+ _INPUT_ 
+ <a>
+ 	<b bb="A B">
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-xml-find -exec "`which echo`" '{}' ';'
++xml-find -exec "echo" '{}' ';'
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -41,4 +41,4 @@ _OUTPUT_
+ /a/b/c/f
+ /a/b/c/g
+ /a/b/h
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/find06.testin xml-coreutils-0.8.1.new/src/tests/find06.testin
+--- xml-coreutils-0.8.1.old/src/tests/find06.testin	2010-01-11 08:10:24.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/find06.testin	2012-11-15 20:47:54.100957703 +0100
+@@ -1,5 +1,5 @@
+ _PURPOSE_
+-xml-find EXECNODE test with {}, assumes "which echo" works.
++xml-find EXECNODE test with {}
+ _INPUT_ 
+ <a>
+ 	<b bb="A B">
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-xml-find -execnode "`which echo`" '{}' ';'
++xml-find -execnode "echo" '{}' ';'
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -41,4 +41,4 @@ e
+ f
+ g
+ h
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/find07.testin xml-coreutils-0.8.1.new/src/tests/find07.testin
+--- xml-coreutils-0.8.1.old/src/tests/find07.testin	2010-01-11 08:27:42.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/find07.testin	2012-11-15 20:47:54.104957967 +0100
+@@ -1,5 +1,5 @@
+ _PURPOSE_
+-xml-find EXECNODE test with {-}, assumes "which {cat,echo}" works.
++xml-find EXECNODE test with {-}
+ _INPUT_ 
+ <a>
+ 	<b bb="A B">
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-xml-find -execnode "`which cat`" '{-}'  ';' -execnode "`which echo`" ';'
++xml-find -execnode "cat" '{-}'  ';' -execnode "echo" ';'
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -101,4 +101,4 @@ _OUTPUT_
+ <g>I</g>
+ <?xml version="1.0"?>
+ <h>J K P</h>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/find08.testin xml-coreutils-0.8.1.new/src/tests/find08.testin
+--- xml-coreutils-0.8.1.old/src/tests/find08.testin	2010-01-14 05:03:04.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/find08.testin	2012-11-15 20:47:54.108958231 +0100
+@@ -1,5 +1,5 @@
+ _PURPOSE_
+-xml-find EXECNODE test with {@}, assumes "which echo" works.
++xml-find EXECNODE test with {@}
+ _INPUT_
+ <html><head>
+ <title></title></head>
+@@ -11,7 +11,7 @@ _INPUT_
+ <h2>MESSAGE</h2>
+ </noframes></html>
+ _COMMAND_
+-xml-find -execnode "`which echo`" '[' '{@}' ']'  ';'
++xml-find -execnode "echo" '[' '{@}' ']'  ';'
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -22,4 +22,4 @@ _OUTPUT_
+ [ src SRC name NAME frameborder FRAMEBORDER framespacing FRAMESPACING marginheight MARGINHEIGHT marginwidth MARGINWIDTH ]
+ [ ]
+ [ ]
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/find09.testin xml-coreutils-0.8.1.new/src/tests/find09.testin
+--- xml-coreutils-0.8.1.old/src/tests/find09.testin	2010-11-10 09:52:53.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/find09.testin	2012-11-15 20:47:54.112958495 +0100
+@@ -6,7 +6,7 @@ _INPUT_
+    hello
+ </a>
+ _COMMAND_
+-xml-find :/ -exec "`which cat`" '{-}' ';' -exec "`which echo`" ';'
++xml-find :/ -exec "cat" '{-}' ';' -exec "echo" ';'
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -14,4 +14,4 @@ _OUTPUT_
+ <a b="&quot;c&quot;">
+    hello
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/Makefile.am xml-coreutils-0.8.1.new/src/tests/Makefile.am
+--- xml-coreutils-0.8.1.old/src/tests/Makefile.am	2011-04-15 08:58:36.000000000 +0200
++++ xml-coreutils-0.8.1.new/src/tests/Makefile.am	2012-11-15 20:47:54.089956977 +0100
+@@ -1,5 +1,3 @@
+-AUTOMAKE_OPTIONS = 1.4 gnits
+-ACLOCAL = -I ../../config
+ datarootdir ?= $(prefix)/share
+ 
+ AWK =
+@@ -62,9 +60,7 @@ TESTS = $(AWK) $(CAT) $(CP) $(CUT) \
+ 	$(SED) $(STRINGS) $(UNECHO) $(WC) \
+ 	$(IDIOMS)
+ 
+-CURDIR ?= $(.CURDIR)
+-
+-TESTS_ENVIRONMENT = TESTBIN=$(CURDIR)/.. DOCDIR=$(srcdir)/../../doc sourcedir=$(srcdir)
++TESTS_ENVIRONMENT = TESTBIN=$(builddir)/.. DOCDIR=$(srcdir)/../../doc sourcedir=$(srcdir)
+ 
+ check_SCRIPTS = $(TESTS)
+ 
+@@ -103,5 +99,5 @@ EXTRA_DIST = compile_test.sh \
+ 
+ SUFFIXES = .testin .sh
+ .testin.sh:
+-	cat $< | /bin/sh $(CURDIR)/compile_test.sh > $@
++	cat $< | /bin/sh $(srcdir)/compile_test.sh > $@
+ 	chmod +x $@
+diff -rupN xml-coreutils-0.8.1.old/src/tests/mv01.testin xml-coreutils-0.8.1.new/src/tests/mv01.testin
+--- xml-coreutils-0.8.1.old/src/tests/mv01.testin	2010-01-12 00:31:59.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/mv01.testin	2012-11-15 20:47:54.139960279 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-mv --write-files "$TMP_PATH/input" :/a/b/c/e "$TMP_PATH/input" :/a/b/h/ ; cat "$TMP_PATH/input"
++cat >/dev/null; xml-mv --write-files "$TMP_PATH/input" :/a/b/c/e "$TMP_PATH/input" :/a/b/h/ ; cat "$TMP_PATH/input"
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -46,4 +46,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/printf01.testin xml-coreutils-0.8.1.new/src/tests/printf01.testin
+--- xml-coreutils-0.8.1.old/src/tests/printf01.testin	2010-01-10 08:46:50.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/printf01.testin	2012-11-15 20:47:54.143960543 +0100
+@@ -12,7 +12,7 @@ _INPUT_
+ 	E
+ </a>
+ _COMMAND_
+-true ; (
++cat >/dev/null; (
+ xml-printf "[%s]\n" "$TMP_PATH/input" :/a ;
+ xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b ;
+ xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b/c 
+@@ -23,4 +23,4 @@ _OUTPUT_
+ [A B CD E ]
+ [B CD ]
+ [C]
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/printf02.testin xml-coreutils-0.8.1.new/src/tests/printf02.testin
+--- xml-coreutils-0.8.1.old/src/tests/printf02.testin	2010-01-10 08:54:32.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/printf02.testin	2012-11-15 20:47:54.167962129 +0100
+@@ -7,10 +7,10 @@ _INPUT_
+ 	<b>def</b>
+ </a>
+ _COMMAND_
+-xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b
++cat >/dev/null; xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b
+ _EXITCODE_
+ 0
+ _OUTPUT_
+ [abc
+ def]
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/printf03.testin xml-coreutils-0.8.1.new/src/tests/printf03.testin
+--- xml-coreutils-0.8.1.old/src/tests/printf03.testin	2010-02-16 05:57:58.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/printf03.testin	2012-11-15 20:47:54.171962393 +0100
+@@ -7,9 +7,9 @@ _INPUT_
+ 	<b>def</b>
+ </a>
+ _COMMAND_
+-xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b[2]
++cat >/dev/null; xml-printf "[%s]\n" "$TMP_PATH/input" :/a/b[2]
+ _EXITCODE_
+ 0
+ _OUTPUT_
+ [def]
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/printf04.testin xml-coreutils-0.8.1.new/src/tests/printf04.testin
+--- xml-coreutils-0.8.1.old/src/tests/printf04.testin	2010-02-19 11:13:33.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/printf04.testin	2012-11-15 20:47:54.175962657 +0100
+@@ -7,9 +7,9 @@ _INPUT_
+ 	<b>def</b>
+ </a>
+ _COMMAND_
+-xml-printf "an x is an %s\n" "$TMP_PATH/input" ://b@c
++cat >/dev/null; xml-printf "an x is an %s\n" "$TMP_PATH/input" ://b@c
+ _EXITCODE_
+ 0
+ _OUTPUT_
+ an x is an x
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/printf05.testin xml-coreutils-0.8.1.new/src/tests/printf05.testin
+--- xml-coreutils-0.8.1.old/src/tests/printf05.testin	2010-02-19 11:22:34.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/printf05.testin	2012-11-15 20:47:54.178962855 +0100
+@@ -7,9 +7,9 @@ _INPUT_
+ 	<b c="x">def</b>
+ </a>
+ _COMMAND_
+-xml-printf "%s before %s\n" "$TMP_PATH/input" ://b[2]@c ://b@c[1]
++cat >/dev/null; xml-printf "%s before %s\n" "$TMP_PATH/input" ://b[2]@c ://b@c[1]
+ _EXITCODE_
+ 0
+ _OUTPUT_
+ x before y
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/rm03.testin xml-coreutils-0.8.1.new/src/tests/rm03.testin
+--- xml-coreutils-0.8.1.old/src/tests/rm03.testin	2010-01-11 12:21:44.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/rm03.testin	2012-11-15 20:47:54.147960807 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-rm --write-files "$TMP_PATH/input" :/a/b/c/ ; cat "$TMP_PATH/input"
++cat >/dev/null; xml-rm --write-files "$TMP_PATH/input" :/a/b/c/ ; cat "$TMP_PATH/input"
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -36,4 +36,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/unecho01.testin xml-coreutils-0.8.1.new/src/tests/unecho01.testin
+--- xml-coreutils-0.8.1.old/src/tests/unecho01.testin	2010-01-11 08:44:43.000000000 +0100
++++ xml-coreutils-0.8.1.new/src/tests/unecho01.testin	2012-11-15 20:47:54.151961071 +0100
+@@ -22,7 +22,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; xml-echo -en "`cat "$TMP_PATH/input" | xml-unecho`"
++cat >/dev/null; xml-echo -en "`cat "$TMP_PATH/input" | xml-unecho`"
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -47,4 +47,4 @@ _OUTPUT_
+ 		<h>J K P</h>
+ 	</b>
+ </a>
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/unecho02.testin xml-coreutils-0.8.1.new/src/tests/unecho02.testin
+--- xml-coreutils-0.8.1.old/src/tests/unecho02.testin	2010-05-15 03:43:44.000000000 +0200
++++ xml-coreutils-0.8.1.new/src/tests/unecho02.testin	2012-11-15 20:47:54.155961335 +0100
+@@ -25,7 +25,7 @@ _INPUT_
+ 	</b>
+ </a>
+ _COMMAND_
+-true; cat "$TMP_PATH/input" | xml-unecho --xml-sed
++cat >/dev/null; cat "$TMP_PATH/input" | xml-unecho --xml-sed
+ _EXITCODE_
+ 0
+ _OUTPUT_
+@@ -58,4 +58,4 @@ _OUTPUT_
+ [/a/b@bb=M N/h]J K P
+ [/a/b@bb=M N]\n\t
+ [/a]\n
+-_END_
+\ No newline at end of file
++_END_
+diff -rupN xml-coreutils-0.8.1.old/src/tests/unecho03.testin xml-coreutils-0.8.1.new/src/tests/unecho03.testin
+--- xml-coreutils-0.8.1.old/src/tests/unecho03.testin	2010-05-15 03:43:15.000000000 +0200
++++ xml-coreutils-0.8.1.new/src/tests/unecho03.testin	2012-11-15 20:47:54.160961665 +0100
+@@ -9,9 +9,9 @@ _INPUT_
+ 123
+ </abc:def>
+ _COMMAND_
+-true; cat "$TMP_PATH/input" | xml-unecho --xml-sed
++cat >/dev/null; cat "$TMP_PATH/input" | xml-unecho --xml-sed
+ _EXITCODE_
+ 0
+ _OUTPUT_
+ [/abc:def@ghi:jkl=http:\/\/www.example.net\/an\/url\/path.html]\n123\n
+-_END_
+\ No newline at end of file
++_END_
