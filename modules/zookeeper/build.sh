@@ -31,7 +31,6 @@ tar xzf zookeeper-el7-rpm.tar.gz
 mv ${PACKNAME}-${VERSION}.tar.gz zookeeper-el7-rpm-master
 popd &>/dev/null
 
-exit 0
 # Now it is time to create the source rpm
 /usr/bin/mock -r default \
         --define "__version ${VERSION}" \
@@ -46,7 +45,6 @@ exit 0
 
 ret=$?
 
-exit 0
 # cleaning
 rm -rf SOURCES
 
@@ -56,11 +54,9 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#rsync -a pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
-#rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
-f_rsync_iso pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-f_rsync_repo pkgs/${PACKNAME}*.rpm  
-#rm -rf pkgs
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
+f_rsync_repo pkgs/*.rpm 
+rm -rf pkgs
 
 # Update sdk7 repo
 f_rupdaterepo
