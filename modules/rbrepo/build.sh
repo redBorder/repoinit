@@ -50,7 +50,7 @@ fi
 # sync to cache and repo
 f_rsync_repo pkgs/${PACKNAME}*.rpm
 f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.noarch.rpm
-#rm -rf pkgs
+rm -rf pkgs
 
 # Update sdk7 repo
 f_rupdaterepo ${REPODIR}
