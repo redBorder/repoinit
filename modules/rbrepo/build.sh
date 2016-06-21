@@ -9,9 +9,9 @@ CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
-list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
-                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
-                ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm"
+list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.src.rpm 
+                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
+                ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm"
 
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -26,13 +26,13 @@ mkdir SOURCES
 cp rbrepo.repo SOURCES
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
@@ -49,8 +49,8 @@ fi
 
 # sync to cache and repo
 f_rsync_repo pkgs/${PACKNAME}*.rpm
-f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-rm -rf pkgs
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.noarch.rpm
+#rm -rf pkgs
 
 # Update sdk7 repo
 f_rupdaterepo ${REPODIR}

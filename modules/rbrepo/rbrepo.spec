@@ -2,6 +2,7 @@ Name: rbrepo
 Version: 1.0.0	
 Release: 1%{?dist}
 Summary: package for redBorder repository	
+BuildArch: noarch
 
 Group: System Environment/Base
 License: GPLv2
