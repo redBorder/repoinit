@@ -1,0 +1,36 @@
+From e88f56243140aaf96f2dcab5f3e30f332cc1d226 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 12:49:18 +0200
+Subject: [PATCH 1/1] rlm_sql_log: Check rad_mkdir result
+
+Check the result of rad_mkdir in sql_log_write, abort on error.
+
+This makes the reported error clearer and fixes the following Coverity
+error:
+
+Error: CHECKED_RETURN (CWE-252):
+freeradius-server-2.2.6/src/modules/rlm_sql_log/rlm_sql_log.c:374: check_return: Calling "rad_mkdir" without checking return value (as is done elsewhere 4 out of 5 times).
+---
+ src/modules/rlm_sql_log/rlm_sql_log.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/modules/rlm_sql_log/rlm_sql_log.c b/src/modules/rlm_sql_log/rlm_sql_log.c
+index ffa41a9..6a6538e 100644
+--- a/src/modules/rlm_sql_log/rlm_sql_log.c
++++ b/src/modules/rlm_sql_log/rlm_sql_log.c
+@@ -371,7 +371,11 @@ static int sql_log_write(rlm_sql_log_t *inst, REQUEST *request, const char *line
+ 	p = strrchr(path, '/');
+ 	if (p) {
+ 		*p = '\0';
+-		rad_mkdir(path, 0755);
++		if (rad_mkdir(path, 0755) < 0) {
++			radlog_request(L_ERR, 0, request, "Failed creating %s: %s",
++				       path, strerror(errno));
++			return RLM_MODULE_FAIL;
++		}
+ 		*p = '/';
+ 	}
+ 
+-- 
+2.1.4
+

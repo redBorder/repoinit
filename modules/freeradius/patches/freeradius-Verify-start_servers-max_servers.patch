@@ -1,0 +1,29 @@
+From 0609be7e7551c22e7f4d7bf189714e20c50bf64e Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Tue, 27 Jan 2015 15:58:22 +0200
+Subject: [PATCH 1/1] Verify start_servers <= max_servers
+
+---
+ src/main/threads.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/main/threads.c b/src/main/threads.c
+index d4de4ff..f1514d1 100644
+--- a/src/main/threads.c
++++ b/src/main/threads.c
+@@ -831,6 +831,12 @@ int thread_pool_init(CONF_SECTION *cs, int *spawn_flag)
+ 		return -1;
+ 	}
+ 
++	if (thread_pool.start_threads > thread_pool.max_threads) {
++		radlog(L_ERR, "FATAL: start_servers (%i) must be <= max_servers (%i)",
++		       thread_pool.start_threads, thread_pool.max_threads);
++		return -1;
++	}
++
+ 	/*
+ 	 *	The pool has already been initialized.  Don't spawn
+ 	 *	new threads, and don't forget about forked children,
+-- 
+2.1.4
+

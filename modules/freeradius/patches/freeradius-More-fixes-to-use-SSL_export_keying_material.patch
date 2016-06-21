@@ -1,0 +1,46 @@
+From cbb394982f0ff25efbfca1d4ec5ccca5bec87c59 Mon Sep 17 00:00:00 2001
+From: "Alan T. DeKok" <aland@freeradius.org>
+Date: Wed, 9 Sep 2015 09:18:50 -0400
+Subject: [PATCH] More fixes to use SSL_export_keying_material
+
+---
+ src/modules/rlm_eap/libeap/mppe_keys.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/src/modules/rlm_eap/libeap/mppe_keys.c b/src/modules/rlm_eap/libeap/mppe_keys.c
+index 0a4174f..a53bf8d 100644
+--- a/src/modules/rlm_eap/libeap/mppe_keys.c
++++ b/src/modules/rlm_eap/libeap/mppe_keys.c
+@@ -184,15 +184,21 @@ void eaptls_gen_mppe_keys(VALUE_PAIR **reply_vps, SSL *s,
+  */
+ void eapttls_gen_challenge(SSL *s, uint8_t *buffer, size_t size)
+ {
++#if OPENSSL_VERSION_NUMBER < 0x10001000L
+ 	uint8_t out[32], buf[32];
+ 	uint8_t seed[sizeof(EAPTLS_PRF_CHALLENGE)-1 + 2*SSL3_RANDOM_SIZE];
+ 	uint8_t *p = seed;
++#endif
+ 
+ 	if (!s->s3) {
+ 		DEBUG("ERROR: No SSLv3 information");
+ 		return;
+ 	}
+ 
++#if OPENSSL_VERSION_NUMBER >= 0x10001000L
++	SSL_export_keying_material(s, buffer, size, EAPTLS_PRF_CHALLENGE,
++				   sizeof(EAPTLS_PRF_CHALLENGE) - 1, NULL, 0, 0);
++#else
+ 	memcpy(p, EAPTLS_PRF_CHALLENGE, sizeof(EAPTLS_PRF_CHALLENGE)-1);
+ 	p += sizeof(EAPTLS_PRF_CHALLENGE)-1;
+ 	memcpy(p, s->s3->client_random, SSL3_RANDOM_SIZE);
+@@ -203,6 +209,7 @@ void eapttls_gen_challenge(SSL *s, uint8_t *buffer, size_t size)
+ 	    seed, sizeof(seed), out, buf, sizeof(out));
+ 
+ 	memcpy(buffer, out, size);
++#endif
+ }
+ 
+ /*
+-- 
+2.5.1
+

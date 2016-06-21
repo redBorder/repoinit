@@ -1,0 +1,48 @@
+From c49ffff3990449828f60f8bfa54728f5c1c16d17 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 21:39:44 +0200
+Subject: [PATCH 1/1] Fix two pointer signedness warnings
+
+This fixes the following compiler warnings:
+
+freeradius-server-2.2.6/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c: scope_hint: In function 'cbtls_verify'
+freeradius-server-2.2.6/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c:711: warning: pointer targets in passing argument 2 of 'pairmake' differ in signedness
+freeradius-server-2.2.6/src/include/libradius.h:373: note: expected 'const char *' but argument is of type 'unsigned char *'
+
+freeradius-server-2.2.6/src/modules/rlm_expr/rlm_expr.c: scope_hint: In function 'base64_to_hex_xlat'
+freeradius-server-2.2.6/src/modules/rlm_expr/rlm_expr.c:678: warning: pointer targets in passing argument 1 of 'fr_bin2hex' differ in signedness
+freeradius-server-2.2.6/src/include/libradius.h:418: note: expected 'const uint8_t *' but argument is of type 'char *'
+---
+ src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c | 2 +-
+ src/modules/rlm_expr/rlm_expr.c                     | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c b/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c
+index 784fc42..d46ab44 100644
+--- a/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c
++++ b/src/modules/rlm_eap/types/rlm_eap_tls/rlm_eap_tls.c
+@@ -708,7 +708,7 @@ static int cbtls_verify(int ok, X509_STORE_CTX *ctx)
+ 
+ 					pairadd(&handler->certs,
+ 						pairmake(cert_attr_names[EAPTLS_SAN_EMAIL][lookup],
+-							 ASN1_STRING_data(name->d.rfc822Name), T_OP_SET));
++							 (char *)ASN1_STRING_data(name->d.rfc822Name), T_OP_SET));
+ 					break;
+ 				default:
+ 					/* XXX TODO handle other SAN types */
+diff --git a/src/modules/rlm_expr/rlm_expr.c b/src/modules/rlm_expr/rlm_expr.c
+index 3aa2a49..c4476cc 100644
+--- a/src/modules/rlm_expr/rlm_expr.c
++++ b/src/modules/rlm_expr/rlm_expr.c
+@@ -675,7 +675,7 @@ static size_t base64_to_hex_xlat(UNUSED void *instance, REQUEST *request,
+ 		       "have %zd bytes", (declen * 2) + 1, outlen);
+ 	}
+ 
+-	fr_bin2hex(decbuf, out, declen);
++	fr_bin2hex((uint8_t *)decbuf, out, declen);
+ 
+ 	return declen * 2;
+ }
+-- 
+2.1.4
+

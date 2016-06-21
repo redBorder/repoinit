@@ -1,0 +1,76 @@
+From df5648fffdef4c1de1d07df2ed46d91051714fb8 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 26 Jan 2015 11:32:51 +0200
+Subject: [PATCH 1/1] Fix various configuration issues
+
+Reduce validity period of the default certificates so people don't rely
+on them and get proper certificates instead.
+
+Disable make_cert_command in eap.conf, as certificates are created
+during RPM install.
+---
+ raddb/certs/ca.cnf     | 2 +-
+ raddb/certs/client.cnf | 2 +-
+ raddb/certs/server.cnf | 2 +-
+ raddb/eap.conf         | 6 +++++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/raddb/certs/ca.cnf b/raddb/certs/ca.cnf
+index 8b38f85..b7352dc 100644
+--- a/raddb/certs/ca.cnf
++++ b/raddb/certs/ca.cnf
+@@ -14,7 +14,7 @@ private_key		= $dir/ca.key
+ RANDFILE		= $dir/.rand
+ name_opt		= ca_default
+ cert_opt		= ca_default
+-default_days		= 365
++default_days		= 60
+ default_crl_days	= 30
+ default_md		= sha256
+ preserve		= no
+diff --git a/raddb/certs/client.cnf b/raddb/certs/client.cnf
+index 76cf4d3..9627c67 100644
+--- a/raddb/certs/client.cnf
++++ b/raddb/certs/client.cnf
+@@ -14,7 +14,7 @@ private_key		= $dir/ca.key
+ RANDFILE		= $dir/.rand
+ name_opt		= ca_default
+ cert_opt		= ca_default
+-default_days		= 365
++default_days		= 60
+ default_crl_days	= 30
+ default_md		= sha256
+ preserve		= no
+diff --git a/raddb/certs/server.cnf b/raddb/certs/server.cnf
+index 9e68698..28ac4c1 100644
+--- a/raddb/certs/server.cnf
++++ b/raddb/certs/server.cnf
+@@ -14,7 +14,7 @@ private_key		= $dir/ca.key
+ RANDFILE		= $dir/.rand
+ name_opt		= ca_default
+ cert_opt		= ca_default
+-default_days		= 365
++default_days		= 60
+ default_crl_days	= 30
+ default_md		= sha256
+ preserve		= no
+diff --git a/raddb/eap.conf b/raddb/eap.conf
+index 95bebe4..0821333 100644
+--- a/raddb/eap.conf
++++ b/raddb/eap.conf
+@@ -297,7 +297,11 @@
+ 			# for the server to print out an error message,
+ 			# and refuse to start.
+ 			#
+-			make_cert_command = "${certdir}/bootstrap"
++			# Redhat RPM's run the bootstrap certificate creation
++			# as part of the RPM install (not upgrade), therefore
++			# the make_cert_command is commented out.
++			#
++			#make_cert_command = "${certdir}/bootstrap"
+ 
+ 			#
+ 			#  Elliptical cryptography configuration
+-- 
+2.1.4
+

@@ -1,0 +1,38 @@
+From a0d07a9e40bc69aa5008a84bad251955e9206ced Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 14:32:24 +0200
+Subject: [PATCH 1/1] Limit log level string when building message
+
+Use strncat instead of strcat to limit the length of copied log level
+name in radlog_request. This makes the code easier to reason about
+overall and to make sure no buffer overflow happens.
+
+This fixes the following Coverity error:
+
+Error: STRING_OVERFLOW (CWE-120):
+freeradius-server-2.2.6/src/main/log.c:310: fixed_size_dest: You might overrun the 1024 byte fixed-size string "buffer" by copying the return value of "fr_int2str" without checking the length.
+---
+ src/main/log.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/log.c b/src/main/log.c
+index ed6baf3..f36c04e 100644
+--- a/src/main/log.c
++++ b/src/main/log.c
+@@ -307,8 +307,11 @@ void radlog_request(int lvl, int priority, REQUEST *request, const char *msg, ..
+ 			s[1] = '\0';
+ 		}
+ 		
+-		strcat(buffer, fr_int2str(levels, (lvl & ~L_CONS), ": "));
+-		len = strlen(buffer);
++		if (len < sizeof(buffer)) {
++			strncat(buffer, fr_int2str(levels, (lvl & ~L_CONS), ": "),
++				sizeof(buffer) - len - 1);
++			len = strlen(buffer);
++		}
+ 	}
+ 	
+ 	if (request && request->module[0]) {
+-- 
+2.1.4
+

@@ -1,0 +1,46 @@
+From d72cfad7b8a1b60078a9735f035cb7fde013f04a Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 21:32:29 +0200
+Subject: [PATCH 1/1] Remove two unused variable declarations
+
+This fixes the following compiler warnings:
+
+freeradius-server-2.2.6/src/main/listen.c:1359: included_from: Included from here.
+freeradius-server-2.2.6/src/main/command.c: scope_hint: In function 'command_show_module_status'
+freeradius-server-2.2.6/src/main/command.c:589: warning: unused variable 'mod'
+
+freeradius-server-2.2.6/src/modules/rlm_sql/rlm_sql.c: scope_hint: In function 'rlm_sql_detach'
+freeradius-server-2.2.6/src/modules/rlm_sql/rlm_sql.c:824: warning: unused variable 'i'
+---
+ src/main/command.c            | 1 -
+ src/modules/rlm_sql/rlm_sql.c | 2 --
+ 2 files changed, 3 deletions(-)
+
+diff --git a/src/main/command.c b/src/main/command.c
+index bce7e9a..7838c2a 100644
+--- a/src/main/command.c
++++ b/src/main/command.c
+@@ -586,7 +586,6 @@ static int command_show_module_status(rad_listen_t *listener, int argc, char *ar
+ {
+ 	CONF_SECTION *cs;
+ 	const module_instance_t *mi;
+-	const module_t *mod;
+ 
+ 	if (argc != 1) {
+ 		cprintf(listener, "ERROR: No module name was given\n");
+diff --git a/src/modules/rlm_sql/rlm_sql.c b/src/modules/rlm_sql/rlm_sql.c
+index 056ca05..dc4b9c6 100644
+--- a/src/modules/rlm_sql/rlm_sql.c
++++ b/src/modules/rlm_sql/rlm_sql.c
+@@ -821,8 +821,6 @@ static int rlm_sql_detach(void *instance)
+ 	paircompare_unregister(PW_SQL_GROUP, sql_groupcmp);
+ 
+ 	if (inst->config) {
+-		int i;
+-
+ 		if (inst->sqlpool) {
+ 			sql_poolfree(inst);
+ 		}
+-- 
+2.1.4
+

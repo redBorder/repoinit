@@ -1,0 +1,30 @@
+From 3e937a66f354df6f817dcd67b6e77027cd817928 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Fri, 30 Jan 2015 15:23:49 +0200
+Subject: [PATCH 1/1] dhcp: Remove useless variable initializer
+
+Remove an initialization of a variable, which is then overwritten, in
+dhcp_get_option.
+
+This fixes the following Clang warning:
+freeradius-server-2.2.6/src/lib/dhcp.c:144:11: warning: Value stored to 'data' during its initialization is never read
+---
+ src/lib/dhcp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/lib/dhcp.c b/src/lib/dhcp.c
+index 8a3c36d..0406480 100644
+--- a/src/lib/dhcp.c
++++ b/src/lib/dhcp.c
+@@ -141,7 +141,7 @@ static uint8_t *dhcp_get_option(dhcp_packet_t *packet, size_t packet_size,
+ 	int overload = 0;
+ 	int field = DHCP_OPTION_FIELD;
+ 	size_t where, size;
+-	uint8_t *data = packet->options;
++	uint8_t *data;
+ 
+ 	where = 0;
+ 	size = packet_size - offsetof(dhcp_packet_t, options);
+-- 
+2.1.4
+

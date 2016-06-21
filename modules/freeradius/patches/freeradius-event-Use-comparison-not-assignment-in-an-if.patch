@@ -1,0 +1,36 @@
+From 540b55543e568dc9626d7d4b30f2dcf50e06fb6c Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Fri, 30 Jan 2015 13:26:59 +0200
+Subject: [PATCH 1/1] event: Use comparison, not assignment in an if
+
+Use an equality operator instead of assignment in an if condition in
+wait_for_child_to_die(). Otherwise condition always evaluates to true.
+
+This fixes the following Coverity errors:
+
+Error: DEADCODE (CWE-561):
+freeradius-server-2.2.6/src/main/event.c:557: dead_error_condition: The condition "request->child_state = 1" must be true.
+freeradius-server-2.2.6/src/main/event.c:557: dead_error_line: Execution cannot reach the expression "request->thread_id != 0" inside this statement: "if ((request->child_state =...".
+
+Error: CONSTANT_EXPRESSION_RESULT (CWE-398):
+freeradius-server-2.2.6/src/main/event.c:557: result_independent_of_operands: "(request->child_state = 1) || request->thread_id != 0" is always true regardless of the values of its operands. This occurs as the logical operand of if.
+---
+ src/main/event.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/event.c b/src/main/event.c
+index 3b7dff5..904a8d1 100644
+--- a/src/main/event.c
++++ b/src/main/event.c
+@@ -554,7 +554,7 @@ static void wait_for_child_to_die(void *ctx)
+ 	 *	up) OR there's still a child thread handling it, THEN
+ 	 *	delay some more.
+ 	 */
+-	if ((request->child_state = REQUEST_QUEUED) ||
++	if ((request->child_state == REQUEST_QUEUED) ||
+ 	    (request->thread_id != NO_CHILD_THREAD)) {
+ 		/*
+ 		 *	Cap delay at max_request_time
+-- 
+2.1.4
+

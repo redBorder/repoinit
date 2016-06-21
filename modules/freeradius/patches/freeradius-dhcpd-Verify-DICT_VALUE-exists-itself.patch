@@ -1,0 +1,33 @@
+From 5bdbb30842e603bb1d301a834256e711f83f4447 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Fri, 30 Jan 2015 13:35:06 +0200
+Subject: [PATCH 1/1] dhcpd: Verify DICT_VALUE exists itself
+
+Verify that a DICT_VALUE was returned from dict_valbyattr by checking
+the returned pointer, not the "name" field address. This likely fixes a
+possible segfault when debugging.
+
+This also fixes the following Coverity error:
+
+Error: NO_EFFECT (CWE-398):
+freeradius-server-2.2.6/src/main/dhcpd.c:300: array_null: Comparing an array to null is not useful: "dv->name".
+---
+ src/main/dhcpd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/dhcpd.c b/src/main/dhcpd.c
+index ce7b6be..b4e907f 100644
+--- a/src/main/dhcpd.c
++++ b/src/main/dhcpd.c
+@@ -298,7 +298,7 @@ static int dhcp_process(REQUEST *request)
+ 	if (vp) {
+ 		DICT_VALUE *dv = dict_valbyattr(DHCP2ATTR(53), vp->vp_integer);
+ 		DEBUG("Trying sub-section dhcp %s {...}",
+-		      dv->name ? dv->name : "<unknown>");
++		      dv ? dv->name : "<unknown>");
+ 		rcode = module_post_auth(vp->vp_integer, request);
+ 	} else {
+ 		DEBUG("DHCP: Failed to find DHCP-Message-Type in packet!");
+-- 
+2.1.4
+

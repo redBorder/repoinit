@@ -1,0 +1,67 @@
+From f6bcaa08170bd1500e860d08d9758bf36c01e960 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 14 Jul 2014 14:26:49 +0300
+Subject: [PATCH 1/1] Add support for timeval configuration values
+
+Add support for configuration values with struct timeval type, denoted
+with PW_TYPE_TIMEVAL.
+---
+ src/include/radius.h |  1 +
+ src/main/conffile.c  | 29 +++++++++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+
+diff --git a/src/include/radius.h b/src/include/radius.h
+index ab93431..547fb62 100644
+--- a/src/include/radius.h
++++ b/src/include/radius.h
+@@ -21,6 +21,7 @@
+ #define PW_TYPE_SIGNED			12
+ #define PW_TYPE_COMBO_IP	       	13
+ #define PW_TYPE_TLV	       		14
++#define PW_TYPE_TIMEVAL    		15
+ 
+ #define	PW_AUTHENTICATION_REQUEST	1
+ #define	PW_AUTHENTICATION_ACK		2
+diff --git a/src/main/conffile.c b/src/main/conffile.c
+index bd993e3..9d230b5 100644
+--- a/src/main/conffile.c
++++ b/src/main/conffile.c
+@@ -1070,6 +1070,35 @@ int cf_item_parse(CONF_SECTION *cs, const char *name,
+ 		       sizeof(ipaddr.ipaddr.ip6addr));
+ 		break;
+ 
++	case PW_TYPE_TIMEVAL: {
++		int sec;
++		char *end;
++		struct timeval tv;
++		char buffer[7];
++
++		sec = strtoul(value, &end, 10);
++		tv.tv_sec = sec;
++		tv.tv_usec = 0;
++		if (*end == '.') {
++			sec = strlen(end + 1);
++
++			if (sec > 6) {
++				radlog(L_ERR, "Too much precision for timeval");
++				return -1;
++			}
++
++			strcpy(buffer, "000000");
++			memcpy(buffer, end + 1, sec);
++
++			sec = strtoul(buffer, NULL, 10);
++			tv.tv_usec = sec;
++		}
++		cf_log_info(cs, "\t%s = %d.%06d",
++				name, (int) tv.tv_sec, (int) tv.tv_usec);
++		memcpy(data, &tv, sizeof(tv));
++		}
++		break;
++
+ 	default:
+ 		radlog(L_ERR, "type %d not supported yet", type);
+ 		return -1;
+-- 
+2.1.4
+

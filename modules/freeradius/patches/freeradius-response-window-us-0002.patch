@@ -1,0 +1,69 @@
+From 955f920861ce9b962cce31b85c3e47a5606162fd Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 14 Jul 2014 15:25:19 +0300
+Subject: [PATCH 1/1] Add init_delay mainconfig field
+
+Add init_delay - a struct timeval mainconfig field to be used for
+adjusting initial request processing delay.
+---
+ src/include/radiusd.h | 1 +
+ src/main/event.c      | 6 ++++--
+ src/main/mainconfig.c | 6 ++++++
+ 3 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/include/radiusd.h b/src/include/radiusd.h
+index 2bf5173..2eb7968 100644
+--- a/src/include/radiusd.h
++++ b/src/include/radiusd.h
+@@ -383,6 +383,7 @@ typedef struct main_config_t {
+ #endif
+ 	int		debug_memory;
+ 	const char	*panic_action;
++	struct timeval  init_delay; /* initial request processing delay */
+ } MAIN_CONFIG_T;
+ 
+ #define DEBUG	if(debug_flag)log_debug
+diff --git a/src/main/event.c b/src/main/event.c
+index c889bf2..c47b046 100644
+--- a/src/main/event.c
++++ b/src/main/event.c
+@@ -3057,7 +3057,8 @@ int received_request(rad_listen_t *listener,
+ 	request->timestamp = request->received.tv_sec;
+ 	request->when = request->received;
+ 
+-	request->delay = USEC;
++	request->delay = mainconfig.init_delay.tv_sec * USEC +
++				mainconfig.init_delay.tv_usec;
+ 
+ 	tv_add(&request->when, request->delay);
+ 
+@@ -3289,7 +3290,8 @@ REQUEST *received_proxy_response(RADIUS_PACKET *packet)
+ 
+ 	request->child_state = REQUEST_QUEUED;
+ 	request->when = now;
+-	request->delay = USEC;
++	request->delay = mainconfig.init_delay.tv_sec * USEC +
++				mainconfig.init_delay.tv_usec;
+ 	request->priority = RAD_LISTEN_PROXY;
+ 	tv_add(&request->when, request->delay);
+ 
+diff --git a/src/main/mainconfig.c b/src/main/mainconfig.c
+index faf69fb..0db1b4b 100644
+--- a/src/main/mainconfig.c
++++ b/src/main/mainconfig.c
+@@ -920,6 +920,12 @@ int read_mainconfig(int reload)
+ 	cf_section_parse(cs, NULL, server_config);
+ 
+ 	/*
++	 * Set default initial request processing delay to 1 second.
++	 */
++	mainconfig.init_delay.tv_sec = 1;
++	mainconfig.init_delay.tv_usec = 0;
++
++	/*
+ 	 *	Free the old configuration items, and replace them
+ 	 *	with the new ones.
+ 	 *
+-- 
+2.1.4
+

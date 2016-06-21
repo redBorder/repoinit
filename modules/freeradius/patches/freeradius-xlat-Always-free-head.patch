@@ -1,0 +1,56 @@
+From e2abc9b518e1c2d87d268efc09c9b20dae50e8f6 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 12:28:23 +0200
+Subject: [PATCH 1/1] xlat: Always free head
+
+Move "head" deallocation into the path for handling fr_dhcp_decode_options
+failure, in xlat_dhcp_options. This makes sure it is freed, as
+fr_dhcp_decode_options is complicated and is not documented to guarantee
+deallocation in case of error.
+
+This fixes the following Coverity error:
+
+Error: RESOURCE_LEAK (CWE-772):
+freeradius-server-2.2.6/src/main/xlat.c:639: alloc_arg: "fr_dhcp_decode_options" allocates memory that is stored into "head".
+freeradius-server-2.2.6/src/lib/dhcp.c:581:2: var_assign_parm: Assigning: "tail" = "head".
+freeradius-server-2.2.6/src/lib/dhcp.c:647:4: alloc_fn: Storage is returned from allocation function "pairmake".
+freeradius-server-2.2.6/src/lib/valuepair.c:1523:3: alloc_fn: Storage is returned from allocation function "pairmake_any".
+freeradius-server-2.2.6/src/lib/valuepair.c:1406:2: alloc_fn: Storage is returned from allocation function "paircreate".
+freeradius-server-2.2.6/src/lib/valuepair.c:174:2: alloc_fn: Storage is returned from allocation function "pairalloc".
+freeradius-server-2.2.6/src/lib/valuepair.c:72:2: alloc_fn: Storage is returned from allocation function "malloc".
+freeradius-server-2.2.6/src/lib/valuepair.c:72:2: var_assign: Assigning: "vp" = "malloc(312UL + name_len)".
+freeradius-server-2.2.6/src/lib/valuepair.c:74:2: noescape: Resource "vp" is not freed or pointed-to in function "memset". [Note: The source code implementation of the function has been overridden by a builtin model.]
+freeradius-server-2.2.6/src/lib/valuepair.c:134:2: return_alloc: Returning allocated memory "vp".
+freeradius-server-2.2.6/src/lib/valuepair.c:174:2: var_assign: Assigning: "vp" = "pairalloc(da)".
+freeradius-server-2.2.6/src/lib/valuepair.c:185:2: return_alloc: Returning allocated memory "vp".
+freeradius-server-2.2.6/src/lib/valuepair.c:1406:2: var_assign: Assigning: "vp" = "paircreate(attr, 5)".
+freeradius-server-2.2.6/src/lib/valuepair.c:1466:2: return_alloc: Returning allocated memory "vp".
+freeradius-server-2.2.6/src/lib/valuepair.c:1523:3: return_alloc_fn: Directly returning storage allocated by "pairmake_any".
+freeradius-server-2.2.6/src/lib/dhcp.c:647:4: var_assign: Assigning: "vp" = "pairmake(da->name, NULL, T_OP_ADD)".
+freeradius-server-2.2.6/src/lib/dhcp.c:671:4: var_assign: Assigning: "*tail" = "vp".
+freeradius-server-2.2.6/src/main/xlat.c:661: leaked_storage: Variable "head" going out of scope leaks the storage it points to.
+---
+ src/main/xlat.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/main/xlat.c b/src/main/xlat.c
+index 0d46327..756271d 100644
+--- a/src/main/xlat.c
++++ b/src/main/xlat.c
+@@ -651,11 +651,11 @@ static size_t xlat_dhcp_options(UNUSED void *instance, REQUEST *request,
+ 
+ 	pairmove(&(request->packet->vps), &head);
+ 
++	fail:
++
+ 	/* Free any unmoved pairs */
+ 	pairfree(&head);
+ 
+-	fail:
+-
+ 	snprintf(out, outlen, "%i", decoded);
+ 
+ 	return strlen(out);
+-- 
+2.1.4
+

@@ -1,0 +1,40 @@
+From 11dab9a6aeed92f067efdba0264cbd82d47ede06 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 11:27:25 +0200
+Subject: [PATCH 1/1] rlm_pap: Account for terminating zero
+
+Account for terminating '\0' character in target (raw) buffer space when
+verifying supplied vp->length in rlm_pap.c normify().
+
+Otherwise both the source (vp->vp_octets) and the target (raw) buffer
+will overflow with vp->length == sizeof(raw).
+
+This fixes the following Coverity errors:
+
+Error: OVERRUN (CWE-119):
+freeradius-server-2.2.6/src/modules/rlm_pap/rlm_pap.c:260: cond_at_most: Checking "vp->length > 255UL" implies that "vp->length" has the value which may be up to 255 on the false branch.
+freeradius-server-2.2.6/src/modules/rlm_pap/rlm_pap.c:262: overrun-buffer-arg: Overrunning array "vp->data.octets" of 254 bytes by passing it to a function which accesses it at byte offset 254 using argument "vp->length" (which evaluates to 255). [Note: The source code implementation of the function has been overridden by a builtin model.]
+
+Error: OVERRUN (CWE-119):
+freeradius-server-2.2.6/src/modules/rlm_pap/rlm_pap.c:260: cond_at_most: Checking "vp->length > 255UL" implies that "vp->length" has the value which may be up to 255 on the false branch.
+freeradius-server-2.2.6/src/modules/rlm_pap/rlm_pap.c:263: overrun-local: Overrunning array "raw" of 255 bytes at byte offset 255 using index "vp->length" (which evaluates to 255).
+---
+ src/modules/rlm_pap/rlm_pap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/modules/rlm_pap/rlm_pap.c b/src/modules/rlm_pap/rlm_pap.c
+index 6ac2f9a..0d728a9 100644
+--- a/src/modules/rlm_pap/rlm_pap.c
++++ b/src/modules/rlm_pap/rlm_pap.c
+@@ -257,7 +257,7 @@ static void normify(REQUEST *request, VALUE_PAIR *vp, size_t min_length)
+ 	 *	\0 terminated buffers.
+ 	 */
+ 	if (vp->type == PW_TYPE_OCTETS) {
+-		if (vp->length > sizeof(raw)) return;
++		if (vp->length >= sizeof(raw)) return;
+ 
+ 		memcpy(raw, vp->vp_octets, vp->length);
+ 		raw[vp->length] = '\0';
+-- 
+2.1.4
+

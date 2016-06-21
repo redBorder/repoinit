@@ -1,0 +1,36 @@
+From 0f512e109fe975de4dcac8cfa27473df6e5ff8bb Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 11:52:50 +0200
+Subject: [PATCH 1/1] rlm_otp: Fix key size calculation
+
+Take size of key array element, instead of an expression attempting to
+calculate the key size, in otp_gen_state().
+
+This makes the HMAC use the full key, instead of just 4 first bytes,
+increasing key strength.
+
+This also fixes the following Coverity error:
+
+Error: BAD_SIZEOF (CWE-467):
+freeradius-server-2.2.6/src/modules/rlm_otp/otp_radstate.c:100: bad_sizeof: Taking the size of arithmetic expression "key[0] * 16" is suspicious.
+freeradius-server-2.2.6/src/modules/rlm_otp/otp_radstate.c:100: remediation: Did you intend "sizeof (key[0]) * 16"?
+---
+ src/modules/rlm_otp/otp_radstate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/modules/rlm_otp/otp_radstate.c b/src/modules/rlm_otp/otp_radstate.c
+index 9e60f00..1d36cd2 100644
+--- a/src/modules/rlm_otp/otp_radstate.c
++++ b/src/modules/rlm_otp/otp_radstate.c
+@@ -97,7 +97,7 @@ otp_gen_state(char rad_state[OTP_MAX_RADSTATE_LEN],
+    * DES, so we'll use it's hmac functionality also -- saves us from
+    * having to collect the data to be signed into one contiguous piece.
+    */
+-  HMAC_Init(&hmac_ctx, key, sizeof(key[0] * 16), EVP_md5());
++  HMAC_Init(&hmac_ctx, key, sizeof(key[0]) * 16, EVP_md5());
+   HMAC_Update(&hmac_ctx, challenge, clen);
+   HMAC_Update(&hmac_ctx, (unsigned char *) &flags, 4);
+   HMAC_Update(&hmac_ctx, (unsigned char *) &when, 4);
+-- 
+2.1.4
+

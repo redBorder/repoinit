@@ -1,0 +1,149 @@
+From cd8a85de248002395b52ea17fd77dc6ae6f4ed80 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 14 Jul 2014 16:13:24 +0300
+Subject: [PATCH 1/1] Make response_window a struct timeval
+
+Make home server's response_window option a struct timeval type,
+increasing precision to microseconds.
+---
+ raddb/proxy.conf      |  4 ++++
+ src/include/realms.h  |  2 +-
+ src/main/event.c      |  8 +++++---
+ src/main/mainconfig.c |  2 ++
+ src/main/realms.c     | 27 +++++++++++++++++++++------
+ 5 files changed, 33 insertions(+), 10 deletions(-)
+
+diff --git a/raddb/proxy.conf b/raddb/proxy.conf
+index 413fc14..92f4a65 100644
+--- a/raddb/proxy.conf
++++ b/raddb/proxy.conf
+@@ -233,6 +233,10 @@ home_server localhost {
+ 	#  If the home server does not respond to a request within
+ 	#  this time, this server will initiate "zombie_period".
+ 	#
++	#  The response window can be a number between 0.001 and 60.000
++	#  Values on the low end are discouraged, as they will likely
++	#  not work due to limitations of operating system timers.
++	#
+ 	#  The response window is large because responses MAY be slow,
+ 	#  especially when proxying across the Internet.
+ 	#
+diff --git a/src/include/realms.h b/src/include/realms.h
+index ffeaab0..2f185da 100644
+--- a/src/include/realms.h
++++ b/src/include/realms.h
+@@ -51,7 +51,7 @@ typedef struct home_server {
+ 	fr_event_t	*ev;
+ 	struct timeval	when;
+ 
+-	int		response_window;
++	struct timeval	response_window;
+ 	int		no_response_fail;
+ 	int		max_outstanding; /* don't overload it */
+ 	int		currently_outstanding;
+diff --git a/src/main/event.c b/src/main/event.c
+index c47b046..fe44e75 100644
+--- a/src/main/event.c
++++ b/src/main/event.c
+@@ -470,7 +470,8 @@ static void wait_for_proxy_id_to_expire(void *ctx)
+ 		request->when.tv_sec += request->home_server->coa_mrd;
+ 	} else
+ #endif
+-	request->when.tv_sec += request->home_server->response_window;
++	timeradd(&request->when, &request->home_server->response_window,
++			&request->when);
+ 
+ 	if ((request->num_proxied_requests == request->num_proxied_responses) ||
+ 	    timercmp(&now, &request->when, >)) {
+@@ -1938,9 +1939,10 @@ static int proxy_request(REQUEST *request)
+ 	gettimeofday(&request->proxy_when, NULL);
+ 
+ 	request->next_when = request->proxy_when;
+-	request->next_when.tv_sec += request->home_server->response_window;
++	timeradd(&request->next_when, &request->home_server->response_window,
++			&request->next_when);
+ 
+-	rad_assert(request->home_server->response_window > 0);
++	rad_assert(timerisset(&request->home_server->response_window));
+ 
+ 	if (timercmp(&when, &request->next_when, <)) {
+ 		request->next_when = when;
+diff --git a/src/main/mainconfig.c b/src/main/mainconfig.c
+index 0db1b4b..49ac100 100644
+--- a/src/main/mainconfig.c
++++ b/src/main/mainconfig.c
+@@ -921,6 +921,8 @@ int read_mainconfig(int reload)
+ 
+ 	/*
+ 	 * Set default initial request processing delay to 1 second.
++	 * Will be updated by half the lowest response window across all
++	 * home servers, if it is less than this.
+ 	 */
+ 	mainconfig.init_delay.tv_sec = 1;
+ 	mainconfig.init_delay.tv_usec = 0;
+diff --git a/src/main/realms.c b/src/main/realms.c
+index 252c298..e185f7c 100644
+--- a/src/main/realms.c
++++ b/src/main/realms.c
+@@ -321,7 +321,7 @@ static CONF_PARSER home_server_config[] = {
+ 	{ "src_ipaddr",  PW_TYPE_STRING_PTR,
+ 	  0, &hs_srcipaddr,  NULL },
+ 
+-	{ "response_window", PW_TYPE_INTEGER,
++	{ "response_window", PW_TYPE_TIMEVAL,
+ 	  offsetof(home_server,response_window), NULL,   "30" },
+ 	{ "no_response_fail", PW_TYPE_BOOLEAN,
+ 	  offsetof(home_server,no_response_fail), NULL,   NULL },
+@@ -378,6 +378,7 @@ static int home_server_add(realm_config_t *rc, CONF_SECTION *cs)
+ 	home_server *home;
+ 	int dual = FALSE;
+ 	CONF_PAIR *cp;
++	struct timeval tv;
+ 
+ 	free(hs_virtual_server); /* used only for printing during parsing */
+ 	hs_virtual_server = NULL;
+@@ -638,14 +639,27 @@ static int home_server_add(realm_config_t *rc, CONF_SECTION *cs)
+ 	if (home->ping_interval < 6) home->ping_interval = 6;
+ 	if (home->ping_interval > 120) home->ping_interval = 120;
+ 
+-	if (home->response_window < 1) home->response_window = 1;
+-	if (home->response_window > 60) home->response_window = 60;
++	tv.tv_sec = 0;
++	tv.tv_usec = 1000;
++	if (timercmp(&home->response_window, &tv, <)) home->response_window = tv;
++	tv.tv_sec = 60;
++	tv.tv_usec = 0;
++	if (timercmp(&home->response_window, &tv, >)) home->response_window = tv;
++
++	/*
++	 *	Track half the minimum response window, so that we can
++	 *	correctly set the timers in process.c
++	 */
++	tv.tv_sec = home->response_window.tv_sec >> 1;
++	tv.tv_usec = ((home->response_window.tv_sec & 1) * 1000000 +
++			home->response_window.tv_usec) >> 1;
++	if (timercmp(&mainconfig.init_delay, &tv, >)) mainconfig.init_delay = tv;
+ 
+ 	if (home->zombie_period < 1) home->zombie_period = 1;
+ 	if (home->zombie_period > 120) home->zombie_period = 120;
+ 
+-	if (home->zombie_period < home->response_window) {
+-		home->zombie_period = home->response_window;
++	if (home->zombie_period < (int)home->response_window.tv_sec) {
++		home->zombie_period = (int)home->response_window.tv_sec;
+ 	}
+ 
+ 	if (home->num_pings_to_alive < 3) home->num_pings_to_alive = 3;
+@@ -1139,7 +1153,8 @@ static int old_server_add(realm_config_t *rc, CONF_SECTION *cs,
+ 		home->max_outstanding = 65535*16;
+ 		home->zombie_period = rc->retry_delay * rc->retry_count;
+ 		if (home->zombie_period == 0) home->zombie_period =30;
+-		home->response_window = home->zombie_period - 1;
++		home->response_window.tv_sec = home->zombie_period - 1;
++		home->response_window.tv_usec = 0;
+ 
+ 		home->ping_check = HOME_PING_CHECK_NONE;
+ 
+-- 
+2.1.4
+

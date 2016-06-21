@@ -1,0 +1,33 @@
+From 97365df65e4d598ed2e919a1dfece828502710a2 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 29 Jan 2015 13:57:59 +0200
+Subject: [PATCH 1/1] Check radius_get_vp return value
+
+Check radius_get_vp return value in modcall_recurse to match other
+invocations.
+
+This fixes the following Coverity error:
+
+Error: CHECKED_RETURN (CWE-252):
+freeradius-server-2.2.6/src/main/modcall.c:649: check_return: Calling "radius_get_vp" without checking return value (as is done elsewhere 6 out of 7 times).
+---
+ src/main/modcall.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/main/modcall.c b/src/main/modcall.c
+index 51b977a..7e96562 100644
+--- a/src/main/modcall.c
++++ b/src/main/modcall.c
+@@ -646,8 +646,7 @@ redo:
+ 		if (!strchr(c->name, '%')) {
+ 			VALUE_PAIR *vp = NULL;
+ 
+-			radius_get_vp(request, c->name, &vp);
+-			if (vp) {
++			if (radius_get_vp(request, c->name, &vp) && vp) {
+ 				vp_prints_value(buffer,
+ 						sizeof(buffer),
+ 						vp, 0);
+-- 
+2.1.4
+

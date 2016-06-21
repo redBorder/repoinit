@@ -1,0 +1,25 @@
+From 031a873767d0d091f03691c6af67ff95344d9318 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 26 Jan 2015 12:22:11 +0200
+Subject: [PATCH 1/1] Fix radtest ppphint argument parsing
+
+---
+ src/main/radtest.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/radtest.in b/src/main/radtest.in
+index a721fa0..9a263a8 100644
+--- a/src/main/radtest.in
++++ b/src/main/radtest.in
+@@ -121,7 +121,7 @@ fi
+ 	    echo "EAP-Code = Response"
+ 	    echo "EAP-Type-Identity = \"$1\""
+ 	fi
+-	if [ "$6" != "" -a "$6" != "0" ]
++	if [ ! -z "$6" ] && [[ $6 =~ ^[0-9]+$ ]] && [ $6 -gt 0 ]
+ 	then
+ 		echo "Framed-Protocol = PPP"
+ 	fi
+-- 
+2.1.4
+

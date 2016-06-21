@@ -1,0 +1,267 @@
+From 2baafddf2af257bf912dc8c88d5e31984d5fc1c7 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Tue, 3 Feb 2015 10:33:48 +0100
+Subject: [PATCH 1/1] Add --disable-openssl-version-check option
+
+Add "--disable-openssl-version-check" configure option, which removes
+checking for vulnerable OpenSSL versions. It is supposed to be used by
+downstream packagers and distributions who have other means to ensure
+vulnerabilities are fixed, such as versioned package dependencies and
+vulnerability handling processes.
+
+This avoids the necessity of editing radiusd.conf on package upgrade to
+make sure it keeps working. At the same time, it provides safe default
+to those installing FreeRADIUS from source.
+
+Instead of defining a dummy ssl_check_version function and ignoring
+allow_vulnerable_openssl option, remove these altogether to match the
+v3.0.x branch.
+---
+ configure                 | 28 ++++++++++++++++++++++++++++
+ configure.in              | 24 ++++++++++++++++++++++++
+ raddb/radiusd.conf.in     | 10 +---------
+ src/include/autoconf.h.in |  3 +++
+ src/include/radiusd.h     |  2 ++
+ src/main/mainconfig.c     |  2 ++
+ src/main/radiusd.c        |  2 ++
+ src/main/version.c        | 36 +++++++++++++++++-------------------
+ 8 files changed, 79 insertions(+), 28 deletions(-)
+
+diff --git a/configure b/configure
+index f828932..85e1648 100755
+--- a/configure
++++ b/configure
+@@ -808,6 +808,7 @@ RUSERS
+ SNMPWALK
+ SNMPGET
+ PERL
++openssl_version_check_config
+ raddbdir
+ radacctdir
+ logdir
+@@ -921,6 +922,7 @@ with_experimental_modules
+ with_openssl
+ with_openssl_includes
+ with_openssl_libraries
++enable_openssl_version_check
+ with_rlm_FOO_lib_dir
+ with_rlm_FOO_include_dir
+ with_udpfromto
+@@ -1560,6 +1562,8 @@ Optional Features:
+   --disable-libtool-lock  avoid locking (might break parallel builds)
+   --enable-strict-dependencies  Fail configure on lack of module dependancy.
+   --enable-developer               Enables features of interest to developers.
++  --disable-openssl-version-check  Disable vulnerable OpenSSL version check.
++
+ 
+ Optional Packages:
+   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
+@@ -19758,6 +19762,30 @@ if test "${with_openssl_libraries+set}" = set; then :
+ fi
+ 
+ 
++# Check whether --enable-openssl-version-check was given.
++if test "${enable_openssl_version_check+set}" = set; then :
++  enableval=$enable_openssl_version_check;
++fi
++
++if test "x$enable_openssl_version_check" != "xno"; then
++
++$as_echo "#define ENABLE_OPENSSL_VERSION_CHECK 1" >>confdefs.h
++
++  openssl_version_check_config="\
++	#
++	#  allow_vulnerable_openssl: Allow the server to start with
++	#  versions of OpenSSL known to have critical vulnerabilities.
++	#
++	#  This check is based on the version number reported by libssl
++	#  and may not reflect patches applied to libssl by
++	#  distribution maintainers.
++	#
++	allow_vulnerable_openssl = no"
++else
++  openssl_version_check_config=
++fi
++
++
+ 
+ 
+ # Check whether --with-rlm-FOO-lib-dir was given.
+diff --git a/configure.in b/configure.in
+index d86e925..57d6a86 100644
+--- a/configure.in
++++ b/configure.in
+@@ -403,6 +403,30 @@ AC_ARG_WITH(openssl-libraries,
+ )
+ 
+ dnl #
++dnl #  extra argument: --disable-openssl-version-check
++dnl #
++AC_ARG_ENABLE(openssl-version-check,
++[  --disable-openssl-version-check  Disable vulnerable OpenSSL version check.]
++)
++if test "x$enable_openssl_version_check" != "xno"; then
++  AC_DEFINE(ENABLE_OPENSSL_VERSION_CHECK, [1],
++            [Define to 1 to have OpenSSL version check enabled])
++  openssl_version_check_config="\
++	#
++	#  allow_vulnerable_openssl: Allow the server to start with
++	#  versions of OpenSSL known to have critical vulnerabilities.
++	#
++	#  This check is based on the version number reported by libssl
++	#  and may not reflect patches applied to libssl by
++	#  distribution maintainers.
++	#
++	allow_vulnerable_openssl = no"
++else
++  openssl_version_check_config=
++fi
++AC_SUBST([openssl_version_check_config])
++
++dnl #
+ dnl #  These next two arguments don't actually do anything.  They're
+ dnl #  place holders so that the top-level configure script can tell
+ dnl #  the user how to configure lower-level modules
+diff --git a/raddb/radiusd.conf.in b/raddb/radiusd.conf.in
+index 201b70b..81a565e 100644
+--- a/raddb/radiusd.conf.in
++++ b/raddb/radiusd.conf.in
+@@ -557,15 +557,7 @@ security {
+ 	#
+ 	status_server = yes
+ 
+-	#
+-	#  allow_vulnerable_openssl: Allow the server to start with
+-	#  versions of OpenSSL known to have critical vulnerabilities.
+-	#
+-	#  This check is based on the version number reported by libssl
+-	#  and may not reflect patches applied to libssl by
+-	#  distribution maintainers.
+-	#
+-	allow_vulnerable_openssl = no
++@openssl_version_check_config@
+ }
+ 
+ # PROXY CONFIGURATION
+diff --git a/src/include/autoconf.h.in b/src/include/autoconf.h.in
+index f14cd52..39af2ea 100644
+--- a/src/include/autoconf.h.in
++++ b/src/include/autoconf.h.in
+@@ -12,6 +12,9 @@
+ /* style of ctime_r function */
+ #undef CTIMERSTYLE
+ 
++/* Define to 1 to have OpenSSL version check enabled */
++#undef ENABLE_OPENSSL_VERSION_CHECK
++
+ /* style of gethostbyaddr_r functions */
+ #undef GETHOSTBYADDRRSTYLE
+ 
+diff --git a/src/include/radiusd.h b/src/include/radiusd.h
+index e7906da..3a41cb0 100644
+--- a/src/include/radiusd.h
++++ b/src/include/radiusd.h
+@@ -362,7 +362,9 @@ typedef struct main_config_t {
+ 	int		proxy_requests;
+ 	int		reject_delay;
+ 	int		status_server;
++#ifdef ENABLE_OPENSSL_VERSION_CHECK
+ 	int		allow_vulnerable_openssl;
++#endif
+ 	int		max_request_time;
+ 	int		cleanup_delay;
+ 	int		max_requests;
+diff --git a/src/main/mainconfig.c b/src/main/mainconfig.c
+index 49ac100..c041f62 100644
+--- a/src/main/mainconfig.c
++++ b/src/main/mainconfig.c
+@@ -172,7 +172,9 @@ static const CONF_PARSER security_config[] = {
+ 	{ "max_attributes",  PW_TYPE_INTEGER, 0, &fr_max_attributes, Stringify(0) },
+ 	{ "reject_delay",  PW_TYPE_INTEGER, 0, &mainconfig.reject_delay, Stringify(0) },
+ 	{ "status_server", PW_TYPE_BOOLEAN, 0, &mainconfig.status_server, "no"},
++#ifdef ENABLE_OPENSSL_VERSION_CHECK
+ 	{ "allow_vulnerable_openssl", PW_TYPE_BOOLEAN, 0, &mainconfig.allow_vulnerable_openssl, "no"},
++#endif
+ 	{ NULL, -1, 0, NULL, NULL }
+ };
+ 
+diff --git a/src/main/radiusd.c b/src/main/radiusd.c
+index 40541c8..5ade168 100644
+--- a/src/main/radiusd.c
++++ b/src/main/radiusd.c
+@@ -281,9 +281,11 @@ int main(int argc, char *argv[])
+ 	 *	Mismatch between build time OpenSSL and linked SSL,
+ 	 *	better to die here than segfault later.
+ 	 */
++#ifdef ENABLE_OPENSSL_VERSION_CHECK
+ 	if (ssl_check_version(mainconfig.allow_vulnerable_openssl) < 0) {
+ 		exit(1);
+ 	}
++#endif
+ 
+ 	/*  Load the modules AFTER doing SSL checks */
+ 	if (setup_modules(FALSE, mainconfig.config) < 0) {
+diff --git a/src/main/version.c b/src/main/version.c
+index d9bf53e..2e55e06 100644
+--- a/src/main/version.c
++++ b/src/main/version.c
+@@ -34,6 +34,22 @@ RCSID("$Id$")
+ 
+ static long ssl_built = OPENSSL_VERSION_NUMBER;
+ 
++/** Print the current linked version of Openssl
++ *
++ * Print the currently linked version of the OpenSSL library.
++ */
++const char *ssl_version(void)
++{
++	return SSLeay_version(SSLEAY_VERSION);
++}
++#else
++const char *ssl_version()
++{
++	return "not linked";
++}
++#endif
++
++
+ /** Check built and linked versions of OpenSSL match
+  *
+  * OpenSSL version number consists of:
+@@ -46,6 +62,7 @@ static long ssl_built = OPENSSL_VERSION_NUMBER;
+  *
+  * @return 0 if ok, else -1
+  */
++#if defined(HAVE_OPENSSL_CRYPTO_H) && defined(ENABLE_OPENSSL_VERSION_CHECK)
+ int ssl_check_version(int allow_vulnerable)
+ {
+ 	long ssl_linked;
+@@ -98,25 +115,6 @@ int ssl_check_version(int allow_vulnerable)
+ 
+ 	return 0;
+ }
+-
+-/** Print the current linked version of Openssl
+- *
+- * Print the currently linked version of the OpenSSL library.
+- */
+-const char *ssl_version(void)
+-{
+-	return SSLeay_version(SSLEAY_VERSION);
+-}
+-#else
+-int ssl_check_version(UNUSED int allow_vulnerable)
+-{
+-	return 0;
+-}
+-
+-const char *ssl_version()
+-{
+-	return "not linked";
+-}
+ #endif
+ 
+ /*
+-- 
+2.1.4
+

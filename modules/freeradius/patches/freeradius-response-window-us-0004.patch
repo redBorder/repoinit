@@ -1,0 +1,206 @@
+From 392ad41c871a84124b47389aaf610389106fd44e Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Mon, 14 Jul 2014 16:54:04 +0300
+Subject: [PATCH 1/1] Add per-client response_window
+
+Add support for specifying per-client response window, overriding the
+effect of higher home server's response window.
+---
+ raddb/clients.conf    | 11 ++++++++++
+ src/include/radiusd.h |  2 ++
+ src/main/client.c     | 13 +++++++++++
+ src/main/event.c      | 61 ++++++++++++++++++++++++++++++++++++++++++++-------
+ 4 files changed, 79 insertions(+), 8 deletions(-)
+
+diff --git a/raddb/clients.conf b/raddb/clients.conf
+index 729c15d..2456873 100644
+--- a/raddb/clients.conf
++++ b/raddb/clients.conf
+@@ -170,6 +170,17 @@ client localhost {
+ 	#  client.  For an example of a coa home server or pool,
+ 	#  see raddb/sites-available/originate-coa
+ #	coa_server = coa
++
++        #
++        #  Response window for proxied packets.  If non-zero,
++        #  then the lower of (home, client) response_window
++        #  will be used.
++        #
++        #  i.e. it can be used to lower the response_window
++        #  packets from one client to a home server.  It cannot
++        #  be used to raise the response_window.
++        #
++#       response_window = 10.0
+ }
+ 
+ # IPv6 Client
+diff --git a/src/include/radiusd.h b/src/include/radiusd.h
+index 2eb7968..e7906da 100644
+--- a/src/include/radiusd.h
++++ b/src/include/radiusd.h
+@@ -133,6 +133,8 @@ typedef struct radclient {
+ #endif
+ #endif
+ 
++	struct timeval		response_window;
++
+ #ifdef WITH_DYNAMIC_CLIENTS
+ 	int			lifetime;
+ 	int			dynamic; /* was dynamically defined */
+diff --git a/src/main/client.c b/src/main/client.c
+index f9a3256..0f3d790 100644
+--- a/src/main/client.c
++++ b/src/main/client.c
+@@ -563,6 +563,8 @@ static const CONF_PARSER client_config[] = {
+ 	  offsetof(RADCLIENT, password), 0, NULL },
+ 	{ "virtual_server",  PW_TYPE_STRING_PTR,
+ 	  offsetof(RADCLIENT, server), 0, NULL },
++	{ "response_window", PW_TYPE_TIMEVAL,
++	  offsetof(RADCLIENT, response_window), 0, NULL },
+ 	{ "server",  PW_TYPE_STRING_PTR, /* compatability with 2.0-pre */
+ 	  offsetof(RADCLIENT, server), 0, NULL },
+ 
+@@ -731,6 +733,17 @@ static RADCLIENT *client_parse(CONF_SECTION *cs, int in_server)
+ 		break;
+ 	}
+ 
++	/* If response window is set */
++	if (timerisset(&c->response_window)) {
++		struct timeval	tv;
++		tv.tv_sec = 0;
++		tv.tv_usec = 1000;
++		if (timercmp(&c->response_window, &tv, <)) c->response_window = tv;
++		tv.tv_sec = 60;
++		tv.tv_usec = 0;
++		if (timercmp(&c->response_window, &tv, >)) c->response_window = tv;
++	}
++
+ #ifdef WITH_DYNAMIC_CLIENTS
+ 	if (c->client_server) {
+ 		free(c->secret);
+diff --git a/src/main/event.c b/src/main/event.c
+index fe44e75..f7e5a1b 100644
+--- a/src/main/event.c
++++ b/src/main/event.c
+@@ -147,6 +147,27 @@ static void remove_from_request_hash(REQUEST *request)
+ 	request_stats_final(request);
+ }
+ 
++/*
++ * Determine initial request processing delay.
++ */
++static int request_init_delay(REQUEST *request)
++{
++        struct timeval half_response_window;
++
++        /* Allow client response window to lower initial delay */
++        if (timerisset(&request->client->response_window)) {
++                half_response_window.tv_sec = request->client->response_window.tv_sec >> 1;
++                half_response_window.tv_usec =
++                        ((request->client->response_window.tv_sec & 1) * USEC +
++                                request->client->response_window.tv_usec) >> 1;
++                if (timercmp(&half_response_window, &request->root->init_delay, <))
++                        return (int)half_response_window.tv_sec * USEC +
++                                (int)half_response_window.tv_usec;
++        }
++
++        return (int)request->root->init_delay.tv_sec * USEC +
++                (int)request->root->init_delay.tv_usec;
++}
+ 
+ static void ev_request_free(REQUEST **prequest)
+ {
+@@ -195,6 +216,27 @@ static void ev_request_free(REQUEST **prequest)
+ }
+ 
+ #ifdef WITH_PROXY
++static struct timeval *request_response_window(REQUEST *request)
++{
++        if (request->client) {
++                /*
++                 *      The client hasn't set the response window.  Return
++                 *      either the home server one, if set, or the global one.
++                 */
++                if (!timerisset(&request->client->response_window)) {
++                        return &request->home_server->response_window;
++                }
++
++                if (timercmp(&request->client->response_window,
++                             &request->home_server->response_window, <)) {
++                        return &request->client->response_window;
++                }
++        }
++
++        rad_assert(request->home_server != NULL);
++        return &request->home_server->response_window;
++}
++
+ static REQUEST *lookup_in_proxy_hash(RADIUS_PACKET *reply)
+ {
+ 	RADIUS_PACKET **proxy_p;
+@@ -456,6 +498,7 @@ static int insert_into_proxy_hash(REQUEST *request, int retransmit)
+ static void wait_for_proxy_id_to_expire(void *ctx)
+ {
+ 	REQUEST *request = ctx;
++	struct timeval *response_window;
+ 
+ 	rad_assert(request->magic == REQUEST_MAGIC);
+ 	rad_assert(request->proxy != NULL);
+@@ -470,8 +513,10 @@ static void wait_for_proxy_id_to_expire(void *ctx)
+ 		request->when.tv_sec += request->home_server->coa_mrd;
+ 	} else
+ #endif
+-	timeradd(&request->when, &request->home_server->response_window,
+-			&request->when);
++	{
++		response_window = request_response_window(request);
++		timeradd(&request->when, response_window, &request->when);
++	}
+ 
+ 	if ((request->num_proxied_requests == request->num_proxied_responses) ||
+ 	    timercmp(&now, &request->when, >)) {
+@@ -1912,6 +1957,7 @@ static int request_pre_handler(REQUEST *request)
+ static int proxy_request(REQUEST *request)
+ {
+ 	struct timeval when;
++	struct timeval *response_window;
+ 	char buffer[128];
+ 
+ #ifdef WITH_COA
+@@ -1939,10 +1985,11 @@ static int proxy_request(REQUEST *request)
+ 	gettimeofday(&request->proxy_when, NULL);
+ 
+ 	request->next_when = request->proxy_when;
+-	timeradd(&request->next_when, &request->home_server->response_window,
++	response_window = request_response_window(request);
++	timeradd(&request->next_when, response_window,
+ 			&request->next_when);
+ 
+-	rad_assert(timerisset(&request->home_server->response_window));
++	rad_assert(timerisset(response_window));
+ 
+ 	if (timercmp(&when, &request->next_when, <)) {
+ 		request->next_when = when;
+@@ -3059,8 +3106,7 @@ int received_request(rad_listen_t *listener,
+ 	request->timestamp = request->received.tv_sec;
+ 	request->when = request->received;
+ 
+-	request->delay = mainconfig.init_delay.tv_sec * USEC +
+-				mainconfig.init_delay.tv_usec;
++	request->delay = request_init_delay(request);
+ 
+ 	tv_add(&request->when, request->delay);
+ 
+@@ -3292,8 +3338,7 @@ REQUEST *received_proxy_response(RADIUS_PACKET *packet)
+ 
+ 	request->child_state = REQUEST_QUEUED;
+ 	request->when = now;
+-	request->delay = mainconfig.init_delay.tv_sec * USEC +
+-				mainconfig.init_delay.tv_usec;
++	request->delay = request_init_delay(request);
+ 	request->priority = RAD_LISTEN_PROXY;
+ 	tv_add(&request->when, request->delay);
+ 
+-- 
+2.1.4
+

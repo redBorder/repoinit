@@ -1,0 +1,33 @@
+From 5b6a4c0323f1d79de592e77f6e9c2afbdc237298 Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Thu, 12 Feb 2015 12:47:38 +0100
+Subject: [PATCH 1/1] Comment-out ippool-dhcp.conf inclusion
+
+Comment-out the inclusion of raddb/sql/mysql/ippool-dhcp.conf in
+raddb/modules/dhcp_sqlippool to make the server start without
+freeradius-mysql package installed.
+
+Otherwise parsing the configuration fails without freeradius-mysql,
+as raddb/sql/mysql/ippool-dhcp.conf is part of that package.
+---
+ raddb/modules/dhcp_sqlippool | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/raddb/modules/dhcp_sqlippool b/raddb/modules/dhcp_sqlippool
+index 39358b2..1e92dee 100644
+--- a/raddb/modules/dhcp_sqlippool
++++ b/raddb/modules/dhcp_sqlippool
+@@ -14,8 +14,8 @@ sqlippool dhcp_sqlippool {
+ 	# Client's MAC address is mapped to Calling-Station-Id in policy.conf
+ 	pool-key = "%{Calling-Station-Id}"
+ 
+-	# For now, it only works with MySQL.
+-	$INCLUDE ${confdir}/sql/mysql/ippool-dhcp.conf
++	# For now, it only works with MySQL. Requires freeradius-mysql.
++	#$INCLUDE ${confdir}/sql/mysql/ippool-dhcp.conf
+  
+ 	sqlippool_log_exists = "DHCP: Existing IP: %{reply:Framed-IP-Address} (did %{Called-Station-Id} cli %{Calling-Station-Id} port %{NAS-Port} user %{User-Name})"
+ 
+-- 
+2.1.4
+

@@ -1,0 +1,61 @@
+From 90c12c5c7def9bdfd080eb66e96f7f035e2085cc Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Wed, 11 Feb 2015 15:24:23 +0100
+Subject: [PATCH 1/1] Move OpenSSL init out of version check
+
+Initialize OpenSSL outside ssl_version_check() to execute even with
+disabled version check. Otherwise SSL_CTX_new() returns zero and
+FreeRADIUS segfaults in init_tls_ctx with version check disabled.
+---
+ src/main/radiusd.c | 9 +++++++++
+ src/main/version.c | 7 -------
+ 2 files changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/src/main/radiusd.c b/src/main/radiusd.c
+index 5ade168..21516a8 100644
+--- a/src/main/radiusd.c
++++ b/src/main/radiusd.c
+@@ -277,6 +277,14 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ 
++#ifdef HAVE_OPENSSL_CRYPTO_H
++	/*
++	 *	Initialize the OpenSSL library before calling any of its
++	 *	functions.
++	 */
++	SSL_library_init();
++	SSL_load_error_strings();
++
+ 	/*
+ 	 *	Mismatch between build time OpenSSL and linked SSL,
+ 	 *	better to die here than segfault later.
+@@ -286,6 +294,7 @@ int main(int argc, char *argv[])
+ 		exit(1);
+ 	}
+ #endif
++#endif
+ 
+ 	/*  Load the modules AFTER doing SSL checks */
+ 	if (setup_modules(FALSE, mainconfig.config) < 0) {
+diff --git a/src/main/version.c b/src/main/version.c
+index 2e55e06..a603a0a 100644
+--- a/src/main/version.c
++++ b/src/main/version.c
+@@ -67,13 +67,6 @@ int ssl_check_version(int allow_vulnerable)
+ {
+ 	long ssl_linked;
+ 
+-	/*
+-	 *	Initialize the library before calling any library
+-	 *	functions.
+-	 */
+-	SSL_library_init();
+-	SSL_load_error_strings();
+-
+ 	ssl_linked = SSLeay();
+ 
+ 	/*
+-- 
+2.1.4
+

@@ -1,0 +1,35 @@
+From 30cd16e78b140b5d287eda1ba4c3b0531b2ad22f Mon Sep 17 00:00:00 2001
+From: Nikolai Kondrashov <Nikolai.Kondrashov@redhat.com>
+Date: Fri, 30 Jan 2015 12:54:39 +0200
+Subject: [PATCH 1/1] dhcp: Use correct format specifiers in a message
+
+Format size_t with %zu specifier, instead of %d, as size_t is not
+guaranteed to be the same size as int.
+
+This fixes the following compiler warnings:
+
+freeradius-server-2.2.6/src/lib/dhcp.c: scope_hint: In function 'fr_dhcp_add_arp_entry'
+freeradius-server-2.2.6/src/lib/dhcp.c:1536: warning: format '%d' expects type 'int', but argument 2 has type 'long unsigned int'
+freeradius-server-2.2.6/src/lib/dhcp.c:1536: warning: format '%d' expects type 'int', but argument 3 has type 'size_t'
+---
+ src/lib/dhcp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/lib/dhcp.c b/src/lib/dhcp.c
+index 9af6a5f..8a3c36d 100644
+--- a/src/lib/dhcp.c
++++ b/src/lib/dhcp.c
+@@ -1530,8 +1530,8 @@ int fr_dhcp_add_arp_entry(int fd, const char *interface,
+ 	}
+ 
+ 	if (macaddr->length > sizeof (req.arp_ha.sa_data)) {
+-		fr_strerror_printf("ERROR: DHCP only supports up to %d octets for "
+-				   "Client Hardware Address (got %d octets)\n",
++		fr_strerror_printf("ERROR: DHCP only supports up to %zu octets for "
++				   "Client Hardware Address (got %zu octets)\n",
+ 				   sizeof(req.arp_ha.sa_data),
+ 				   macaddr->length);
+ 		return -1;
+-- 
+2.1.4
+
