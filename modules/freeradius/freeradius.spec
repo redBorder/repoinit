@@ -1,9 +1,7 @@
-Summary: High-performance and highly configurable free RADIUS server
-Name: freeradius
-#Version: 2.2.6
-Version: 2.2.9
-#Release: 6%{?dist}
-Release: 1%{?dist}
+Summary: High-performance and highly configurable free RADIUS server, redBorder edition.
+Name: freeradius-rb
+Version: %{__version}
+Release: %{__release}%{?dist}
 License: GPLv2+ and LGPLv2+
 Group: System Environment/Daemons
 URL: http://www.freeradius.org/
@@ -69,6 +67,7 @@ BuildRequires: rbutils-devel
 Requires(pre): shadow-utils glibc-common
 Requires(post): /sbin/chkconfig
 Requires(preun): /sbin/chkconfig
+Conflicts: freeradius
 
 %description
 The FreeRADIUS Server Project is a high performance and highly configurable
@@ -87,7 +86,7 @@ done when adding or deleting new users.
 
 %package utils
 Group: System Environment/Daemons
-Summary: FreeRADIUS utilities
+Summary: FreeRADIUS utilities, redBorder edition.
 Requires: %{name} = %{version}-%{release}
 Requires: libpcap >= 0.9.4
 
@@ -100,26 +99,28 @@ of the server, and let you decide if they satisfy your needs.
 Support for RFC and VSA Attributes Additional server configuration
 attributes Selecting a particular configuration Authentication methods
 
+This is the redBorder edition.
+
 %package ldap
-Summary: LDAP support for freeradius
+Summary: LDAP support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: openldap-devel
 
 %description ldap
-This plugin provides the LDAP support for the FreeRADIUS server project.
+This plugin provides the LDAP support for the FreeRADIUS server project, redBorder edition.
 
 %package krb5
-Summary: Kerberos 5 support for freeradius
+Summary: Kerberos 5 support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: krb5-devel
 
 %description krb5
-This plugin provides the Kerberos 5 support for the FreeRADIUS server project.
+This plugin provides the Kerberos 5 support for the FreeRADIUS server project, redBorder edition.
 
 %package perl
-Summary: Perl support for freeradius
+Summary: Perl support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 Requires: perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
@@ -133,52 +134,52 @@ BuildRequires: perl-devel
 BuildRequires: perl(ExtUtils::Embed)
 
 %description perl
-This plugin provides the Perl support for the FreeRADIUS server project.
+This plugin provides the Perl support for the FreeRADIUS server project, redBorder edition.
 
 %package python
-Summary: Python support for freeradius
+Summary: Python support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: python-devel
 
 %description python
-This plugin provides the Python support for the FreeRADIUS server project.
+This plugin provides the Python support for the FreeRADIUS server project, redBorder edition.
 
 %package mysql
-Summary: MySQL support for freeradius
+Summary: MySQL support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: mysql-devel
 
 %description mysql
-This plugin provides the MySQL support for the FreeRADIUS server project.
+This plugin provides the MySQL support for the FreeRADIUS server project, redBorder edition.
 
 %package postgresql
-Summary: Postgresql support for freeradius
+Summary: Postgresql support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: postgresql-devel
 
 %description postgresql
-This plugin provides the postgresql support for the FreeRADIUS server project.
+This plugin provides the postgresql support for the FreeRADIUS server project, redBorder edition.
 
 %package unixODBC
-Summary: Unix ODBC support for freeradius
+Summary: Unix ODBC support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release}
 BuildRequires: unixODBC-devel
 
 %description unixODBC
-This plugin provides the unixODBC support for the FreeRADIUS server project.
+This plugin provides the unixODBC support for the FreeRADIUS server project, redBorder edition.
 
 %package kafka
-Summary: Kafka support for freeradius
+Summary: Kafka support for freeradius, redBorder edition.
 Group: System Environment/Daemons
 Requires: %{name} = %{version}-%{release} librdkafka1 rbutils
 BuildRequires: librdkafka-devel rbutils-devel
 
 %description kafka
-This plugin provides the unixODBC support for the FreeRADIUS server project.
+This plugin provides the unixODBC support for the FreeRADIUS server project, redBorder edition.
 
 
 %prep
