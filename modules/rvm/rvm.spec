@@ -1,19 +1,29 @@
 %global rvm_dir /usr/lib/rvm
 %global rvm_group rvm
-%global ruby_version 2.2.4
+%global ruby_version %{__rubyversion}
+%global bundler_version %{__bundlerversion}
+%global rubygems_version %{__rubygemsversion}
 
 Name: rvm
-Version: 1.27.0
-Release: 1%{?dist}
+Version: %{__version}
+Release: %{__release}%{?dist}
 License: ASL 2.0
+BuildArch: x86_64
 Source0: rvm-%{version}.tar.gz
+#Source1: ruby-%{ruby_version}.tar.bz2
+#Source2: bundler-%{bundler_version}.gem
+#Source3: rubygems-%{rubygems_version}.tar.gz
+#Source4: bundle-0.0.1.gem
 BuildRequires: libyaml-devel libffi-devel autoconf automake libtool bison
 BuildRequires: gcc-c++ patch readline readline-devel zlib-devel openssl-devel procps-ng sqlite-devel
+#BuildRequires: patch readline procps-ng 
 Requires: sed grep tar gzip bzip2 make file
 Summary: Rvm and ruby
 
 %description
 Rvm with ruby, gem, and bundler, packaged as an rpm. System level install.
+Versions: ruby-%{ruby_version}, bundler-%{bundler_version} and 
+rubygems-%{rubygems_version}
 
 %prep
 %setup -q -n rvm-%{version}
@@ -22,12 +32,6 @@ Rvm with ruby, gem, and bundler, packaged as an rpm. System level install.
 rvm_path="%{rvm_dir}" \
   rvm_man_path="%{_mandir}" \
   ./install --auto-dotfiles &>/dev/null
-
-#mkdir -p $RPM_BUILD_ROOT/rvm
-#cp $RPM_SOURCE_DIR/rvm/rvm-stable.tar.gz $RPM_BUILD_ROOT/
-#cd $RPM_BUILD_ROOT/rvm
-#tar --strip-components=1 -xzf ../rvm-stable.tar.gz
-#sudo ./install --auto-dotfiles
 
 echo "" > %{rvm_dir}/gemsets/default.gems
 echo "" > %{rvm_dir}/gemsets/global.gems
@@ -50,9 +54,16 @@ current=ruby-%{ruby_version}
 default=ruby-%{ruby_version}
 " > %{rvm_dir}/config/alias
 
-#%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-1.7.3.gem
+#%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundle-0.0.1.gem
+#%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-%{bundler_version}.gem
+
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install bundle
+
+##%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-1.7.3.gem
 
 rm -rf %{rvm_dir}/src/*
+rm -rf %{rvm_dir}/log/*
+rm -rf %{rvm_dir}/archives/*
 
 %install
 rm -rf $RPM_BUILD_ROOT/*
@@ -68,9 +79,12 @@ chgrp -R rvm $RPM_BUILD_ROOT/%{rvm_dir}
 chmod -R g+wxr $RPM_BUILD_ROOT/%{rvm_dir}
 
 %clean
-#sudo rm -rf /usr/local/rvm
-#sudo rm /etc/rvmrc
-#sudo rm /etc/profile.d/rvm.sh
+
+%pre
+getent group rvm >/dev/null || groupadd -r rvm
+
+%post
+/bin/bash --login -c "rvm use %{ruby_version} --default" || :
 
 %files
 %{rvm_dir}
