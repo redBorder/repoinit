@@ -27,9 +27,14 @@ fi
 mkdir SOURCES
 wget --no-check-certificate https://github.com/rvm/${PACKNAME}/archive/${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 #wget --no-check-certificate https://ftp.ruby-lang.org/pub/ruby/2.2/ruby-${RUBY_VERSION}.tar.bz2 -O SOURCES/ruby-${RUBY_VERSION}.tar.bz2
-#wget --no-check-certificate https://rubygems.org/downloads/bundler-${BUNDLER_VERSION}.gem -O SOURCES/bundler-${BUNDLER_VERSION}.gem
-#wget --no-check-certificate https://rubygems.org/downloads/bundle-0.0.1.gem -O SOURCES/bundle-0.0.1.gem
 #wget --no-check-certificate https://rubygems.org/rubygems/rubygems-${RUBYGEMS_VERSION}.tgz -O SOURCES/rubygems-${RUBYGEMS_VERSION}.tar.gz
+wget --no-check-certificate https://rubygems.org/downloads/bundler-1.12.5.gem -O SOURCES/bundler-1.12.5.gem
+wget --no-check-certificate https://rubygems.org/downloads/bundle-0.0.1.gem -O SOURCES/bundle-0.0.1.gem
+wget --no-check-certificate https://rubygems.org/downloads/system-getifaddrs-0.2.1.gem -O SOURCES/system-getifaddrs-0.2.1.gem
+wget --no-check-certificate https://rubygems.org/downloads/prettyprint-0.0.1.gem -O SOURCES/prettyprint-0.0.1.gem
+wget --no-check-certificate https://rubygems.org/downloads/getopt-1.4.3.gem -O SOURCES/getopt-1.4.3.gem
+wget --no-check-certificate https://rubygems.org/downloads/netaddr-1.5.1.gem -O SOURCES/netaddr-1.5.1.gem
+
 cp rvmrc rvm.sh SOURCES
 
 # Now it is time to create the source rpm
@@ -37,7 +42,6 @@ cp rvmrc rvm.sh SOURCES
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--define "__rubyversion ${RUBY_VERSION}" \
-	--define "__bundlerversion ${BUNDLER_VERSION}" \
 	--define "__rubygemsversion ${RUBYGEMS_VERSION}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
@@ -46,7 +50,6 @@ cp rvmrc rvm.sh SOURCES
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--define "__rubyversion ${RUBY_VERSION}" \
-	--define "__bundlerversion ${BUNDLER_VERSION}" \
 	--define "__rubygemsversion ${RUBYGEMS_VERSION}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 

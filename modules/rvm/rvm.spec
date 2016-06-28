@@ -1,3 +1,4 @@
+%define debug_package %{nil}
 %global rvm_dir /usr/lib/rvm
 %global rvm_group rvm
 %global ruby_version %{__rubyversion}
@@ -9,11 +10,14 @@ Version: %{__version}
 Release: %{__release}%{?dist}
 License: ASL 2.0
 BuildArch: x86_64
+#Source: ruby-%{ruby_version}.tar.bz2
 Source0: rvm-%{version}.tar.gz
-#Source1: ruby-%{ruby_version}.tar.bz2
-#Source2: bundler-%{bundler_version}.gem
-#Source3: rubygems-%{rubygems_version}.tar.gz
-#Source4: bundle-0.0.1.gem
+Source1: bundler-1.12.5.gem
+Source2: bundle-0.0.1.gem
+Source3: system-getifaddrs-0.2.1.gem
+Source4: getopt-1.4.3.gem
+Source5: prettyprint-0.0.1.gem
+Source6: netaddr-1.5.1.gem
 BuildRequires: libyaml-devel libffi-devel autoconf automake libtool bison
 BuildRequires: gcc-c++ patch readline readline-devel zlib-devel openssl-devel procps-ng sqlite-devel
 #BuildRequires: patch readline procps-ng 
@@ -54,12 +58,15 @@ current=ruby-%{ruby_version}
 default=ruby-%{ruby_version}
 " > %{rvm_dir}/config/alias
 
-#%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundle-0.0.1.gem
-#%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-%{bundler_version}.gem
+# install bundle gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundle-*.gem
 
-%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install bundle
-
-##%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/bundler-1.7.3.gem
+# install global basic gems
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/prettyprint-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/getopt-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/netaddr-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/system-getifaddrs-*.gem
 
 rm -rf %{rvm_dir}/src/*
 rm -rf %{rvm_dir}/log/*
