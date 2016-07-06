@@ -23,7 +23,7 @@ Source8: thread_safe-0.3.5.gem
 Source9: descendants_tracker-0.0.4.gem
 Source10: coercible-1.0.0.gem
 Source11: symmetric-encryption-3.8.3.gem
-Source12: arp_scan-0.1.0
+Source12: arp_scan-0.1.0.gem
 
 BuildRequires: libyaml-devel libffi-devel autoconf automake libtool bison
 BuildRequires: gcc-c++ patch readline readline-devel zlib-devel openssl-devel procps-ng sqlite-devel
