@@ -1,0 +1,12 @@
+[Unit]
+Description="Secor is a service persisting Kafka logs to Amazon S3, Google Cloud Storage and Openstack Swift"
+
+[Service]
+EnvironmentFile=/etc/sysconfig/secor
+ExecStart='java -ea -Dsecor_group=secor_partition -Dlog4j.configuration=/etc/secor/log4j.prod.properties -Dconfig=/etc/secor/secor.prod.partition.properties -cp /usr/share/secor.jar:/usr/share/secor:/usr/share/secor/lib/*${ADDITIONAL_CLASSPATH} com.pinterest.secor.main.ConsumerMain'
+Restart=always
+User=secor
+Group=secor
+
+[Install]
+WantedBy=multi-user.target
