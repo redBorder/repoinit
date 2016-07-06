@@ -34,6 +34,14 @@ wget --no-check-certificate https://rubygems.org/downloads/system-getifaddrs-0.2
 wget --no-check-certificate https://rubygems.org/downloads/prettyprint-0.0.1.gem -O SOURCES/prettyprint-0.0.1.gem
 wget --no-check-certificate https://rubygems.org/downloads/getopt-1.4.3.gem -O SOURCES/getopt-1.4.3.gem
 wget --no-check-certificate https://rubygems.org/downloads/netaddr-1.5.1.gem -O SOURCES/netaddr-1.5.1.gem
+wget --no-check-certificate https://rubygems.org/downloads/json-1.8.3.gem -O SOURCES/json-1.8.3.gem
+wget --no-check-certificate https://rubygems.org/downloads/arp_scan-0.1.0.gem -O SOURCES/arp_scan-0.1.0.gem
+# Symmetric Encryption dependencies
+wget --no-check-certificate https://rubygems.org/downloads/thread_safe-0.3.5.gem -O SOURCES/thread_safe-0.3.5.gem
+wget --no-check-certificate https://rubygems.org/downloads/descendants_tracker-0.0.4.gem -O SOURCES/descendants_tracker-0.0.4.gem
+wget --no-check-certificate https://rubygems.org/downloads/coercible-1.0.0.gem -O SOURCES/coercible-1.0.0.gem
+wget --no-check-certificate https://rubygems.org/downloads/symmetric-encryption-3.8.3.gem -O SOURCES/symmetric-encryption-3.8.3.gem
+
 
 cp rvmrc rvm.sh SOURCES
 
