@@ -178,7 +178,7 @@ if [ "$1" -ge "1" ] ; then
 fi
 
 %changelog
-* Tue Jun 14 2016 Juan J. Preito <jjprieto@redborder.com> - 3.4.8-1
+* Tue Jun 14 2016 Juan J. Prieto <jjprieto@redborder.com> - 3.4.8-1
 - Fisrt version for 3.4.8
 
 

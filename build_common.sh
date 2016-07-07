@@ -70,7 +70,7 @@ f_rupdaterepo() {
 	if [ $ret -eq 0 ]; then
 		# it is time to update repo
 		f_ssh_rbrepo touch /var/lock/rbrepo_createrepo
-		f_ssh_rbrepo createrepo ${REPODIR}
+		f_ssh_rbrepo createrepo --update ${REPODIR}
 		f_ssh_rbrepo rm -f /var/lock/rbrepo_createrepo
 	else
 		echo "Error updating repo ${REPODIR}"
