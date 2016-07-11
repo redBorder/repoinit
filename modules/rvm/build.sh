@@ -36,6 +36,7 @@ wget --no-check-certificate https://rubygems.org/downloads/getopt-1.4.3.gem -O S
 wget --no-check-certificate https://rubygems.org/downloads/netaddr-1.5.1.gem -O SOURCES/netaddr-1.5.1.gem
 wget --no-check-certificate https://rubygems.org/downloads/json-1.8.3.gem -O SOURCES/json-1.8.3.gem
 wget --no-check-certificate https://rubygems.org/downloads/arp_scan-0.1.0.gem -O SOURCES/arp_scan-0.1.0.gem
+wget --no-check-certificate https://rubygems.org/downloads/knife-acl-0.0.12.gem -O SOURCES/knife-acl-0.0.12.gem
 # Symmetric Encryption dependencies
 wget --no-check-certificate https://rubygems.org/downloads/thread_safe-0.3.5.gem -O SOURCES/thread_safe-0.3.5.gem
 wget --no-check-certificate https://rubygems.org/downloads/descendants_tracker-0.0.4.gem -O SOURCES/descendants_tracker-0.0.4.gem
