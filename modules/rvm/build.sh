@@ -38,6 +38,7 @@ wget --no-check-certificate https://rubygems.org/downloads/json-1.8.3.gem -O SOU
 wget --no-check-certificate https://rubygems.org/downloads/arp_scan-0.1.0.gem -O SOURCES/arp_scan-0.1.0.gem
 wget --no-check-certificate https://rubygems.org/downloads/knife-acl-0.0.12.gem -O SOURCES/knife-acl-0.0.12.gem
 wget --no-check-certificate https://rubygems.org/downloads/chef-12.0.3.gem -O SOURCES/chef-12.0.3.gem
+wget --no-check-certificate https://rubygems.org/downloads/rake-10.1.0.gem -O SOURCES/rake-10.1.0.gem
 # Symmetric Encryption dependencies
 wget --no-check-certificate https://rubygems.org/downloads/thread_safe-0.3.5.gem -O SOURCES/thread_safe-0.3.5.gem
 wget --no-check-certificate https://rubygems.org/downloads/descendants_tracker-0.0.4.gem -O SOURCES/descendants_tracker-0.0.4.gem
