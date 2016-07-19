@@ -24,6 +24,9 @@ Source9: descendants_tracker-0.0.4.gem
 Source10: coercible-1.0.0.gem
 Source11: symmetric-encryption-3.8.3.gem
 Source12: arp_scan-0.1.0.gem
+Source13: knife-acl-0.0.12.gem
+Source14: chef-12.0.3.gem
+Source15: rake-10.1.0.gem
 
 BuildRequires: libyaml-devel libffi-devel autoconf automake libtool bison
 BuildRequires: gcc-c++ patch readline readline-devel zlib-devel openssl-devel procps-ng sqlite-devel
@@ -80,6 +83,9 @@ default=ruby-%{ruby_version}
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/coercible-*.gem
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/symmetric-encryption-*.gem
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/arp_scan-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/knife-acl-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/chef-*.gem
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/rake-*.gem
 
 rm -rf %{rvm_dir}/src/*
 rm -rf %{rvm_dir}/log/*
