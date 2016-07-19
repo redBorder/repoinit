@@ -1,0 +1,6 @@
+[redborder]
+name=redborder-repo
+baseurl=http://repo.redborder.com/
+gpgcheck=0
+enabled=1
+sslcheck=0
