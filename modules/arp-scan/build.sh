@@ -22,13 +22,25 @@ REPODIR=${REPODIR:="/repos/redBorder"}
 #fi
 
 # First we need to download source
+rm -rf pkgs
 mkdir SOURCES
 mkdir pkgs
-wget http://pkgs.repoforge.org/arp-scan/${PACKNAME}-${VERSION}-${RELEASE}.rf.src.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.rf.src.rpm
+#wget http://pkgs.repoforge.org/arp-scan/${PACKNAME}-${VERSION}-${RELEASE}.rf.src.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.rb.src.rpm
+spectool \
+	--define "__version ${VERSION}" \
+	--define "__release ${RELEASE}" \
+	-C SOURCES -g ${PACKNAME}.spec
 
+# Now it is time to create the source rpm
+/usr/bin/mock -r sdk7 \
+        --define "__version ${VERSION}" \
+        --define "__release ${RELEASE}" \
+        --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
 /usr/bin/mock -r sdk7 \
+        --define "__version ${VERSION}" \
+        --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
