@@ -28,6 +28,7 @@ Source13: knife-acl-0.0.12.gem
 Source14: chef-12.0.3.gem
 Source15: rake-10.1.0.gem
 Source16: mrdialog-1.0.3.gem
+Source17: net-ip-0.0.8.gem
 
 BuildRequires: libyaml-devel libffi-devel autoconf automake libtool bison
 BuildRequires: gcc-c++ patch readline readline-devel zlib-devel openssl-devel procps-ng sqlite-devel
@@ -88,6 +89,7 @@ default=ruby-%{ruby_version}
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/chef-*.gem
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/rake-*.gem
 %{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/mrdialog-*.gem --no-ri
+%{rvm_dir}/bin/rvm %{ruby_version}@global do gem install %{rvm_dir}/archives/net-ip-*.gem
 
 rm -rf %{rvm_dir}/src/*
 rm -rf %{rvm_dir}/log/*
