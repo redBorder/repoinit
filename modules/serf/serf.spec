@@ -9,8 +9,7 @@ URL: https://github.com/hashicorp/serf
 Source0: serf
 
 %description
-Serf is a decentralized solution for service discovery and orchestration that is lightweight,
-highly available, and fault tolerant.
+Serf is a decentralized solution for service discovery and orchestration that is lightweight, highly available, and fault tolerant.
 
 %prep
 
