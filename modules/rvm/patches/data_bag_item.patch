@@ -1,0 +1,12 @@
+diff -Nru a/chef-12.0.3/lib/chef/data_bag_item.rb b/chef-12.0.3/lib/chef/data_bag_item.rb
+--- a/chef-12.0.3/lib/chef/data_bag_item.rb	2016-10-04 18:51:48.911602948 +0200
++++ b/chef-12.0.3/lib/chef/data_bag_item.rb	2016-10-04 18:53:56.515411361 +0200
+@@ -158,7 +158,7 @@
+       end
+     end
+ 
+-    def destroy(data_bag=data_bag, databag_item=name)
++    def destroy(data_bag=data_bag(), databag_item=name)
+       chef_server_rest.delete_rest("data/#{data_bag}/#{databag_item}")
+     end
+ 

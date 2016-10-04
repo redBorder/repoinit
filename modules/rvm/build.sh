@@ -47,6 +47,19 @@ wget --no-check-certificate https://rubygems.org/downloads/descendants_tracker-0
 wget --no-check-certificate https://rubygems.org/downloads/coercible-1.0.0.gem -O SOURCES/coercible-1.0.0.gem
 wget --no-check-certificate https://rubygems.org/downloads/symmetric-encryption-3.8.3.gem -O SOURCES/symmetric-encryption-3.8.3.gem
 
+# Patch and rebuild chef gem due a bug in data_bag_item script
+pushd SOURCES &>/dev/null
+gem unpack ./chef-12.0.3.gem --target=tmp
+pushd tmp &>/dev/null
+patch -p1 <../data_bag_item.patch
+popd &>/dev/null
+gem spec ./chef-12.0.3.gem --ruby > tmp/chef-12.0.3/chef-12.0.3.gemspec &>/dev/null
+pushd tmp/chef-12.0.3 &>/dev/null
+gem build chef-12.0.3.gemspec
+popd &>/dev/null
+rm -f chef-12.0.3.gem
+mv tmp/chef-12.0.3/chef-12.0.3.gem .
+popd &>/dev/null
 
 cp rvmrc rvm.sh SOURCES
 
