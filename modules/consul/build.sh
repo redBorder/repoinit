@@ -25,6 +25,7 @@ mkdir SOURCES
 wget --no-check-certificate https://releases.hashicorp.com/${PACKNAME}/${VERSION}/${PACKNAME}_${VERSION}_linux_amd64.zip -O SOURCES/${PACKNAME}_${VERSION}_linux_amd64.zip
 pushd SOURCES &>/dev/null
 unzip ${PACKNAME}_${VERSION}_linux_amd64.zip
+cp ../consul.service .
 popd &>/dev/null
 
 # Now it is time to create the source rpm
