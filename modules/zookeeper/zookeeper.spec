@@ -45,13 +45,13 @@ popd
 
 
 %install
-mkdir -p $RPM_BUILD_ROOT%{_prefix}/zookeeper
+mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper
 mkdir -p $RPM_BUILD_ROOT%{_log_dir}
 mkdir -p $RPM_BUILD_ROOT%{_data_dir}
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d
 mkdir -p $RPM_BUILD_ROOT%{_conf_dir}/
-install -p -D -m 644 zookeeper-%{version}.jar $RPM_BUILD_ROOT%{_prefix}/zookeeper/
-install -p -D -m 644 lib/*.jar $RPM_BUILD_ROOT%{_prefix}/zookeeper/
+install -p -D -m 644 zookeeper-%{version}.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
+install -p -D -m 644 lib/*.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
 install -p -D -m 755 %{S:1} $RPM_BUILD_ROOT%{_unitdir}/
 install -p -D -m 644 %{S:2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zookeeper
 install -p -D -m 644 %{S:3} $RPM_BUILD_ROOT%{_conf_dir}/
@@ -63,9 +63,9 @@ install -p -D -m 644 conf/configuration.xsl $RPM_BUILD_ROOT%{_conf_dir}/
 install -p -D -m 755 bin/*.sh $RPM_BUILD_ROOT%{_prefix}/bin
 # stupid systemd fails to expand file paths in runtime
 CLASSPATH=
-for i in $RPM_BUILD_ROOT%{_prefix}/zookeeper/*.jar
+for i in $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/*.jar
 do
-  CLASSPATH="%{_prefix}/zookeeper/$(basename ${i}):${CLASSPATH}"
+  CLASSPATH="%{_prefix}/lib/zookeeper/$(basename ${i}):${CLASSPATH}"
 done
 echo "[Service]" > $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
 echo "Environment=CLASSPATH=${CLASSPATH}" >> $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
@@ -78,7 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 /usr/bin/getent group zookeeper >/dev/null || /usr/sbin/groupadd -r zookeeper
 if ! /usr/bin/getent passwd zookeeper >/dev/null ; then
-    /usr/sbin/useradd -r -g zookeeper -m -d %{_prefix}/zookeeper -s /bin/bash -c "Zookeeper" zookeeper
+    /usr/sbin/useradd -r -g zookeeper -d %{_prefix}/lib/zookeeper -s /sbin/nologin -c "Zookeeper" zookeeper
 fi
 
 %post
@@ -111,7 +111,7 @@ fi
 %{_prefix}/bin/zkEnv.sh
 %{_prefix}/bin/zkServer.sh
 %{_prefix}/bin/zkcli
-%attr(-,zookeeper,zookeeper) %{_prefix}/zookeeper
+%attr(-,zookeeper,zookeeper) %{_prefix}/lib/zookeeper
 %attr(0755,zookeeper,zookeeper) %dir %{_log_dir}
 %attr(0700,zookeeper,zookeeper) %dir %{_data_dir}
 
