@@ -24,8 +24,8 @@ install -D -m 644 %{SOURCE0} $RPM_BUILD_ROOT/etc/yum.repos.d/
 
 %files
 %defattr(0644,root,root)
-/etc/yum.repos.d/rbrepo.repo
+/etc/yum.repos.d/rbrepo-devel.repo
 
 %changelog
-* Thu Oct 28 2016 Carlos J. Mateos <cjmateos@redborder.com> - 1.0.0-1
+* Fri Oct 28 2016 Carlos J. Mateos <cjmateos@redborder.com> - 1.0.0-1
 - first spec version
