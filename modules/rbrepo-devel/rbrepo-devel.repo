@@ -1,0 +1,6 @@
+[rbrepo]
+name=rbrepo-devel
+baseurl=http://rbrepo.redborder.lan/devel
+gpgcheck=0
+enabled=1
+sslcheck=0
