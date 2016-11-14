@@ -1,0 +1,2 @@
+YARN_OPTS="-Djava.io.tmpdir=/tmp/hadoop/nodemanager"
+YARN_HEAPSIZE=1000

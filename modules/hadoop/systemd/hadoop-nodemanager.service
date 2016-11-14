@@ -1,0 +1,13 @@
+[Unit]
+Description=Hadoop nodemanager
+
+[Service]
+User=hadoop
+Group=hadoop
+EnvironmentFile=/etc/sysconfig/java
+EnvironmentFile=/etc/sysconfig/hadoop_nodemanager
+ExecStart=/usr/lib/hadoop/bin/yarn --config /usr/lib/hadoop/etc/hadoop nodemanager
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
