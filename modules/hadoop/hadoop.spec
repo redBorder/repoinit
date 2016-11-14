@@ -16,7 +16,7 @@ Source5: hadoop_nodemanager
 %description
 
 %prep
-%setup -D -T -qn %{name}-%{version} -b 0
+%setup -qn %{name}-%{version}
 
 %build
 
@@ -29,7 +29,7 @@ exit 0
 
 %install
 mkdir -p %{buildroot}/usr/lib/hadoop
-install -D -m 755 %{SOURCE0} %{buildroot}%/usr/lib/hadoop/
+install -D -m 755 %{SOURCE0} %{buildroot}/usr/lib/hadoop/
 install -D -m 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/hadoop-resourcemanager.service
 install -D -m 644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/hadoop-nodemanager.service
 [ -f /etc/sysconfig/java ] || install -D -m 644 %{SOURCE3} %{buildroot}/etc/sysconfig/java
@@ -53,7 +53,5 @@ rm -rf %{buildroot}
 %ghost /var/lib/hadoop
 
 %changelog
-* Tue Oct 11 2016 Alberto Rodriguez <arodriguez@redborder.com> - 0.7.0-2
-- add unit file for systemd service management
-* Fri Sep 16 2016 Alberto Rodriguez <arodriguez@redborder.com> - 0.7.0-1
+* Mon Nov 14 2016 Alberto Rodriguez <arodriguez@redborder.com> - 2.7.3-1
 - first spec version
