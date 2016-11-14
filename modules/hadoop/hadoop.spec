@@ -29,7 +29,7 @@ exit 0
 
 %install
 mkdir -p %{buildroot}/usr/lib/hadoop
-install -D -m 755 %{SOURCE0} %{buildroot}/usr/lib/hadoop/
+cp -rf * %{buildroot}/usr/lib/hadoop/
 install -D -m 644 %{SOURCE1} %{buildroot}/usr/lib/systemd/system/hadoop-resourcemanager.service
 install -D -m 644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/hadoop-nodemanager.service
 [ -f /etc/sysconfig/java ] || install -D -m 644 %{SOURCE3} %{buildroot}/etc/sysconfig/java
