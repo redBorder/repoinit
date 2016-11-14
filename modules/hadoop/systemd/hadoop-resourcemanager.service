@@ -1,0 +1,13 @@
+[Unit]
+Description=Hadoop resourcemanager
+
+[Service]
+User=hadoop
+Group=hadoop
+EnvironmentFile=/etc/sysconfig/java
+EnvironmentFile=/etc/sysconfig/hadoop_resourcemanager
+ExecStart=/usr/lib/hadoop/bin/yarn --config /usr/lib/hadoop/etc/hadoop resourcemanager
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

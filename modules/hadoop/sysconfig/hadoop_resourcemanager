@@ -1,0 +1,2 @@
+YARN_HEAPSIZE=1000
+YARN_OPTS="-Djava.io.tmpdir=/tmp/hadoop/resourcemanager"
