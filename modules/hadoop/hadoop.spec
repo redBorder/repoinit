@@ -1,7 +1,7 @@
 Name: hadoop
 Version: %{__version}
 Release: %{__release}%{?dist}
-Summary: package for consul, a service discovery and configuration solution
+Summary: package for apache hadoop
 
 Group: System Environment/Base
 License: Apache License
@@ -12,6 +12,8 @@ Source2: hadoop-nodemanager.service
 Source3: java
 Source4: hadoop_resourcemanager
 Source5: hadoop_nodemanager
+
+Requires: java-1.8.0-openjdk
 
 %description
 
