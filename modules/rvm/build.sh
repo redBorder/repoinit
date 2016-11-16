@@ -103,7 +103,7 @@ gem unpack ./chef-12.0.3.gem --target=tmp
 pushd tmp &>/dev/null
 patch -p1 <../../patches/data_bag_item.patch
 popd &>/dev/null
-gem spec ./chef-12.0.3.gem --ruby > tmp/chef-12.0.3/chef-12.0.3.gemspec &>/dev/null
+gem spec ./chef-12.0.3.gem --ruby > tmp/chef-12.0.3/chef-12.0.3.gemspec
 pushd tmp/chef-12.0.3 &>/dev/null
 gem build chef-12.0.3.gemspec
 popd &>/dev/null
