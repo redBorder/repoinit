@@ -224,5 +224,7 @@ getent group rvm >/dev/null || groupadd -r rvm
 /etc/profile.d/rvm.sh
 
 %changelog
-* Fri Jun 17 2016 Juan J. Prieto <jjprieto@redborder.com> - 1.27.0
+* Thu Nov 17 2016 Carlos J. Mateos <cjmateos@redborder.com> - 1.27.0-2
+- Updated to latest version
+* Fri Jun 17 2016 Juan J. Prieto <jjprieto@redborder.com> - 1.27.0-1
 - Updated to latest version
