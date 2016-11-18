@@ -211,7 +211,7 @@ chgrp -R rvm $RPM_BUILD_ROOT/%{rvm_dir}
 chmod -R g+wxr $RPM_BUILD_ROOT/%{rvm_dir}
 
 ruby -p -i -e 'gsub(%r{#!.*/this/will/be/overwritten/or/wrapped/anyways/do/not/worry/ruby}, "#!/usr/bin/ruby")' \
-  %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_name}-%{version}/bin/*
+  %{rvm_dir}/rubies/ruby-%{__rubyversion}/lib/ruby/gems/2.2.0/bin/*
 
 %clean
 
