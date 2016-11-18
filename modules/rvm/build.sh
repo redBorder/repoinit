@@ -12,17 +12,8 @@ RUBY_VERSION=${RUBY_VERSION:="2.2.2"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
 
-#list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.src.rpm
-#                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.noarch.rpm
-#                ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.noarch.rpm"
-#
-#if [ "x$1" != "xforce" ]; then
-#        f_check "${list_of_packages}"
-#        if [ $? -eq 0 ]; then
-#                # the rpms exist and we don't need to create again
-#                exit 0
-#        fi
-#fi
+# remove old RPMs
+rm -rf pkgs
 
 # First we need to download source
 mkdir SOURCES
