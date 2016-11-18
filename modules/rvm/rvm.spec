@@ -210,6 +210,9 @@ cp /etc/rvmrc $RPM_BUILD_ROOT/etc/rvmrc
 chgrp -R rvm $RPM_BUILD_ROOT/%{rvm_dir}
 chmod -R g+wxr $RPM_BUILD_ROOT/%{rvm_dir}
 
+ruby -p -i -e 'gsub(%r{#!.*/this/will/be/overwritten/or/wrapped/anyways/do/not/worry/ruby}, "#!/usr/bin/ruby")' \
+  %{buildroot}%{_libdir}/ruby/gems/%{rb_ver}/gems/%{mod_name}-%{version}/bin/*
+
 %clean
 
 %pre
