@@ -6,7 +6,7 @@ node('ng-runner') {
         extensions: [],
         submoduleCfg: [],
         userRemoteConfigs: [[
-            credentialsId: 'c556c8d8-1fe0-47f4-94a5-d9e676915680',
+            credentialsId: "${CREDENTIALS_ID}",
             url: 'git@github.com:redBorder/repoinit.git']]
     ])
     sh "./build_module.sh -m ${MODULE}"

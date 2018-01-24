@@ -1,4 +1,4 @@
-Name: serf
+Name: minio
 Version: %{__version}
 Release: %{__release}%{?dist}
 Summary: package for minio, an object storage server with Amazon S3 compatible API
