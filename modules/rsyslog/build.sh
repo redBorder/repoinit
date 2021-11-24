@@ -17,7 +17,19 @@ list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}.el7.x86_64.rpm
                   ${REPODIR}/${PACKNAME}-mmnormalize-${VERSION}.el7.x86_64.rpm
                   ${CACHEDIR}/${PACKNAME}-mmnormalize-${VERSION}.el7.x86_64.rpm
                   ${REPODIR}/${PACKNAME}-mmjsonparse-${VERSION}.el7.x86_64.rpm
-                  ${CACHEDIR}/${PACKNAME}-mmjsonparse-${VERSION}.el7.x86_64.rpm"
+                  ${CACHEDIR}/${PACKNAME}-mmjsonparse-${VERSION}.el7.x86_64.rpm
+                  ${REPODIR}/libfastjson4-0.99.9-1.el7.src.rpm
+                  ${CACHEDIR}/libfastjson4-0.99.9-1.el7.src.rpm
+                  ${REPODIR}/libfastjson4-0.99.9-1.el7.x86_64.rpm
+                  ${CACHEDIR}/libfastjson4-0.99.9-1.el7.x86_64.rpm
+                  ${REPODIR}/libestr-0.1.11-1.el7.src.rpm
+                  ${CACHEDIR}/libestr-0.1.11-1.el7.src.rpm
+                  ${REPODIR}/libestr-0.1.11-1.el7.x86_64.rpm
+                  ${CACHEDIR}/libestr-0.1.11-1.el7.x86_64.rpm
+                  ${REPODIR}/liblognorm5-2.0.6-1.el7.src.rpm
+                  ${CACHEDIR}/liblognorm5-2.0.6-1.el7.src.rpm
+                  ${REPODIR}/liblognorm5-2.0.6-1.el7.x86_64.rpm
+                  ${CACHEDIR}/liblognorm5-2.0.6-1.el7.x86_64.rpm"
 
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -35,9 +47,21 @@ wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/${PACKNAME}-kafka-${VE
 wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/${PACKNAME}-mmnormalize-${VERSION}.el7.x86_64.rpm -O pkgs/${PACKNAME}-mmnormalize-${VERSION}.el7.x86_64.rpm
 wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/${PACKNAME}-mmjsonparse-${VERSION}.el7.x86_64.rpm -O pkgs/${PACKNAME}-mmjsonparse-${VERSION}.el7.x86_64.rpm 
 
+# Libraries for rsyslog
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/libfastjson4-0.99.9-1.el7.src.rpm -O pkgs/libfastjson4-0.99.9-1.el7.src.rpm
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/libfastjson4-0.99.9-1.el7.x86_64.rpm -O pkgs/libfastjson4-0.99.9-1.el7.x86_64.rpm
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/libestr-0.1.11-1.el7.src.rpm -O pkgs/libestr-0.1.11-1.el7.src.rpm
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/libestr-0.1.11-1.el7.x86_64.rpm -O pkgs/libestr-0.1.11-1.el7.x86_64.rpm
+
+# Libraries for rsyslog-mmjsonparse
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/liblognorm5-2.0.6-1.el7.src.rpm -O pkgs/liblognorm5-2.0.6-1.el7.src.rpm
+wget http://rpms.adiscon.com/v8-stable/epel-7/x86_64/RPMS/liblognorm5-2.0.6-1.el7.x86_64.rpm -O pkgs/liblognorm5-2.0.6-1.el7.x86_64.rpm
+
 # sync to cache and repo
-f_rsync_repo pkgs/${PACKNAME}*.rpm
-f_rsync_iso pkgs/${PACKNAME}*.rpm
+#f_rsync_repo pkgs/${PACKNAME}*.rpm
+#f_rsync_iso pkgs/${PACKNAME}*.rpm
+f_rsync_repo pkgs/*.rpm
+f_rsync_iso pkgs/*.rpm
 rm -rf pkgs
 
 # Update sdk7 repo
