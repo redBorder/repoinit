@@ -31,6 +31,8 @@ rm -rf %{buildroot}
 /usr/lib/systemd/system/consul.service
 
 %changelog
+* Fri Jan 07 2022 David Vanhoucke <dvanhoucke@redborder.com> - 1.11.1-1
+- latest consul version
 * Tue Oct 11 2016 Alberto Rodriguez <arodriguez@redborder.com> - 0.7.0-2
 - add unit file for systemd service management
 * Fri Sep 16 2016 Alberto Rodriguez <arodriguez@redborder.com> - 0.7.0-1
