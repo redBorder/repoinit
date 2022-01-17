@@ -42,6 +42,7 @@ Patch28: freeradius-Use-SSL_export_keying_material-for-TLSv1.2-PRF-deriv.patch
 Patch29: freeradius-More-fixes-to-use-SSL_export_keying_material.patch
 Patch30: freeradius-Always-delete-MS-MPPE-from-the-reply.-Fixes-1206.patch
 Patch31: freeradius-Add-kafka-support.patch
+Patch32: rlm_raw.patch
 
 Obsoletes: freeradius-devel
 Obsoletes: freeradius-libs
@@ -217,7 +218,7 @@ This plugin provides the unixODBC support for the FreeRADIUS server project, red
 #%patch29 -p1
 #%patch30 -p1
 %patch31 -p1
-
+%patch32 -p1
 # Some source files mistakenly have execute permissions set
 find $RPM_BUILD_DIR/freeradius-server-%{version} \( -name '*.c' -o -name '*.h' \) -a -perm /0111 -exec chmod a-x {} +
 
@@ -379,7 +380,7 @@ exit 0
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/radiusd.conf
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/sql.conf
 %dir %attr(750,root,radiusd) /etc/raddb/sql
-#%attr(640,root,radiusd) %config(noreplace) /etc/raddb/sql/oracle/*
+%attr(640,root,radiusd) %config(noreplace) /etc/raddb/sql/postgresql/*
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/users
 %dir %attr(770,root,radiusd) /etc/raddb/certs
 %config(noreplace) /etc/raddb/certs/Makefile
@@ -392,6 +393,7 @@ exit 0
 %dir %attr(750,root,radiusd) /etc/raddb/sites-enabled
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/sites-enabled/*
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/eap.conf
+%attr(640,root,radiusd) %config(noreplace) /etc/raddb/kafka_log.conf
 %config(noreplace) %attr(640,root,radiusd) /etc/raddb/example.pl
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/policy.conf
 %config(noreplace) /etc/raddb/policy.txt
@@ -448,6 +450,7 @@ exit 0
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/sradutmp
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/unix
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/wimax
+%attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/raw
 # binaries
 %defattr(-,root,root)
 /usr/sbin/checkrad
@@ -596,6 +599,10 @@ exit 0
 %{_libdir}/freeradius/rlm_unix-%{version}.so
 %{_libdir}/freeradius/rlm_wimax.so
 %{_libdir}/freeradius/rlm_wimax-%{version}.so
+%{_libdir}/freeradius/rlm_kafka_log.so
+%{_libdir}/freeradius/rlm_kafka_log-%{version}.so
+%{_libdir}/freeradius/rlm_raw.so
+%{_libdir}/freeradius/rlm_raw-%{version}.so
 
 %files utils
 /usr/bin/*
@@ -650,14 +657,26 @@ exit 0
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/ldap
 
 %files unixODBC
+%attr(640,root,radiusd)
 %{_libdir}/freeradius/rlm_sql_unixodbc.so
 %{_libdir}/freeradius/rlm_sql_unixodbc-%{version}.so
 
 %files kafka
+%attr(640,root,radiusd)
 %{_libdir}/freeradius/rlm_kafka_log.so
 %{_libdir}/freeradius/rlm_kafka_log-%{version}.so
 
+%files raw
+%attr(640,root,radiusd)
+%{_libdir}/freeradius/rlm_raw.so
+%{_libdir}/freeradius/rlm_raw-%{version}.so
+
 %changelog
+
+* Tue Jan 11 2022 Eduardo Reyes <eareyes@redborder.com> - 2.2.9-2
+- Fix kafka module
+- Add raw module
+
 * Tue Jun 21 2016 Juan J. Prieto <jjprieto@redborder.com> - 2.2.9-1
 - Update to 2.2.9
 - create kafka module
