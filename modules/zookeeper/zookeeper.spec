@@ -21,6 +21,7 @@ Source4: log4j.properties
 Source5: log4j-cli.properties
 Source6: zookeeper.sysconfig
 Source7: zkcli
+Source8: zookeeper.sh
 Prefix: %{_prefix}
 Vendor: Apache Software Foundation
 Packager: Juan J. Prieto <jjprieto@redborder.com>
@@ -50,6 +51,7 @@ mkdir -p $RPM_BUILD_ROOT%{_log_dir}
 mkdir -p $RPM_BUILD_ROOT%{_data_dir}
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d
 mkdir -p $RPM_BUILD_ROOT%{_conf_dir}/
+mkdir -p $RPM_BUILD_ROOT/etc/profile.d
 install -p -D -m 644 zookeeper-%{version}.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
 install -p -D -m 644 lib/*.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
 install -p -D -m 755 %{S:1} $RPM_BUILD_ROOT%{_unitdir}/
@@ -61,6 +63,8 @@ install -p -D -m 644 %{S:6} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/zookeeper
 install -p -D -m 755 %{S:7} $RPM_BUILD_ROOT%{_prefix}/bin/zkcli
 install -p -D -m 644 conf/configuration.xsl $RPM_BUILD_ROOT%{_conf_dir}/
 install -p -D -m 755 bin/*.sh $RPM_BUILD_ROOT%{_prefix}/bin
+install -p -D -m 644 %{S:8} $RPM_BUILD_ROOT/etc/profile.d
+
 # stupid systemd fails to expand file paths in runtime
 CLASSPATH=
 for i in $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/*.jar
@@ -69,6 +73,8 @@ do
 done
 echo "[Service]" > $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
 echo "Environment=CLASSPATH=${CLASSPATH}" >> $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
+echo "" >> $RPM_BUILD_ROOT%{_prefix}/bin/zkEnv.sh
+echo "CLASSPATH=\$CLASSPATH:${CLASSPATH}" >> $RPM_BUILD_ROOT%{_prefix}/bin/zkEnv.sh
 
 %{makeinstall} -C src/c
 
@@ -111,6 +117,7 @@ fi
 %{_prefix}/bin/zkEnv.sh
 %{_prefix}/bin/zkServer.sh
 %{_prefix}/bin/zkcli
+/etc/profile.d/zookeeper.sh
 %attr(-,zookeeper,zookeeper) %{_prefix}/lib/zookeeper
 %attr(0755,zookeeper,zookeeper) %dir %{_log_dir}
 %attr(0700,zookeeper,zookeeper) %dir %{_data_dir}

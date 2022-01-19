@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.7.0"}
+VERSION=${VERSION:="1.11.1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="consul"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
