@@ -55,10 +55,10 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
-#f_rsync_repo pkgs/*.rpm 
-#rm -rf pkgs
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
+f_rsync_repo pkgs/*.rpm 
+rm -rf pkgs
 
 # Update sdk7 repo
-#f_rupdaterepo
+f_rupdaterepo
 
