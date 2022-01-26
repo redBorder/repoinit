@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="3.4.8"}
+VERSION=${VERSION:="3.4.11"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="zookeeper"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
@@ -23,12 +23,13 @@ fi
 
 # First we need to download source
 mkdir SOURCES
-URL=$(curl -s https://www.apache.org/dyn/closer.cgi/zookeeper/zookeeper-${VERSION}/zookeeper-${VERSION}.tar.gz?asjson=1 | python -c 'import sys,json; data=json.load(sys.stdin); print data["preferred"] + data["path_info"]')
+URL="https://archive.apache.org/dist/zookeeper/zookeeper-${VERSION}/zookeeper-${VERSION}.tar.gz"
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 wget https://github.com/redBorder/zookeeper-el7-rpm/archive/master.tar.gz -O SOURCES/zookeeper-el7-rpm.tar.gz
 pushd SOURCES &>/dev/null
 tar xzf zookeeper-el7-rpm.tar.gz
 mv ${PACKNAME}-${VERSION}.tar.gz zookeeper-el7-rpm-master
+cp ../zookeeper.sh zookeeper-el7-rpm-master/
 popd &>/dev/null
 
 # Now it is time to create the source rpm

@@ -3,7 +3,11 @@
 source build_common.sh
 
 VERSION=${VERSION:="0.1.0"}
+<<<<<<< HEAD
 RELEASE=${RELEASE:="2"}
+=======
+RELEASE=${RELEASE:="1"}
+>>>>>>> development
 PACKNAME=${PACKNAME:="minio"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
@@ -50,10 +54,9 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#f_rsync_repo pkgs/${PACKNAME}*.rpm
-#f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
-#rm -rf pkgs
+f_rsync_repo pkgs/${PACKNAME}*.rpm
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
+rm -rf pkgs
 
 # Update sdk7 repo
-#f_rupdaterepo ${REPODIR}
-
+f_rupdaterepo ${REPODIR}
