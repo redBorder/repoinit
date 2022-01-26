@@ -1,0 +1,13 @@
+[Unit]
+Description=Minio S3 Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/minio server --config-dir /etc/minio /var/minio/data
+KillSignal=SIGTERM
+User=minio
+TimeoutStartSec=60
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
