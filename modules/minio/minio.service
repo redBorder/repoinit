@@ -1,0 +1,21 @@
+[Unit]
+Description=Minio S3 Service
+Documentation=https://docs.min.io
+After=network.target
+AssertFileIsExecutable=/usr/bin/minio
+
+[Service]
+User=minio
+
+EnvironmentFile=/etc/default/minio
+ExecStartPre=/bin/bash -c "if [ -z \"${MINIO_VOLUMES}\" ]; then echo \"Variable MINIO_VOLUMES not set in /etc/default/minio\"; exit 1; fi"
+ExecStart=/usr/bin/minio server $MINIO_OPTS $MINIO_VOLUMES
+
+KillSignal=SIGTERM
+TimeoutStartSec=60
+
+# Let systemd restart this service always
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
