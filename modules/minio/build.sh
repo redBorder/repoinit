@@ -3,7 +3,7 @@
 source build_common.sh
 
 VERSION=${VERSION:="0.1.0"}
-RELEASE=${RELEASE:="1"}
+RELEASE=${RELEASE:="2"}
 PACKNAME=${PACKNAME:="minio"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
@@ -25,6 +25,7 @@ mkdir SOURCES
 pushd SOURCES &>/dev/null
 wget --no-check-certificate https://dl.minio.io/server/minio/release/linux-amd64/minio 
 popd &>/dev/null
+cp minio.service SOURCES/minio.service
 
 # Now it is time to create the source rpm
 /usr/bin/mock \
@@ -55,4 +56,3 @@ rm -rf pkgs
 
 # Update sdk7 repo
 f_rupdaterepo ${REPODIR}
-
