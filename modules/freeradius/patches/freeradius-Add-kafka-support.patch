@@ -1,7 +1,7 @@
-diff -Nru a/doc/rlm_kafka b/doc/rlm_kafka
---- a/doc/rlm_kafka	1970-01-01 01:00:00.000000000 +0100
-+++ b/doc/rlm_kafka	2016-03-22 17:50:26.000000000 +0100
-@@ -0,0 +1,59 @@
+diff -ruN a/doc/rlm_kafka b/doc/rlm_kafka
+--- a/doc/rlm_kafka	1970-01-01 00:00:00.000000000 +0000
++++ b/doc/rlm_kafka	2022-01-11 09:37:07.211710000 +0000
+@@ -0,0 +1,58 @@
 +rlm_kafka installation and running guide
 +by Eugenio Perez <eupm90@gmail.com>
 +Copyright 2014 Eneo Tecnologia S.L.
@@ -10,8 +10,8 @@ diff -Nru a/doc/rlm_kafka b/doc/rlm_kafka
 +
 +0. INTRODUCTION
 +
-+  rlm_kafka uses Magnus Edenhill's librdkafka to send, currently, accounting 
-+  and post-proxy information to a kafka topic in json format. It's easily 
++  rlm_kafka uses Magnus Edenhill's librdkafka to send, currently, accounting
++  and post-proxy information to a kafka topic in json format. It's easily
 +  extensible to send a kafka message for each plugin entry point.
 +
 +1. WHAT DOES IT DO
@@ -21,13 +21,13 @@ diff -Nru a/doc/rlm_kafka b/doc/rlm_kafka
 +  object to a kafka topic.
 +
 +2. HOW TO USE IT
-+  
++
 +  You have to install librdkafka and rbutils from:
 +
 +    * https://github.com/edenhill/librdkafka
 +    * https://github.com/redBorder/rbutils
 +
-+  After that, change kafka_log.conf according to your needs. It should look 
++  After that, change kafka_log.conf according to your needs. It should look
 +  like:
 +
 +  kafka_log {
@@ -38,12 +38,12 @@ diff -Nru a/doc/rlm_kafka b/doc/rlm_kafka
 +    rdkafka.socket.max.fails        = "3"
 +  }
 +
-+  And be sure that it's $INCLUDEd under the "modules {}" section of radiusd.conf 
++  And be sure that it's $INCLUDEd under the "modules {}" section of radiusd.conf
 +  file.
 +
 +  Note: More options are defined under section 3: MODULE OPTIONS.
 +
-+  Then put "kafka_log" under "post-proxy {}" or "accounting {}" section under 
++  Then put "kafka_log" under "post-proxy {}" or "accounting {}" section under
 +  sites-enabled/default (Or the virtual host you want to use).
 +
 +  Proxy or accounting listening freeradius configuration is out of this
@@ -57,14 +57,13 @@ diff -Nru a/doc/rlm_kafka b/doc/rlm_kafka
 +  rdkafka.*  => Option to pass directly to librdkafka
 +
 +4. Bug reports:
-+    
-+  Please use the github issues system. If you prefer, you can send me an 
-+  email to eugenio@redborder.org
 +
-diff -Nru a/raddb/kafka_log.conf b/raddb/kafka_log.conf
---- a/raddb/kafka_log.conf	1970-01-01 01:00:00.000000000 +0100
-+++ b/raddb/kafka_log.conf	2016-03-22 17:50:26.000000000 +0100
-@@ -0,0 +1,21 @@
++  Please use the github issues system. If you prefer, you can send me an
++  email to eugenio@redborder.org
+diff -ruN a/raddb/kafka_log.conf b/raddb/kafka_log.conf
+--- a/raddb/kafka_log.conf	1970-01-01 00:00:00.000000000 +0000
++++ b/raddb/kafka_log.conf	2022-01-11 09:37:07.211710000 +0000
+@@ -0,0 +1,20 @@
 +# -*- text -*-
 +##
 +## kafka_log.conf -- Apache kafka modules
@@ -85,10 +84,21 @@ diff -Nru a/raddb/kafka_log.conf b/raddb/kafka_log.conf
 +	rdkafka.socket.keepalive.enable = "true"
 +	rdkafka.socket.max.fails        = "3"
 +}
+diff -ruN a/raddb/radiusd.conf.in b/raddb/radiusd.conf.in
+--- a/raddb/radiusd.conf.in	2015-09-30 21:37:13.000000000 +0100
++++ b/raddb/radiusd.conf.in	2022-01-11 10:17:10.369005078 +0000
+@@ -750,6 +750,8 @@
+ 	#  IP addresses managed in an SQL table.
+ 	#
+ #	$INCLUDE sqlippool.conf
 +
-diff -Nru a/raddb/sites-available/default b/raddb/sites-available/default
---- a/raddb/sites-available/default	2015-09-30 22:37:13.000000000 +0200
-+++ b/raddb/sites-available/default	2016-03-22 17:50:26.000000000 +0100
++	$INCLUDE kafka_log.conf
+ }
+ 
+ # Instantiation
+diff -ruN a/raddb/sites-available/default b/raddb/sites-available/default
+--- a/raddb/sites-available/default	2015-09-30 21:37:13.000000000 +0100
++++ b/raddb/sites-available/default	2022-01-11 10:14:06.016764650 +0000
 @@ -11,7 +11,7 @@
  #	the "inner-tunnel" virtual server.  You wll likely have to edit
  #	that, too, for authentication to work.
@@ -98,19 +108,6 @@ diff -Nru a/raddb/sites-available/default b/raddb/sites-available/default
  #
  ######################################################################
  #
-@@ -429,10 +429,10 @@
- #	pgsql-voip
- 
- 	# For Exec-Program and Exec-Program-Wait
--	exec
-+#	exec
- 
- 	#  Filter attributes from the accounting response.
--	attr_filter.accounting_response
-+#	attr_filter.accounting_response
- 
- 	#
- 	#  See "Autz-Type Status-Server" for how this works.
 @@ -440,6 +440,8 @@
  #	Acct-Type Status-Server {
  #
@@ -128,12 +125,11 @@ diff -Nru a/raddb/sites-available/default b/raddb/sites-available/default
 +	kafka_log
  }
  
-diff -Nru a/src/modules/rlm_kafka/Makefile b/src/modules/rlm_kafka/Makefile
---- a/src/modules/rlm_kafka/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ b/src/modules/rlm_kafka/Makefile	2016-03-22 17:50:26.000000000 +0100
-@@ -0,0 +1,24 @@
-+#
-+# Makefile
+diff -ruN a/src/modules/rlm_kafka/Makefile b/src/modules/rlm_kafka/Makefile
+--- a/src/modules/rlm_kafka/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ b/src/modules/rlm_kafka/Makefile	2022-01-11 08:20:59.085937000 +0000
+@@ -0,0 +1,23 @@
++Makefile
 +#
 +# Version:	$Id: 06c6a490c1d650921f0a429cc0edc11ece170765 $
 +#
@@ -156,34 +152,34 @@ diff -Nru a/src/modules/rlm_kafka/Makefile b/src/modules/rlm_kafka/Makefile
 +test.lo: CFLAGS += -DRADIUSD_VERSION_STRING=\"${RADIUSD_VERSION_STRING}\"
 +test.lo: test.c $(HEADERS)
 +	$(LIBTOOL) --mode=compile --tag=CC $(CC) $(CFLAGS) $(RLM_CFLAGS) -c test.c
-diff -Nru a/src/modules/rlm_kafka/rlm_client_enrichment.c b/src/modules/rlm_kafka/rlm_client_enrichment.c
---- a/src/modules/rlm_kafka/rlm_client_enrichment.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/src/modules/rlm_kafka/rlm_client_enrichment.c	2016-03-22 17:50:26.000000000 +0100
+diff -ruN a/src/modules/rlm_kafka/rlm_client_enrichment.c b/src/modules/rlm_kafka/rlm_client_enrichment.c
+--- a/src/modules/rlm_kafka/rlm_client_enrichment.c	1970-01-01 00:00:00.000000000 +0000
++++ b/src/modules/rlm_kafka/rlm_client_enrichment.c	2022-01-11 08:26:21.137080000 +0000
 @@ -0,0 +1,175 @@
 +/*
-+ *  rlm_client_enrichment	Mantains an per client enrichment database
-+ *
-+ *  Version:    $Id: 299232d754e44d66d8f8b1e79490e98810966b2d $
-+ *
-+ *  Author:     Eugenio Perez <eupm90@gmail.com>
-+ *              Based on Nicolas Baradakis sql_log
-+ *
-+ *  Copyright (C) 2014 Eneo Tecnologia
-+ *
-+ *  This program is free software; you can redistribute it and/or
-+ *  modify it under the terms of the GNU General Public License
-+ *  as published by the Free Software Foundation; either version 2
-+ *  of the License, or (at your option) any later version.
-+ *
-+ *  This program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ *  GNU General Public License for more details.
-+ *
-+ *  You should have received a copy of the GNU General Public License
-+ *  along with this program; if not, write to the Free Software
-+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-+ */
++*  rlm_client_enrichment	Mantains an per client enrichment database
++*
++*  Version:    $Id: 299232d754e44d66d8f8b1e79490e98810966b2d $
++*
++*  Author:     Eugenio Perez <eupm90@gmail.com>
++*              Based on Nicolas Baradakis sql_log
++*
++*  Copyright (C) 2014 Eneo Tecnologia
++*
++*  This program is free software; you can redistribute it and/or
++*  modify it under the terms of the GNU General Public License
++*  as published by the Free Software Foundation; either version 2
++*  of the License, or (at your option) any later version.
++*
++*  This program is distributed in the hope that it will be useful,
++*  but WITHOUT ANY WARRANTY; without even the implied warranty of
++*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++*  GNU General Public License for more details.
++*
++*  You should have received a copy of the GNU General Public License
++*  along with this program; if not, write to the Free Software
++*  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++*/
 +
 +#include "rlm_client_enrichment.h"
 +#include <assert.h>
@@ -335,9 +331,9 @@ diff -Nru a/src/modules/rlm_kafka/rlm_client_enrichment.c b/src/modules/rlm_kafk
 +	// this will free all saved items
 +	fr_hash_table_free(db);
 +}
-diff -Nru a/src/modules/rlm_kafka/rlm_client_enrichment.h b/src/modules/rlm_kafka/rlm_client_enrichment.h
---- a/src/modules/rlm_kafka/rlm_client_enrichment.h	1970-01-01 01:00:00.000000000 +0100
-+++ b/src/modules/rlm_kafka/rlm_client_enrichment.h	2016-03-22 17:50:26.000000000 +0100
+diff -ruN a/src/modules/rlm_kafka/rlm_client_enrichment.h b/src/modules/rlm_kafka/rlm_client_enrichment.h
+--- a/src/modules/rlm_kafka/rlm_client_enrichment.h	1970-01-01 00:00:00.000000000 +0000
++++ b/src/modules/rlm_kafka/rlm_client_enrichment.h	2022-01-11 08:27:37.945115000 +0000
 @@ -0,0 +1,40 @@
 +/*
 + *  rlm_client_enrichment	Mantains an per client enrichment database
@@ -379,9 +375,9 @@ diff -Nru a/src/modules/rlm_kafka/rlm_client_enrichment.h b/src/modules/rlm_kafk
 +void client_enrichment_db_free(client_enrichment_db_t *db);
 +
 +#endif  /* RLM_CLIENT_ENRICHMENT_H */
-diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_kafka_log.c
---- a/src/modules/rlm_kafka/rlm_kafka_log.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/src/modules/rlm_kafka/rlm_kafka_log.c	2016-03-22 17:50:26.000000000 +0100
+diff -ruN a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_kafka_log.c
+--- a/src/modules/rlm_kafka/rlm_kafka_log.c	1970-01-01 00:00:00.000000000 +0000
++++ b/src/modules/rlm_kafka/rlm_kafka_log.c	2022-01-11 08:32:28.007244000 +0000
 @@ -0,0 +1,803 @@
 +/*
 + *  rlm_kafka_log	Send the accounting information to an Apache kafka
@@ -517,10 +513,10 @@ diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_ka
 +	memcpy(keydata,const_keydata,sizeof(keydata)-1);
 +	keydata[sizeof(keydata)-1] = '\0';
 +
-+	for(i=0;i<toks;i++) {
-+		ret <<= (toks == 6 ? 8 : 24);
-+		const char *prev_endptr = endptr;
-+		ret += strtoul(endptr,&endptr,16);
++		for(i=0;i<toks;i++) {
++			ret <<= (toks == 6 ? 8 : 24);
++			const char *prev_endptr = endptr;
++			ret += strtoul(endptr,&endptr,16);
 +
 +		if (NULL == endptr) {
 +			radlog(L_ERR,"Invalid mac %.*s",(int)keylen,
@@ -640,7 +636,7 @@ diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_ka
 +    return res;
 +}
 +
-+static int cf_section_rdkafka_parse(CONF_SECTION *section, 
++static int cf_section_rdkafka_parse(CONF_SECTION *section,
 +						rd_kafka_conf_t *rk_conf,rd_kafka_topic_conf_t *rkt_conf,
 +						char *err,size_t errsize){
 +	static const char *config_prefix = "rdkafka.";
@@ -653,7 +649,7 @@ diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_ka
 +
 +			if(strlen(key) > strlen(config_prefix)){
 +				key = key + strlen(config_prefix);
-+				const rd_kafka_conf_res_t rc = 
++				const rd_kafka_conf_res_t rc =
 +					rdkafka_add_attr_to_config(rk_conf,rkt_conf,key,val,err,errsize);
 +				if(rc != RD_KAFKA_CONF_OK)
 +					return rc;
@@ -950,7 +946,7 @@ diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_ka
 +static void strbuffer_append_timestamp(strbuffer_t *strbuff,time_t timestamp){
 +	char buffer[MAX_INT_STRING_SIZE]; /* 2^64 */
 +	const char *timestamp_str = _itoa(timestamp,buffer,10,sizeof(buffer));
-+	
++
 +	strbuffer_append(strbuff,"\"timestamp\":");
 +	strbuffer_append(strbuff,timestamp_str);
 +}
@@ -1186,35 +1182,35 @@ diff -Nru a/src/modules/rlm_kafka/rlm_kafka_log.c b/src/modules/rlm_kafka/rlm_ka
 +		NULL			/* post-auth */
 +	},
 +};
-diff -Nru a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
---- a/src/modules/rlm_kafka/test.c	1970-01-01 01:00:00.000000000 +0100
-+++ b/src/modules/rlm_kafka/test.c	2016-03-22 17:50:26.000000000 +0100
+diff -ruN a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
+--- a/src/modules/rlm_kafka/test.c	1970-01-01 00:00:00.000000000 +0000
++++ b/src/modules/rlm_kafka/test.c	2022-01-11 08:36:54.286362000 +0000
 @@ -0,0 +1,192 @@
 +/*
-+ *  rlm_kafka_log	Send the accounting information to an Apache kafka
-+ *                  topic
-+ *
-+ *  Version:    $Id: a4b15430d2056d9473cafc7579801f16ea35a884 $
-+ *
-+ *  Author:     Eugenio Perez <eupm90@gmail.com>
-+ *              Based on Nicolas Baradakis sql_log
-+ *
-+ *  Copyright (C) 2014 Eneo Tecnologia
-+ *
-+ *  This program is free software; you can redistribute it and/or
-+ *  modify it under the terms of the GNU General Public License
-+ *  as published by the Free Software Foundation; either version 2
-+ *  of the License, or (at your option) any later version.
-+ *
-+ *  This program is distributed in the hope that it will be useful,
-+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-+ *  GNU General Public License for more details.
-+ *
-+ *  You should have received a copy of the GNU General Public License
-+ *  along with this program; if not, write to the Free Software
-+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
-+ */
++*  rlm_kafka_log	Send the accounting information to an Apache kafka
++*                  topic
++*
++*  Version:    $Id: a4b15430d2056d9473cafc7579801f16ea35a884 $
++*
++*  Author:     Eugenio Perez <eupm90@gmail.com>
++*              Based on Nicolas Baradakis sql_log
++*
++*  Copyright (C) 2014 Eneo Tecnologia
++*
++*  This program is free software; you can redistribute it and/or
++*  modify it under the terms of the GNU General Public License
++*  as published by the Free Software Foundation; either version 2
++*  of the License, or (at your option) any later version.
++*
++*  This program is distributed in the hope that it will be useful,
++*  but WITHOUT ANY WARRANTY; without even the implied warranty of
++*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++*  GNU General Public License for more details.
++*
++*  You should have received a copy of the GNU General Public License
++*  along with this program; if not, write to the Free Software
++*  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA
++*/
 +
 +#include <stdint.h>
 +#include <assert.h>
@@ -1236,18 +1232,18 @@ diff -Nru a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
 +
 +
 +/*
-+ *      The rest of this is because the conffile.c, etc. assume
-+ *      they're running inside of the server.  And we don't (yet)
-+ *      have a "libfreeradius-server", or "libfreeradius-util".
-+ */
++*      The rest of this is because the conffile.c, etc. assume
++*      they're running inside of the server.  And we don't (yet)
++*      have a "libfreeradius-server", or "libfreeradius-util".
++*/
 +int debug_flag = 0;
 +struct main_config_t mainconfig;
 +char *request_log_file = NULL;
 +char *debug_log_file = NULL;
 +int radius_xlat(UNUSED char *out, UNUSED int outlen, UNUSED const char *fmt,
-+                UNUSED REQUEST *request, UNUSED RADIUS_ESCAPE_STRING func)
++               UNUSED REQUEST *request, UNUSED RADIUS_ESCAPE_STRING func)
 +{
-+        return -1;
++       return -1;
 +}
 +
 +
@@ -1349,7 +1345,7 @@ diff -Nru a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
 +			.expected = -1
 +		},{
 +			.mac = "0123-6789ab",
-+			.expected = -1
++		.expected = -1
 +		},{
 +			.mac = "01234-6789ab",
 +			.expected = -1
@@ -1369,7 +1365,7 @@ diff -Nru a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
 +			.mac = "012345-6789a",
 +			.expected = -1
 +		},{
-+			.mac = "0123456789a",
++		.mac = "0123456789a",
 +			.expected = -1
 +		}
 +	};
@@ -1382,13 +1378,11 @@ diff -Nru a/src/modules/rlm_kafka/test.c b/src/modules/rlm_kafka/test.c
 +	mac_partitioner_test();
 +	return 0;
 +}
-diff -Nru a/src/modules/stable b/src/modules/stable
---- a/src/modules/stable	2015-09-30 22:37:13.000000000 +0200
-+++ b/src/modules/stable	2016-03-22 17:50:26.000000000 +0100
-@@ -41,5 +41,6 @@
- rlm_sqlcounter
- rlm_sqlippool
+diff -ruN a/src/modules/stable b/src/modules/stable
+--- a/src/modules/stable	2015-09-30 21:37:13.000000000 +0100
++++ b/src/modules/stable	2022-01-11 10:10:36.055537846 +0000
+@@ -43,3 +43,4 @@
  rlm_sql_log
-+rlm_kafka
  rlm_unix
  rlm_wimax
++rlm_kafka
