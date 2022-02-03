@@ -6,7 +6,7 @@ License: GPLv2+ and LGPLv2+
 Group: System Environment/Daemons
 URL: http://www.freeradius.org/
 
-Source0: ftp://ftp.freeradius.org/pub/radius/freeradius-server-%{version}.tar.gz
+Source0: ftp://ftp.freeradius.org/ftp/pub/freeradius/old/freeradius-server-%{version}.tar.gz
 Source100: freeradius-radiusd-init
 Source102: freeradius-logrotate
 Source103: freeradius-pam-conf
