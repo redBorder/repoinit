@@ -9,8 +9,8 @@ PACKNAME=${PACKNAME:="freeradius"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
 
-list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.src.rpm 
-                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
+list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.src.rpm
+                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
                 ${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
                 ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm"
 
@@ -24,7 +24,7 @@ fi
 
 # First we need to download source
 mkdir SOURCES
-wget ftp://ftp.freeradius.org/pub/freeradius/freeradius-server-2.2.9.tar.gz -O SOURCES/${PACKNAME}-server-${VERSION}.tar.gz
+wget ftp://ftp.freeradius.org/pub/freeradius/old/freeradius-server-2.2.9.tar.gz -O SOURCES/${PACKNAME}-server-${VERSION}.tar.gz
 cp patches/* SOURCES
 
 # Now it is time to create the source rpm
@@ -56,4 +56,3 @@ rm -rf pkgs
 
 # Update sdk7 repo
 f_rupdaterepo
-
