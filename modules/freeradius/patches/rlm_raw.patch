@@ -56,7 +56,7 @@ diff -ruN a/src/modules/rlm_raw/config.h.in b/src/modules/rlm_raw/config.h.in
 + #undef STDC_HEADERS
 diff -ruN a/src/modules/rlm_raw/configure b/src/modules/rlm_raw/configure
 --- a/src/modules/rlm_raw/configure	1970-01-01 00:00:00.000000000 +0000
-+++ b/src/modules/rlm_raw/configure	2022-01-10 10:32:29.576360000 +0000
++++ b/src/modules/rlm_raw/configure	2022-02-04 08:22:27.252651263 +0000
 @@ -0,0 +1,4635 @@
 +#! /bin/sh
 +# From configure.in Revision.
@@ -4693,7 +4693,6 @@ diff -ruN a/src/modules/rlm_raw/configure b/src/modules/rlm_raw/configure
 +  # would make configure fail if this is the last instruction.
 +  $ac_cs_success || { (exit 1); exit 1; }
 +fi
-\ No hay ningún carácter de nueva línea al final del fichero
 diff -ruN a/src/modules/rlm_raw/configure.in b/src/modules/rlm_raw/configure.in
 --- a/src/modules/rlm_raw/configure.in	1970-01-01 00:00:00.000000000 +0000
 +++ b/src/modules/rlm_raw/configure.in	2022-01-10 09:30:00.928430000 +0000
@@ -5154,8 +5153,8 @@ diff -ruN a/src/modules/rlm_raw/rlm_raw.c b/src/modules/rlm_raw/rlm_raw.c
 +	},
 +};
 diff -ruN a/src/modules/stable b/src/modules/stable
---- a/src/modules/stable	2022-01-11 10:18:52.670138498 +0000
-+++ b/src/modules/stable	2022-01-11 10:19:57.575223146 +0000
+--- a/src/modules/stable	2022-02-04 08:30:14.864957873 +0000
++++ b/src/modules/stable	2022-02-04 08:27:17.704841710 +0000
 @@ -44,3 +44,4 @@
  rlm_unix
  rlm_wimax

@@ -23,7 +23,7 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
-mkdir SOURCES
+mkdir -p SOURCES
 wget ftp://ftp.freeradius.org/pub/freeradius/old/freeradius-server-2.2.9.tar.gz -O SOURCES/${PACKNAME}-server-${VERSION}.tar.gz
 cp patches/* SOURCES
 
@@ -31,7 +31,7 @@ cp patches/* SOURCES
 /usr/bin/mock \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
-	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+	--resultdir=pkgs --buildsrpm --spec=freeradius.spec --sources=SOURCES
 
 # with it, we can create rest of packages
 /usr/bin/mock \
@@ -42,7 +42,7 @@ cp patches/* SOURCES
 ret=$?
 
 # cleaning
-rm -rf SOURCES
+#rm -rf SOURCES
 
 if [ $ret -ne 0 ]; then
         echo "Error in mock stage ... exiting"
@@ -50,9 +50,9 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-f_rsync_repo pkgs/${PACKNAME}*.rpm
-f_rsync_iso pkgs/*.el7.rb.x86_64.rpm
-rm -rf pkgs
+#f_rsync_repo pkgs/${PACKNAME}*.rpm
+#f_rsync_iso pkgs/*.el7.rb.x86_64.rpm
+#rm -rf pkgs
 
 # Update sdk7 repo
-f_rupdaterepo
+#f_rupdaterepo
