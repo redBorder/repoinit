@@ -337,7 +337,7 @@ exit 0
 %dir %attr(750,root,radiusd) /etc/raddb/sites-available
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/sites-available/*
 %dir %attr(750,root,radiusd) /etc/raddb/sites-enabled
-%ghost /etc/raddb/sites-enabled/*
+%attr(640,root,radiusd) %config(noreplace) /etc/raddb/sites-enabled/*
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/eap.conf
 %config(noreplace) %attr(640,root,radiusd) /etc/raddb/example.pl
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/policy.conf
@@ -443,7 +443,7 @@ exit 0
 %ghost %attr(644,radiusd,radiusd) /var/log/radius/radutmp
 %ghost %attr(600,radiusd,radiusd) /var/log/radius/radius.log
 # RADIUS shared libs
-%attr(755,root,root) %ghost %{_libdir}/freeradius/lib*.so*
+%attr(755,root,root)  %{_libdir}/freeradius/lib*.so*
 # RADIUS Loadable Modules
 %dir %attr(755,root,root) %{_libdir}/freeradius
 #%attr(755,root,root) %{_libdir}/freeradius/rlm_*.so*
@@ -548,6 +548,7 @@ exit 0
 %{_libdir}/freeradius/rlm_kafka_log-%{version}.so
 %{_libdir}/freeradius/rlm_raw.so
 %{_libdir}/freeradius/rlm_raw-%{version}.so
+
 
 %files utils
 /usr/bin/*
