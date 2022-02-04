@@ -13,35 +13,10 @@ Source103: freeradius-pam-conf
 
 Patch1: freeradius-cert-config.patch
 Patch2: freeradius-radtest.patch
-Patch3: freeradius-response-window-us-0001.patch
-Patch4: freeradius-response-window-us-0002.patch
-Patch5: freeradius-response-window-us-0003.patch
-Patch6: freeradius-response-window-us-0004.patch
-Patch7: freeradius-response-window-us-0005.patch
-Patch8: freeradius-Verify-start_servers-max_servers.patch
-Patch9: freeradius-rlm_pap-Account-for-terminating-zero.patch
-Patch10: freeradius-rlm_otp-Fix-key-size-calculation.patch
-Patch11: freeradius-xlat-Always-free-head.patch
-Patch12: freeradius-rlm_sql_log-Check-rad_mkdir-result.patch
-Patch13: freeradius-Return-positive-integers-from-each-radius_xlat.patch
-Patch14: freeradius-Check-radius_get_vp-return-value.patch
-Patch15: freeradius-Check-cf_item_parse-return-value.patch
-Patch16: freeradius-Initialize-child-count-in-modcall_recurse.patch
-Patch17: freeradius-Limit-log-level-string-when-building-message.patch
-Patch18: freeradius-Remove-two-unused-variable-declarations.patch
-Patch19: freeradius-Fix-two-pointer-signedness-warnings.patch
-Patch20: freeradius-dhcp-Use-correct-format-specifiers-in-a-message.patch
-Patch21: freeradius-event-Use-comparison-not-assignment-in-an-if.patch
-Patch22: freeradius-dhcpd-Verify-DICT_VALUE-exists-itself.patch
-Patch23: freeradius-dhcp-Remove-useless-variable-initializer.patch
-Patch24: freeradius-Don-t-dereference-NULL-cs-in-cf_item_parse.patch
-Patch25: freeradius-Add-disable-openssl-version-check-option.patch
-Patch26: freeradius-Move-OpenSSL-init-out-of-version-check.patch
-Patch27: freeradius-Comment-out-ippool-dhcp.conf-inclusion.patch
-Patch28: freeradius-Use-SSL_export_keying_material-for-TLSv1.2-PRF-deriv.patch
-Patch29: freeradius-More-fixes-to-use-SSL_export_keying_material.patch
-Patch30: freeradius-Always-delete-MS-MPPE-from-the-reply.-Fixes-1206.patch
-Patch31: freeradius-Add-kafka-support.patch
+Patch3: freeradius-Verify-start_servers-max_servers.patch
+Patch4: freeradius-Comment-out-ippool-dhcp.conf-inclusion.patch
+Patch5: freeradius-Add-kafka-support.patch
+Patch6: rlm_raw.patch
 
 Obsoletes: freeradius-devel
 Obsoletes: freeradius-libs
@@ -186,38 +161,10 @@ This plugin provides the unixODBC support for the FreeRADIUS server project, red
 %setup -q -n freeradius-server-%{version}
 %patch1 -p1 -b .cert-config
 %patch2 -p1 -b .radtest
-#%patch3 -p1
-#%patch4 -p1
-#%patch5 -p1
-#%patch6 -p1
-#%patch7 -p1
-%patch8 -p1
-#%patch9 -p1
-#%patch10 -p1
-#%patch11 -p1
-#%patch12 -p1
-#%patch13 -p1
-#%patch14 -p1
-#%patch15 -p1
-#%patch16 -p1
-
-#%patch17 -p1
-
-#%patch18 -p1
-#%patch19 -p1
-#%patch20 -p1
-#%patch21 -p1
-#%patch22 -p1
-#%patch23 -p1
-#%patch24 -p1
-#%patch25 -p1
-#%patch26 -p1
-%patch27 -p1
-#%patch28 -p1
-#%patch29 -p1
-#%patch30 -p1
-%patch31 -p1
-
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 # Some source files mistakenly have execute permissions set
 find $RPM_BUILD_DIR/freeradius-server-%{version} \( -name '*.c' -o -name '*.h' \) -a -perm /0111 -exec chmod a-x {} +
 
@@ -448,6 +395,7 @@ exit 0
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/sradutmp
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/unix
 %attr(640,root,radiusd) %config(noreplace) /etc/raddb/modules/wimax
+
 # binaries
 %defattr(-,root,root)
 /usr/sbin/checkrad
@@ -495,7 +443,7 @@ exit 0
 %ghost %attr(644,radiusd,radiusd) /var/log/radius/radutmp
 %ghost %attr(600,radiusd,radiusd) /var/log/radius/radius.log
 # RADIUS shared libs
-%attr(755,root,root) %{_libdir}/freeradius/lib*.so*
+%attr(755,root,root)  %{_libdir}/freeradius/lib*.so*
 # RADIUS Loadable Modules
 %dir %attr(755,root,root) %{_libdir}/freeradius
 #%attr(755,root,root) %{_libdir}/freeradius/rlm_*.so*
@@ -596,6 +544,11 @@ exit 0
 %{_libdir}/freeradius/rlm_unix-%{version}.so
 %{_libdir}/freeradius/rlm_wimax.so
 %{_libdir}/freeradius/rlm_wimax-%{version}.so
+%{_libdir}/freeradius/rlm_kafka_log.so
+%{_libdir}/freeradius/rlm_kafka_log-%{version}.so
+%{_libdir}/freeradius/rlm_raw.so
+%{_libdir}/freeradius/rlm_raw-%{version}.so
+
 
 %files utils
 /usr/bin/*
@@ -656,6 +609,9 @@ exit 0
 %files kafka
 %{_libdir}/freeradius/rlm_kafka_log.so
 %{_libdir}/freeradius/rlm_kafka_log-%{version}.so
+
+%{_libdir}/freeradius/rlm_raw.so
+%{_libdir}/freeradius/rlm_raw-%{version}.so
 
 %changelog
 * Tue Jun 21 2016 Juan J. Prieto <jjprieto@redborder.com> - 2.2.9-1
