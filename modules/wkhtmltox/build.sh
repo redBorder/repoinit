@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.12.6-1"}
+VERSION=${VERSION:="0.12.1-1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="wkhtmltox"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
@@ -23,7 +23,7 @@ fi
 mkdir pkgs
 # wkhtmltox rpms
 
-wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox-0.12.6-1.centos7.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}.el7.x86_64.rpm
+wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.1/wkhtmltox-0.12.1_linux-centos7-amd64.rpm -O pkgs/${PACKNAME}-${VERSION}.el7.x86_64.rpm
 
 f_rsync_repo pkgs/*.rpm
 f_rsync_iso pkgs/*.rpm
