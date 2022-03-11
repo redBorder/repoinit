@@ -1,0 +1,9 @@
+diff -ruN a/zookeeper.logrotate b/zookeeper.logrotate
+--- a/zookeeper.logrotate	2016-04-05 16:45:33.000000000 +0100
++++ b/zookeeper.logrotate	2022-03-11 09:44:11.044751152 +0000
+@@ -1,4 +1,5 @@
+ /var/log/zookeeper/*.log {
++       su zookeeper zookeeper
+        weekly
+        rotate 4
+        maxsize 100M
