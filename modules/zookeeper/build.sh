@@ -22,7 +22,7 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
-mkdir SOURCES
+mkdir -p SOURCES
 URL="https://archive.apache.org/dist/zookeeper/zookeeper-${VERSION}/zookeeper-${VERSION}.tar.gz"
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 wget https://github.com/redBorder/zookeeper-el7-rpm/archive/master.tar.gz -O SOURCES/zookeeper-el7-rpm.tar.gz
@@ -30,6 +30,7 @@ pushd SOURCES &>/dev/null
 tar xzf zookeeper-el7-rpm.tar.gz
 mv ${PACKNAME}-${VERSION}.tar.gz zookeeper-el7-rpm-master
 cp ../zookeeper.sh zookeeper-el7-rpm-master/
+cp ../patches/* zookeeper-el7-rpm-master/
 popd &>/dev/null
 
 # Now it is time to create the source rpm
@@ -56,7 +57,7 @@ fi
 
 # sync to cache and repo
 f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
-f_rsync_repo pkgs/*.rpm 
+f_rsync_repo pkgs/*.rpm
 rm -rf pkgs
 
 # Update sdk7 repo
