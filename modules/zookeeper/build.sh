@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="3.4.11"}
+VERSION=${VERSION:="3.4.12"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="zookeeper"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
