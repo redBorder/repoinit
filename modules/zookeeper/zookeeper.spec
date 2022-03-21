@@ -22,6 +22,9 @@ Source5: log4j-cli.properties
 Source6: zookeeper.sysconfig
 Source7: zkcli
 Source8: zookeeper.sh
+
+Patch1: logrotate.patch
+
 Prefix: %{_prefix}
 Vendor: Apache Software Foundation
 Packager: Juan J. Prieto <jjprieto@redborder.com>
@@ -37,7 +40,9 @@ ZooKeeper is a centralized service for maintaining configuration information, na
 
 %prep
 %setup -q -n zookeeper-%{version}
-
+cd /builddir/build/SOURCES
+%patch1 -p1
+cd /builddir/build/BUILD/zookeeper-%{version}
 %build
 pushd src/c
 %configure
