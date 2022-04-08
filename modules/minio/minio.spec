@@ -19,7 +19,7 @@ Minio is an open source object storage server with Amazon S3 compatible API.
 %pre
 getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{name} >/dev/null || \
-    useradd -r -g %{name} -d /var/lib/%{name} -s /bin/bash \
+    useradd -r -g %{name} -d /var/lib/%{name} -s /bin/nologin \
     -c "User for Minio" %{name} -m
 exit 0
 
