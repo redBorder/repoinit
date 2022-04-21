@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="3.0.0"}
+VERSION=${VERSION:="1.7.6"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="cookbook-cron"}
 LIBVER=${LIBVER:="1"}
