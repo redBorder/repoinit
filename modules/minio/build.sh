@@ -3,7 +3,7 @@
 source build_common.sh
 
 VERSION=${VERSION:="0.1.1"}
-RELEASE=${RELEASE:="20220526054841"}
+RELEASE=${RELEASE:="20230125001954"}
 PACKNAME=${PACKNAME:="minio"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
