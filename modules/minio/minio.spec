@@ -44,7 +44,7 @@ rm -rf %{buildroot}
 %dir /etc/minio
 
 %changelog
-* Thu Jan 26 2023 Luis Blanco <lblanco@redborder.com> - 
+* Thr Jan 26 2023 Luis Blanco <lblanco@redborder.com> - 
 - minio release fixed to 2023-01-25
 * Wed Jan 24 2018 Alberto Rodríguez <arodriguez@redborder.com> - 0.1.0-2
 - add unit file for systemd service management
