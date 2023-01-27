@@ -107,8 +107,9 @@ fi
 /usr/bin/systemctl daemon-reload >/dev/null 2>&1 || :
 
 %files
-%defattr(-,root,root)
+%defattr(0644,root,root)
 %{_unitdir}/zookeeper.service
+%defattr(-,root,root)
 %{_unitdir}/zookeeper.service.d/classpath.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/zookeeper
 %config(noreplace) %{_sysconfdir}/sysconfig/zookeeper

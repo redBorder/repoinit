@@ -2,8 +2,8 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.1.0"}
-RELEASE=${RELEASE:="2"}
+VERSION=${VERSION:="0.1.1"}
+RELEASE=${RELEASE:="20230125001954"}
 PACKNAME=${PACKNAME:="minio"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
@@ -23,7 +23,9 @@ fi
 # First we need to download source
 mkdir SOURCES
 pushd SOURCES &>/dev/null
-wget --no-check-certificate https://dl.minio.io/server/minio/release/linux-amd64/minio 
+wget --no-check-certificate https://dl.minio.io/server/minio/release/linux-amd64/archive/${PACKNAME}-${RELEASE}.0.0.x86_64.rpm 
+rpm2cpio ${PACKNAME}-${RELEASE}.0.0.x86_64.rpm | cpio -idmv && mv /usr/local/bin/minio .    #Extract the executable and move it to SOURCES
+rm -f /etc/systemd/system/minio.service                                                   #Remove other extracted files that we don't want from our system
 popd &>/dev/null
 cp minio.service SOURCES/minio.service
 
