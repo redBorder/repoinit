@@ -1,16 +1,16 @@
 #!/bin/bash
 
-source build_common.sh
+# source build_common.sh
 
 VERSION=${VERSION:="0.1.1"}
 RELEASE=${RELEASE:="20230125001954"}
 PACKNAME=${PACKNAME:="minio"}
-CACHEDIR=${CACHEDIR:="/isos/redBorder"}
-REPODIR=${REPODIR:="/repos/redBorder"}
+# CACHEDIR=${CACHEDIR:="/isos/redBorder"}
+# REPODIR=${REPODIR:="/repos/redBorder"}
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.src.rpm 
-                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
-                ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm"
+                ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm"
+                # ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm"
 
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -23,6 +23,7 @@ fi
 # First we need to download source
 mkdir SOURCES
 pushd SOURCES &>/dev/null
+echo "INFO: Downloading Minio: ${RELEASE} to SOURCES/"
 wget --no-check-certificate https://dl.minio.io/server/minio/release/linux-amd64/archive/${PACKNAME}-${RELEASE}.0.0.x86_64.rpm 
 rpm2cpio ${PACKNAME}-${RELEASE}.0.0.x86_64.rpm | cpio -idmv && mv /usr/local/bin/minio .    #Extract the executable and move it to SOURCES
 rm -f /etc/systemd/system/minio.service                                                   #Remove other extracted files that we don't want from our system
@@ -51,10 +52,10 @@ if [ $ret -ne 0 ]; then
 	exit 1
 fi
 
-# sync to cache and repo
-f_rsync_repo pkgs/${PACKNAME}*.rpm
-f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
-rm -rf pkgs
+# # sync to cache and repo
+# f_rsync_repo pkgs/${PACKNAME}*.rpm
+# f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
+# rm -rf pkgs
 
-# Update sdk7 repo
-f_rupdaterepo ${REPODIR}
+# # Update sdk7 repo
+# f_rupdaterepo ${REPODIR}
