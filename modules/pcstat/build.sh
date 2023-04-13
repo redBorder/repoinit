@@ -8,7 +8,8 @@ PACKNAME=${PACKNAME:="pcstat"}
 
 # First we need to download source
 mkdir SOURCES
-wget https://github.com/tobert/pcstat/releases/download/v0.0.1/pcstat_0.0.1_x86_64.rpm
+mkdir pkgs
+wget https://github.com/tobert/pcstat/releases/download/v0.0.1/pcstat_0.0.1_x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
 
 # sync to cache and repo
 f_rsync_repo pkgs/${PACKNAME}*.rpm
