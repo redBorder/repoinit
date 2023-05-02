@@ -30,6 +30,13 @@ config=${config:=$config_dir/radiusd.conf}
 pidfile=${pidfile:=/var/run/$prog/$prog.pid}
 lockfile=${lockfile:=/var/lock/subsys/radiusd}
 
+# Create /var/run/radiusd
+if [ ! -d /var/run/radiusd ]; then
+  mkdir -p /var/run/radiusd
+  chown radiusd:radiusd /var/run/radiusd
+  chmod 750 /var/run/radiusd
+fi
+
 start() {
     [ -x $exec ] || exit 5
     [ -f $config ] || exit 6
