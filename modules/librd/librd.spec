@@ -42,7 +42,7 @@ Requires: %{name}%{soname} = %{version}-%{release} zlib-devel
 make
 
 %install
-DESTDIR=%{buildroot}/usr make install
+DESTDIR=%{buildroot}/usr CFLAGS=-Wno-format-truncation make install
 cp LICENSE %{buildroot}/usr/share/doc/librd0/
 
 %clean
