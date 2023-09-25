@@ -3,6 +3,7 @@
 %global gh_short     %(c=%{gh_commit}; echo ${c:0:7})
 %global gh_owner     edenhill
 %global gh_project   %{libname}
+%global _missing_build_ids_terminate_build 0
 
 Name:    librd
 Summary: Rapid Development C library
