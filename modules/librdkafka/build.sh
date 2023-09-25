@@ -29,14 +29,14 @@ mkdir SOURCES
 wget https://github.com/edenhill/librdkafka/archive/${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
 	--define "__release ${RELEASE}" \
 	--define "__libver ${LIBVER}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
 	--define "__release ${RELEASE}" \
 	--define "__libver ${LIBVER}" \
@@ -59,6 +59,6 @@ f_rsync_repo pkgs/${PACKNAME}*.rpm
 f_rsync_iso pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
 rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 f_rupdaterepo
 

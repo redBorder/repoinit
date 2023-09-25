@@ -27,13 +27,13 @@ wget http://prdownloads.sourceforge.net/xml-coreutils/xml-coreutils-${VERSION}.t
 cp patches/*.patch SOURCES
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
@@ -55,6 +55,6 @@ f_rsync_repo pkgs/${PACKNAME}*.rpm
 f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm
 rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 f_rupdaterepo
 

@@ -60,6 +60,6 @@ f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.rb.x86_64.rpm pkgs/lib${P
 f_rsync_repo pkgs/*.rpm
 rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 f_rupdaterepo
 

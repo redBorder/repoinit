@@ -7,13 +7,15 @@ BuildArch: noarch
 Group: System Environment/Base
 License: GPLv2
 Source0: confluent-repo.repo
-Requires: epel-release
+Requires: epel-release crypto-policies-scripts
+BuildRequires: crypto-policies-scripts
 
 %description
 This package contains the Extra Packages for Confluent repository
 as well as configuration for yum.
 
 %prep
+update-crypto-policies --set DEFAULT:SHA1
 
 %build
 rpm --import http://packages.confluent.io/rpm/3.0/archive.key

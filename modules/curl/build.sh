@@ -32,13 +32,13 @@ rpm2cpio curl-${VERSION}-1.0.cf.rhel7.src.rpm | cpio -idmv
 popd &>/dev/null
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/curl*.src.rpm
@@ -61,6 +61,6 @@ f_rsync_repo pkgs/*.rpm
 f_rsync_iso pkgs/curl-${VERSION}*.el7.centos.x86_64.rpm pkgs/libcurl-${VERSION}*.el7.centos.x86_64.rpm
 rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 f_rupdaterepo
 

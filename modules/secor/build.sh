@@ -34,14 +34,14 @@ tar czf SOURCES/secor-${CORRECT_VERSION}.tar.gz secor-${CORRECT_VERSION}
 cp secor.service SOURCES/secor.service
 
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
 	--define "__version ${CORRECT_VERSION}" \
 	--define "__release ${RELEASE}" \
 	--define "__libver ${LIBVER}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
 	--define "__version ${CORRECT_VERSION}" \
 	--define "__release ${RELEASE}" \
 	--define "__libver ${LIBVER}" \
@@ -65,6 +65,6 @@ fi
 #f_rsync_iso pkgs/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.centos.x86_64.rpm
 #rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 #f_updaterepo
 

@@ -27,13 +27,13 @@ mkdir pkgs
 wget https://copr-be.cloud.fedoraproject.org/results/urban/rhel-packages/epel-7-x86_64/${PACKNAME}-${VERSION}-${RELEASE}.el7/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm
 
 ## Now it is time to create the source rpm
-#/usr/bin/mock -r sdk7 \
+#/usr/bin/mock -r sdk9 \
 #        --define "__version ${VERSION}" \
 #        --define "__release ${RELEASE}" \
 #	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
@@ -53,6 +53,6 @@ f_rsync_repo pkgs/*.rpm
 f_rsync_iso pkgs/${PACKNAME}-${VERSION}*.el7.centos.x86_64.rpm
 rm -rf pkgs
 
-# Update sdk7 repo
+# Update sdk9 repo
 f_rupdaterepo
 
