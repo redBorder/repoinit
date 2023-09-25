@@ -204,7 +204,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fpic"
 perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
-make LINK_MODE=-pie
+CFLAGS=-Wno-implicit-function-declaration make LINK_MODE=-pie
 
 %install
 mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/lib/radiusd
