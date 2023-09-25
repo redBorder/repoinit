@@ -39,10 +39,10 @@ Requires: %{name}%{soname} = %{version}-%{release} zlib-devel
 %setup -qn %{gh_project}-%{gh_commit}
 
 %build
-make
+CFLAGS=-Wno-format-truncation make
 
 %install
-DESTDIR=%{buildroot}/usr CFLAGS=-Wno-format-truncation make install
+DESTDIR=%{buildroot}/usr make install
 cp LICENSE %{buildroot}/usr/share/doc/librd0/
 
 %clean
