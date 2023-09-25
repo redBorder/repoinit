@@ -7,6 +7,7 @@ RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="confluent-repo"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
+REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
 list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.rpm 
@@ -26,13 +27,13 @@ mkdir SOURCES
 cp confluent-repo.repo SOURCES
 
 # Now it is time to create the source rpm
-/usr/bin/mock --enable-network -r sdk9 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock --enable-network -r sdk9 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
