@@ -170,9 +170,9 @@ find $RPM_BUILD_DIR/freeradius-server-%{version} \( -name '*.c' -o -name '*.h' \
 
 %build
 %ifarch s390 s390x
-export CFLAGS="$RPM_OPT_FLAGS -fPIC"
+export CFLAGS="$RPM_OPT_FLAGS -Wno-implicit-function-declaration -fPIC"
 %else
-export CFLAGS="$RPM_OPT_FLAGS -fpic"
+export CFLAGS="$RPM_OPT_FLAGS -Wno-implicit-function-declaration -fpic"
 %endif
 
 %configure \
@@ -204,7 +204,7 @@ export CFLAGS="$RPM_OPT_FLAGS -fpic"
 perl -pi -e 's:sys_lib_search_path_spec=.*:sys_lib_search_path_spec="/lib64 /usr/lib64 /usr/local/lib64":' libtool
 %endif
 
-CFLAGS=-Wno-implicit-function-declaration make LINK_MODE=-pie
+make LINK_MODE=-pie
 
 %install
 mkdir -p $RPM_BUILD_ROOT/%{_localstatedir}/lib/radiusd
