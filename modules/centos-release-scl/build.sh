@@ -2,9 +2,9 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="12.7.0"}
-RELEASE=${RELEASE:="1"}
-PACKNAME=${PACKNAME:="chef-server-core"}
+VERSION=${VERSION:="2"}
+RELEASE=${RELEASE:="3"}
+PACKNAME=${PACKNAME:="centos-release-scl"}
 CACHEDIR=${CACHEDIR:="/isos/redBorder"}
 REPODIR=${REPODIR:="/repos/redBorder"}
 
@@ -24,11 +24,9 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
+rm -rf pkgs
 mkdir pkgs
-wget https://packages.chef.io/stable/el/7/${PACKNAME}-${VERSION}-${RELEASE}.el7.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.x86_64.rpm
-
-mkdir pkgs
-wget http://mirror.centos.org/centos/7/extras/x86_64/Packages/${PACKNAME}-rh-${VERSION}-${RELEASE}.centos.noarch.rpm -O pkgs/${PACKNAME}-rh-${VERSION}-${RELEASE}.centos.noarch.rpm 
+wget http://mirror.centos.org/centos/7/extras/x86_64/Packages/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.noarch.rpm -O pkgs/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.noarch.rpm 
 
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -36,7 +34,7 @@ if [ $ret -ne 0 ]; then
         exit 1
 fi
 
-wget http://vault.centos.org/7.9.2009/extras/Source/SPackages/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.src.rpm -O pkgs/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.src.rpm
+wget https://cbs.centos.org/kojifiles/packages/${PACKNAME}-rh/${VERSION}/${RELEASE}.el7.centos/src/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.src.rpm -O pkgs/${PACKNAME}-rh-${VERSION}-${RELEASE}.el7.centos.src.rpm
 
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -44,19 +42,19 @@ if [ $ret -ne 0 ]; then
         exit 1
 fi
 
-wget http://mirror.centos.org/centos/7/extras/x86_64/Packages/${VERSION}-${RELEASE}.el7.centos.noarch.rpm -O pkgs/${VERSION}-${RELEASE}.el7.centos.noarch.rpm
+wget http://mirror.centos.org/centos/7/extras/x86_64/Packages/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.noarch.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.noarch.rpm
 
 ret=$?
 if [ $ret -ne 0 ]; then
-        echo "Error in getting ${VERSION}-${RELEASE}.el7.centos.noarch.rpm ... exiting"
+        echo "Error in getting ${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.noarch.rpm ... exiting"
         exit 1
 fi
 
-wget http://vault.centos.org/7.9.2009/extras/Source/SPackages/${VERSION}-${RELEASE}.el7.centos.src.rpm -O pkgs/${VERSION}-${RELEASE}.el7.centos.src.rpm 
+wget https://linuxsoft.cern.ch/cern/centos/7/extras/Sources/SPackages/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
 
 ret=$?
 if [ $ret -ne 0 ]; then
-        echo "Error in getting ${VERSION}-${RELEASE}.el7.centos.src.rpm ... exiting"
+        echo "Error in getting ${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm ... exiting"
         exit 1
 fi
 
