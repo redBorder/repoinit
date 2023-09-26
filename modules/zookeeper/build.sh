@@ -26,6 +26,7 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
+rm -rf pkgs
 rm -rf SOURCES
 mkdir -p SOURCES
 
@@ -66,9 +67,6 @@ popd &>/dev/null
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
-
-# cleaning
-rm -rf SOURCES
 
 if [ $ret -ne 0 ]; then
         echo "Error in mock stage ... exiting"
