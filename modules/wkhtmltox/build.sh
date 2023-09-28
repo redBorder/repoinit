@@ -2,14 +2,14 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.12.1-1"}
+VERSION=${VERSION:="0.12.5-1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="wkhtmltox"}
-CACHEDIR=${CACHEDIR:="/isos/redBorder"}
-REPODIR=${REPODIR:="/repos/redBorder"}
+CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
+REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 
-list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}.el7.x86_64.rpm 
-                  ${CACHEDIR}/${PACKNAME}-${VERSION}.el7.x86_64.rpm
+list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}.el8.x86_64.rpm 
+                  ${CACHEDIR}/${PACKNAME}-${VERSION}.el8.x86_64.rpm
                  "
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -20,13 +20,21 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
+rm -rf pkgs
 mkdir pkgs
 # wkhtmltox rpms
 
-wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.1/wkhtmltox-0.12.1_linux-centos7-amd64.rpm -O pkgs/${PACKNAME}-${VERSION}.el7.x86_64.rpm
+wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/${PACKNAME}-${VERSION}.centos8.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}.el8.x86_64.rpm
+ret=$?
+if [ $ret -ne 0 ]; then
+        echo "Error in getting ${PACKNAME}-${VERSION}.centos8.x86_64.rpm... exiting"
+        exit 1
+fi
 
-f_rsync_repo pkgs/*.rpm
-f_rsync_iso pkgs/*.rpm
+# sync to cache and repo
+f_rsync_repo pkgs/*.x86_64.rpm
+f_rsync_iso pkgs/*.x86_64.rpm
+
 rm -rf pkgs
 
 # Update sdk9 repo
