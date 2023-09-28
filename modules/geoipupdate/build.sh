@@ -17,15 +17,15 @@ REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 
 list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.rpm
-				${REPODIR_SRPMS}/GeoIP-GeoLite-data-2016.05-1.el9.rb.src.rpm
-				${REPODIR_SRPMS}/GeoIP-1.6.9-2.el9.rb.src.rpm
+		${REPODIR_SRPMS}/GeoIP-GeoLite-data-2016.05-1.el9.rb.src.rpm
+		${REPODIR_SRPMS}/GeoIP-1.6.9-2.el9.rb.src.rpm
                 ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
                 ${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
                 ${REPODIR}/${PACKNAME}-debugsource-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
                 ${REPODIR}/${PACKNAME}-cron-${VERSION}-${RELEASE}.el9.rb.noarch.rpm 
                 ${REPODIR}/${PACKNAME}-cron6-${VERSION}-${RELEASE}.el9.rb.noarch.rpm 
-				${REPODIR}/GeoIP-GeoLite-data-2016.05-1.el9.rb.noarch.rpm
-				${REPODIR}/GeoIP-GeoLite-data-extra-2016.05-1.el9.rb.noarch.rpm
+		${REPODIR}/GeoIP-GeoLite-data-2016.05-1.el9.rb.noarch.rpm
+		${REPODIR}/GeoIP-GeoLite-data-extra-2016.05-1.el9.rb.noarch.rpm
                 ${REPODIR}/GeoIP-1.6.9-2.el9.rb.x86_64.rpm
                 ${REPODIR}/GeoIP-debuginfo-1.6.9-2.el9.rb.x86_64.rpm
                 ${REPODIR}/GeoIP-debugsource-1.6.9-2.el9.rb.x86_64.rpm
@@ -35,10 +35,10 @@ list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.
                 ${CACHEDIR}/${PACKNAME}-debugsource-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
                 ${CACHEDIR}/${PACKNAME}-cron-${VERSION}-${RELEASE}.el9.rb.noarch.rpm 
                 ${CACHEDIR}/${PACKNAME}-cron6-${VERSION}-${RELEASE}.el9.rb.noarch.rpm
-				${CACHEDIR}/GeoIP-GeoLite-data-2016.05-1.el9.rb.noarch.rpm
-				${CACHEDIR}/GeoIP-GeoLite-data-extra-2016.05-1.el9.rb.noarch.rpm
+		${CACHEDIR}/GeoIP-GeoLite-data-2016.05-1.el9.rb.noarch.rpm
+		${CACHEDIR}/GeoIP-GeoLite-data-extra-2016.05-1.el9.rb.noarch.rpm
                 ${CACHEDIR}/GeoIP-1.6.9-2.el9.rb.x86_64.rpm
-				${CACHEDIR}/GeoIP-debuginfo-1.6.9-2.el9.rb.x86_64.rpm
+		${CACHEDIR}/GeoIP-debuginfo-1.6.9-2.el9.rb.x86_64.rpm
                 ${CACHEDIR}/GeoIP-debugsource-1.6.9-2.el9.rb.x86_64.rpm
                 ${CACHEDIR}/GeoIP-devel-1.6.9-2.el9.rb.x86_64.rpm"
 
@@ -103,6 +103,8 @@ if [ $ret -ne 0 ]; then
         echo "Error in mock stage GeoIP-GeoLite... exiting"
         exit 1
 fi
+
+exit
 
 # sync to cache and repo
 f_rsync_repo pkgs/*.x86_64.rpm pkgs/*.noarch.rpm
