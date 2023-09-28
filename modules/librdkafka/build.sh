@@ -3,21 +3,20 @@
 source build_common.sh
 
 #VERSION=${VERSION:="0.8.4"}
-VERSION=${VERSION:="0.9.1"}
-RELEASE=${RELEASE:="1"}
+VERSION=${VERSION:="1.6.1"}
+RELEASE=${RELEASE:="102"}
 PACKNAME=${PACKNAME:="librdkafka"}
-LIBVER=${LIBVER:="1"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 
 list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.rpm 
-		${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
-		${REPODIR}/${PACKNAME}${LIBVER}-debuginfo-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
+		${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+		${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
 		${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
 		${REPODIR}/${PACKNAME}-debugsource-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
-		${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
-		${CACHEDIR}/${PACKNAME}${LIBVER}-debuginfo-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
+		${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+		${CACHEDIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
 		${CACHEDIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
 		${CACHEDIR}/${PACKNAME}-debugsource-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm" 
 
@@ -30,26 +29,28 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
+rm -rf SOURCES
 mkdir SOURCES
-wget https://github.com/edenhill/librdkafka/archive/${VERSION}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
+wget http://mirror.stream.centos.org/9-stream/AppStream/source/tree/Packages/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm -O SOURCES/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm
 ret=$?
 if [ $ret -ne 0 ]; then
-        echo "Error in getting librdkafka ${VERSION}.tar.gz... exiting"
+        echo "Error in getting ${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm... exiting"
         exit 1
 fi
+pushd SOURCES &>/dev/null
+rpm2cpio ${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm | cpio -idmv
+popd &>/dev/null
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
 	--define "__release ${RELEASE}" \
-	--define "__libver ${LIBVER}" \
-	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
+	--resultdir=pkgs --buildsrpm --spec=SOURCES/${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
 /usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
 	--define "__release ${RELEASE}" \
-	--define "__libver ${LIBVER}" \
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
@@ -69,5 +70,3 @@ rm -rf SOURCES
 # Update sdk9 repo
 f_rupdaterepo ${REPODIR}
 f_rupdaterepo ${REPODIR_SRPMS}
-
-
