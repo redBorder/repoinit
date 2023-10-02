@@ -44,6 +44,7 @@ cd /builddir/build/SOURCES
 %patch1 -p1
 cd /builddir/build/BUILD/zookeeper-%{version}
 %build
+export CFLAGS="$RPM_OPT_FLAGS -Wno-error=format-overflow -Wno-error=stringop-truncation"
 pushd src/c
 %configure
 %{__make} %{?_smp_mflags}
@@ -191,6 +192,8 @@ if [ "$1" -ge "1" ] ; then
 fi
 
 %changelog
+* Tue Sep 26 2023 David Vanhoucke <dvanhoucke@redborder.com> - 3.4.8-1
+- adapt for compilation in rhel9
 * Tue Jun 14 2016 Juan J. Prieto <jjprieto@redborder.com> - 3.4.8-1
 - Fisrt version for 3.4.8
 
