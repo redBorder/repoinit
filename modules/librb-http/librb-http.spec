@@ -33,6 +33,7 @@ Requires: librd0
 Summary: Development files for %{name}
 Group:   Development/Libraries/C and C++
 Requires: %{name}%{soname} = %{version}-%{release}
+Requires: libcurl-devel >= 7.48.0
 %description -n %{name}-devel
 %{summary}.
 
