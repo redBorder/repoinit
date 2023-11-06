@@ -12,12 +12,11 @@ REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
-list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.centos.src.rpm 
-                ${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.centos.x86_64.rpm 
-                ${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el9.centos.x86_64.rpm
-                ${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.centos.x86_64.rpm 
-                ${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.centos.x86_64.rpm
-                ${CACHEDIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.centos.x86_64.rpm"
+list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.rpm 
+                ${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+                ${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+                ${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
+                ${CACHEDIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm"
 
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
