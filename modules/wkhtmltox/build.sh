@@ -2,14 +2,14 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.12.5-1"}
-RELEASE=${RELEASE:="1"}
+VERSION=${VERSION:="0.12.6.1"}
+RELEASE=${RELEASE:="3"}
 PACKNAME=${PACKNAME:="wkhtmltox"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 
-list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}.el8.x86_64.rpm 
-                  ${CACHEDIR}/${PACKNAME}-${VERSION}.el8.x86_64.rpm
+list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.almalinux9.x86_64.rpm
+                  ${CACHEDIR}/${PACKNAME}-${VERSION}-${RELEASE}.almalinux9.x86_64.rpm
                  "
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -24,10 +24,11 @@ rm -rf pkgs
 mkdir pkgs
 # wkhtmltox rpms
 
-wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/${PACKNAME}-${VERSION}.centos8.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}.el8.x86_64.rpm
+wget https://github.com/wkhtmltopdf/packaging/releases/download/${VERSION}-${RELEASE}/${PACKNAME}-${VERSION}-${RELEASE}.almalinux9.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.almalinux9.x86_64.rpm
+
 ret=$?
 if [ $ret -ne 0 ]; then
-        echo "Error in getting ${PACKNAME}-${VERSION}.centos8.x86_64.rpm... exiting"
+        echo "Error in getting ${PACKNAME}-${VERSION}-${RELEASE}.almalinux9.x86_64.rpm... exiting"
         exit 1
 fi
 
