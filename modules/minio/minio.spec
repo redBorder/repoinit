@@ -21,6 +21,7 @@ getent group %{name} >/dev/null || groupadd -r %{name}
 getent passwd %{name} >/dev/null || \
     useradd -r -g %{name} -d /var/lib/%{name} -s /bin/bash \
     -c "User for Minio" %{name} -m
+    usermod -s /sbin/nologin %{name}
 exit 0
 
 %install
