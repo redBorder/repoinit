@@ -7,9 +7,19 @@ f_rsync_repo() {
 	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/latest/rhel/9/x86_64/
 }
 
+f_rsync_devel_repo() {
+	local LIST="$@"
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/devel/${DEVEL}/rhel/9/x86_64/
+}
+
 f_rsync_repo_SRPMS() {
 	local LIST="$@"
 	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/latest/rhel/9/SRPMS/
+}
+
+f_rsync_devel_repo_SRPMS() {
+	local LIST="$@"
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/devel/${DEVEL}/rhel/9/SPRMS/
 }
 
 f_rsync_iso() {
@@ -83,19 +93,19 @@ f_rupdaterepo() {
 	return $ret
 }
 
-
 f_check() {
 	# need to check if the packages exist
+	echo Starting to check packages exist
 	local list_of_packages="$@"
 	local create_rpms=0
 	for package in ${list_of_packages}; do
 		f_ssh_rbrepo test -e ${package}
 		if [ $? -eq 0 ]; then
-        		f_ssh_rbrepo file --mime-type -b ${package} | grep -q "application/x-rpm"
-        		if [ $? -ne 0 ]; then
+			f_ssh_rbrepo file --mime-type -b ${package} | grep -q "application/x-rpm"
+			if [ $? -ne 0 ]; then
 				create_rpms=1
 				break
-        	        fi
+			fi
 		else
 			create_rpms=1
 			break
