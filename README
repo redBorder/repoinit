@@ -1,3 +1,4 @@
+## Support
 Please, review these links:
 
 http://www.smorgasbork.com/2014/07/16/building-a-custom-centos-7-kickstart-disc-part-1/
@@ -5,12 +6,29 @@ http://kfei.logdown.com/posts/143152-build-your-own-customized-install-disc-from
 https://fedoraproject.org/wiki/QA:Testcase_Kickstart_File_Path_Ks_Cfg
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Installation_Guide/chap-anaconda-boot-options.html#list-boot-options-sources
 
+## Description
+This repository is a collection of other repositories but boosted with build scripts. For example with minio, the primal package is downloaded to adapt it to our packaging system, generating the rpms and the iso.
+
+### Building one package
+build_modules -m <module_name>
+
+### Building minio and uploading to devel
+This command will build minio and upload it to devel's rbrepo
+```
+sudo DEVEL=<devel_name> VERSION=<x.y.z> ./build_module.sh -m minio
+```
+for example
+```
+sudo DEVEL=ljblanco VERSION=13550.0.0 ./build_module.sh -m minio
+```
+
+## Requirements
 Packages needed:
 
 Mock:
 # yum install epel-release
 # yum install mock
 
-Content:
+## Content
 sdk7.cfg => Config file for running mock for a Centos 7
 sdk9.cfg => Config file for running mock for a Rocky 9
