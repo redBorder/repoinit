@@ -32,14 +32,14 @@ f_build() {
                         echo "Something was wrong ... exiting"
                         ret=1
                     else
-                        # module built successfuly
+                        # echo 'module built successfuly'
                         modules[${moduledep}]=1
                     fi
                 fi
             done
         fi
         if [ $ret -eq 0 ]; then
-            # now, build the module
+            # echo 'Building the module'
             if [ -x ${opt_dir}/$module/build.sh ]; then
                 pushd ${opt_dir}/$module &>/dev/null
                 echo "Building module: $module"
