@@ -1,11 +1,11 @@
-Name:           mc
+Name:           mcli
 Version:       %{__version}
 Release:       %{__release}%{?dist}
 Summary:        MinIO Client (mc) - Tool for managing object storage
 
 License:        Apache-2.0
 URL:            https://min.io
-Source0:        mc
+Source0:        mcli
 BuildArch:      x86_64
 
 Requires:       glibc
@@ -21,10 +21,10 @@ for filesystems and object storage.
 # No build step needed since we're using a pre-built binary.
 
 %install
-install -Dm0755 %{SOURCE0} %{buildroot}/usr/local/bin/mc
+install -Dm0755 %{SOURCE0} %{buildroot}/usr/local/bin/mcli
 
 %files
-/usr/local/bin/mc
+/usr/local/bin/mcli
 
 %changelog
 * Tue Oct 15 2024 Miguel Negrón <manegron@redborder.com>

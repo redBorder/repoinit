@@ -4,7 +4,8 @@ source build_common.sh
 
 VERSION=${VERSION:="0.0.1"}
 RELEASE=${RELEASE:="1"}
-PACKNAME=${PACKNAME:="mc"}
+ORIGINAL_PACKNAME=${ORIGINAL_PACKNAME:="mc"}
+PACKNAME=${PACKNAME:="mcli"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
@@ -27,10 +28,10 @@ rm -rf SOURCES
 rm -rf pkgs
 mkdir SOURCES
 mkdir pkgs
-wget https://dl.min.io/client/mc/release/linux-amd64/${PACKNAME} -O SOURCES/${PACKNAME}
+wget https://dl.min.io/client/mc/release/linux-amd64/${ORIGINAL_PACKNAME} -O SOURCES/${PACKNAME}
 ret=$?
 if [ $ret -ne 0 ]; then
-        echo "Error in getting mc... exiting"
+        echo "Error in getting mcli... exiting"
         exit 1
 fi
 
