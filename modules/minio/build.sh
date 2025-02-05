@@ -57,10 +57,10 @@ f_rsync_repo pkgs/*.x86_64.rpm
 f_rsync_repo_SRPMS pkgs/*.src.rpm
 f_rsync_iso pkgs/*.x86_64.rpm
 
-# rm -rf pkgs
-# rm -rf SOURCES
+rm -rf pkgs
+rm -rf SOURCES
 
 # # Update sdk9 repo
-# f_rupdaterepo ${REPODIR}
-# f_rupdaterepo ${REPODIR_SRPMS}
+f_rupdaterepo ${REPODIR}
+f_rupdaterepo ${REPODIR_SRPMS}
 
