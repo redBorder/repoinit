@@ -17,10 +17,6 @@ This command will build minio and upload it to devel's rbrepo
 ```
 sudo DEVEL=<devel_name> VERSION=<x.y.z> ./build_module.sh -m minio
 ```
-for example
-```
-sudo DEVEL=ljblanco VERSION=13550.0.0 ./build_module.sh -m minio
-```
 
 ## Requirements
 Packages needed:
