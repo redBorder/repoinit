@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="3.4.12"}
+VERSION=${VERSION:="3.8.4"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="zookeeper"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
@@ -30,8 +30,8 @@ rm -rf pkgs
 rm -rf SOURCES
 mkdir -p SOURCES
 
-URL="https://archive.apache.org/dist/zookeeper/zookeeper-${VERSION}/zookeeper-${VERSION}.tar.gz"
-wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
+URL="https://archive.apache.org/dist/zookeeper/zookeeper-${VERSION}/apache-zookeeper-${VERSION}-bin.tar.gz"
+wget ${URL} -O SOURCES/apache-${PACKNAME}-${VERSION}-bin.tar.gz
 
 ret=$?
 if [ $ret -ne 0 ]; then
@@ -49,9 +49,10 @@ fi
 
 pushd SOURCES &>/dev/null
 tar xzf zookeeper-el7-rpm.tar.gz
-mv ${PACKNAME}-${VERSION}.tar.gz zookeeper-el7-rpm-master
+mv apache-${PACKNAME}-${VERSION}-bin.tar.gz zookeeper-el7-rpm-master
 cp ../zookeeper.sh zookeeper-el7-rpm-master/
 cp ../patches/* zookeeper-el7-rpm-master/
+sed -i 's|Source0: zookeeper-%{version}.tar.gz|Source0: apache-zookeeper-%{version}-bin.tar.gz|' zookeeper-el7-rpm-master/zookeeper.spec
 popd &>/dev/null
 
 # Now it is time to create the source rpm
@@ -74,13 +75,13 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-f_rsync_repo pkgs/*.x86_64.rpm
-f_rsync_repo_SRPMS pkgs/*.src.rpm
-f_rsync_iso pkgs/*.x86_64.rpm
+# if_rsync_repo pkgs/*.x86_64.rpm
+# f_rsync_repo_SRPMS pkgs/*.src.rpm
+#f_rsync_iso pkgs/*.x86_64.rpm
 
-rm -rf pkgs
-rm -rf SOURCES
+#rm -rf pkgs
+#rm -rf SOURCES
 
 # Update sdk9 repo
-f_rupdaterepo ${REPODIR}
-f_rupdaterepo $REPODIR_SRPMS
+# f_rupdaterepo ${REPODIR}
+# f_rupdaterepo $REPODIR_SRPMS

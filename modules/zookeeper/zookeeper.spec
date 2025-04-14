@@ -1,3 +1,4 @@
+%undefine __brp_mangle_shebangs
 %define __jar_repack 0
 %define debug_package %{nil}
 %define name         zookeeper
@@ -13,7 +14,7 @@ Release: %{__release}%{?dist}
 License: Apache License, Version 2.0
 Group: Applications/Databases
 URL: http://zookeper.apache.org/
-Source0: zookeeper-%{version}.tar.gz
+Source0: apache-zookeeper-%{version}-bin.tar.gz
 Source1: zookeeper.service
 Source2: zookeeper.logrotate
 Source3: zoo.cfg
@@ -22,8 +23,6 @@ Source5: log4j-cli.properties
 Source6: zookeeper.sysconfig
 Source7: zkcli
 Source8: zookeeper.sh
-
-Patch1: logrotate.patch
 
 Prefix: %{_prefix}
 Vendor: Apache Software Foundation
@@ -38,18 +37,9 @@ Requires(postun): systemd
 %description
 ZooKeeper is a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services. All of these kinds of services are used in some form or another by distributed applications. Each time they are implemented there is a lot of work that goes into fixing the bugs and race conditions that are inevitable. Because of the difficulty of implementing these kinds of services, applications initially usually skimp on them ,which make them brittle in the presence of change and difficult to manage. Even when done correctly, different implementations of these services lead to management complexity when the applications are deployed.
 
-%prep
-%setup -q -n zookeeper-%{version}
-cd /builddir/build/SOURCES
-%patch1 -p1
-cd /builddir/build/BUILD/zookeeper-%{version}
-%build
-export CFLAGS="$RPM_OPT_FLAGS -Wno-error=format-overflow -Wno-error=stringop-truncation"
-pushd src/c
-%configure
-%{__make} %{?_smp_mflags}
-popd
 
+%prep
+%setup -q -n apache-zookeeper-%{version}-bin
 
 %install
 mkdir -p $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper
@@ -58,7 +48,7 @@ mkdir -p $RPM_BUILD_ROOT%{_data_dir}
 mkdir -p $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d
 mkdir -p $RPM_BUILD_ROOT%{_conf_dir}/
 mkdir -p $RPM_BUILD_ROOT/etc/profile.d
-install -p -D -m 644 zookeeper-%{version}.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
+install -p -D -m 644 lib/zookeeper-%{version}.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
 install -p -D -m 644 lib/*.jar $RPM_BUILD_ROOT%{_prefix}/lib/zookeeper/
 install -p -D -m 755 %{S:1} $RPM_BUILD_ROOT%{_unitdir}/
 install -p -D -m 644 %{S:2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/zookeeper
@@ -81,8 +71,6 @@ echo "[Service]" > $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
 echo "Environment=CLASSPATH=${CLASSPATH}" >> $RPM_BUILD_ROOT%{_unitdir}/zookeeper.service.d/classpath.conf
 echo "" >> $RPM_BUILD_ROOT%{_prefix}/bin/zkEnv.sh
 echo "CLASSPATH=\$CLASSPATH:${CLASSPATH}" >> $RPM_BUILD_ROOT%{_prefix}/bin/zkEnv.sh
-
-%{makeinstall} -C src/c
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -116,80 +104,23 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/zookeeper
 %config(noreplace) %{_conf_dir}/*
 %defattr(0755,root,root)
-%{_prefix}/bin/cli_mt
-%{_prefix}/bin/cli_st
-%{_prefix}/bin/load_gen
+#%{_prefix}/bin/cli_mt
+#%{_prefix}/bin/cli_st
+#%{_prefix}/bin/load_gen
 %{_prefix}/bin/zkCleanup.sh
 %{_prefix}/bin/zkCli.sh
 %{_prefix}/bin/zkEnv.sh
 %{_prefix}/bin/zkServer.sh
 %{_prefix}/bin/zkcli
+%{_prefix}/bin/zkServer-initialize.sh
+%{_prefix}/bin/zkSnapShotToolkit.sh
+%{_prefix}/bin/zkSnapshotComparer.sh
+%{_prefix}/bin/zkTxnLogToolkit.sh
 /etc/profile.d/zookeeper.sh
 %attr(-,zookeeper,zookeeper) %{_prefix}/lib/zookeeper
 %attr(0755,zookeeper,zookeeper) %dir %{_log_dir}
 %attr(0700,zookeeper,zookeeper) %dir %{_data_dir}
 
-# ------------------------------ libzookeeper ------------------------------
-
-%package -n libzookeeper
-Summary: C client interface to zookeeper server
-Group: Development/Libraries
-BuildRequires: gcc
-
-%description -n libzookeeper
-The client supports two types of APIs -- synchronous and asynchronous.
- 
-Asynchronous API provides non-blocking operations with completion callbacks and
-relies on the application to implement event multiplexing on its behalf.
- 
-On the other hand, Synchronous API provides a blocking flavor of
-zookeeper operations and runs its own event loop in a separate thread.
- 
-Sync and Async APIs can be mixed and matched within the same application.
-
-%files -n libzookeeper
-%defattr(-, root, root, -)
-%doc src/c/README src/c/LICENSE
-%{_libdir}/libzookeeper_mt.so.*
-%{_libdir}/libzookeeper_st.so.*
-
-# ------------------------------ libzookeeper-devel ------------------------------
-
-%package -n libzookeeper-devel
-Summary: Headers and static libraries for libzookeeper
-Group: Development/Libraries
-BuildRequires: gcc
-Requires: libzookeeper
-
-%description -n libzookeeper-devel
-This package contains the libraries and header files needed for
-developing with libzookeeper.
-
-%files -n libzookeeper-devel
-%defattr(-, root, root, -)
-%{_includedir}
-%{_libdir}/*.a
-%{_libdir}/*.la
-%{_libdir}/*.so
-
-%pre -n libzookeeper-devel
-getent group zookeeper >/dev/null || groupadd -r zookeeper
-getent passwd zookeeper >/dev/null || useradd -r -g zookeeper -d / -s /sbin/nologin zookeeper
-exit 0
-
-%post -n libzookeeper-devel
-/sbin/chkconfig --add zookeeper
-
-%preun -n libzookeeper-devel
-if [ $1 = 0 ] ; then
-    /sbin/service zookeeper stop >/dev/null 2>&1
-    /sbin/chkconfig --del zookeeper
-fi
-
-%postun -n libzookeeper-devel
-if [ "$1" -ge "1" ] ; then
-    /sbin/service zookeeper condrestart >/dev/null 2>&1 || :
-fi
 
 %changelog
 * Tue Sep 26 2023 David Vanhoucke <dvanhoucke@redborder.com> - 3.4.8-1
