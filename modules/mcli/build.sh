@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="0.0.1"}
+VERSION=${VERSION:="0.0.2"}
 RELEASE=${RELEASE:="1"}
 ORIGINAL_PACKNAME=${ORIGINAL_PACKNAME:="mc"}
 PACKNAME=${PACKNAME:="mcli"}
