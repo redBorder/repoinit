@@ -32,13 +32,13 @@ wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 mkdir pkgs
 tar -xzf SOURCES/${PACKNAME}-${VERSION}.tar.gz -C pkgs --strip-components=1
 
-# sync to cache and repo
-f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
-f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
+# # sync to cache and repo
+# f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
+# f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
 
-# cleaning
-rm -rf SOURCES
-rm -rf pkgs
+# # cleaning
+# rm -rf SOURCES
+# rm -rf pkgs
 
-# Update sdk9 repo
-f_rupdaterepo ${REPODIR}
+# # Update sdk9 repo
+# f_rupdaterepo ${REPODIR}
