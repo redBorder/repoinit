@@ -4,17 +4,17 @@ f_ssh_rbrepo() {
 
 f_rsync_repo() {
 	local LIST="$@"
-	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST}root@rbrepo.redborder.lan:/repos/ng/devel/ptorres/rhel/9/x86_64/
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/latest/rhel/9/x86_64/
 }
 
 f_rsync_repo_SRPMS() {
 	local LIST="$@"
-	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/devel/ptorres/rhel/9/SRPMS/
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/latest/rhel/9/SRPMS/
 }
 
 f_rsync_iso() {
 	local LIST="$@"
-	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/repos/ng/devel/ptorres/rhel/9/x86_64/
+	rsync -av -e "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" ${LIST} root@rbrepo.redborder.lan:/isos/ng/latest/rhel/9/x86_64/
 }
 
 f_updaterepo() {
@@ -93,7 +93,7 @@ f_check() {
 		if [ $? -eq 0 ]; then
         		f_ssh_rbrepo file --mime-type -b ${package} | grep -q "application/x-rpm"
         		if [ $? -ne 0 ]; then
-				create_rpms=1
+				create_rpms=1º	
 				break
         	        fi
 		else
