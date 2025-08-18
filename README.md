@@ -66,7 +66,6 @@ To build a full release (RPMs + ISO), run the appropriate script for your archit
 
 ### 3. Upload
 By default, generated packages/ISOs are uploaded to the configured `repo.redborder.com`.
-Ensure your credentials and target destination are correctly set in the relevant config file.
 
 ## 👩‍💻 Intended Audience
 This project is meant for:
