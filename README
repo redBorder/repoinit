@@ -11,3 +11,6 @@ Mock:
 # yum install epel-release
 # yum install mock
 
+Content:
+sdk7.cfg => Config file for running mock for a Centos 7
+sdk9.cfg => Config file for running mock for a Rocky 9

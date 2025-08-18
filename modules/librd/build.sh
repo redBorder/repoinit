@@ -7,15 +7,16 @@ VERSION=${VERSION:="0.1.0"}
 RELEASE=${RELEASE:="1"}
 LIBVER=${LIBVER:="0"}
 PACKNAME=${PACKNAME:="librd"}
-CACHEDIR=${CACHEDIR:="/isos/redBorder"}
-REPODIR=${REPODIR:="/repos/redBorder"}
+CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
+REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
+REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 VSHORT=$(c=${COMMIT}; echo ${c:0:7})
 
-list_of_packages="${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el7.centos.src.rpm 
-                ${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
-                ${REPODIR}/${PACKNAME}-debuginfo-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-                ${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm 
-                ${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm"
+list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.rb.src.rpm 
+                ${REPODIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+                ${REPODIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+                ${CACHEDIR}/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm
+                ${CACHEDIR}/${PACKNAME}-devel-${VERSION}-${RELEASE}.el9.rb.x86_64.rpm"
 
 if [ "x$1" != "xforce" ]; then
         f_check "${list_of_packages}"
@@ -29,15 +30,21 @@ fi
 mkdir SOURCES
 wget https://github.com/edenhill/${PACKNAME}/archive/${COMMIT}/${PACKNAME}-${VERSION}-${VSHORT}.tar.gz -O SOURCES/${PACKNAME}-${VERSION}-${VSHORT}.tar.gz
 
+ret=$?
+if [ $ret -ne 0 ]; then
+        echo "Error in getting ${PACKNAME}-${VERSION}-${VSHORT}.tar.gz ... exiting"
+        exit 1
+fi
+
 # Now it is time to create the source rpm
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
         --define "__libver ${LIBVER}" \
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
 # with it, we can create rest of packages
-/usr/bin/mock -r sdk7 \
+/usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
         --define "__libver ${LIBVER}" \
@@ -54,12 +61,13 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#rsync -a pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
-#rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
-f_rsync_iso pkgs/${PACKNAME}${LIBVER}-${VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-f_rsync_repo pkgs/${PACKNAME}*.rpm  
+f_rsync_repo pkgs/*.x86_64.rpm
+f_rsync_repo_SRPMS pkgs/*.src.rpm
+f_rsync_iso pkgs/*.x86_64.rpm
+
 rm -rf pkgs
+rm -rf SOURCES
 
-# Update sdk7 repo
-f_rupdaterepo
-
+# Update sdk9 repo
+f_rupdaterepo $REPODIR
+f_rupdaterepo $REPODIR_SRPMS

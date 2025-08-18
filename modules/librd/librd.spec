@@ -3,6 +3,8 @@
 %global gh_short     %(c=%{gh_commit}; echo ${c:0:7})
 %global gh_owner     edenhill
 %global gh_project   %{libname}
+%global _missing_build_ids_terminate_build 0
+%global debug_package %{nil}
 
 Name:    librd
 Summary: Rapid Development C library
@@ -39,7 +41,7 @@ Requires: %{name}%{soname} = %{version}-%{release} zlib-devel
 %setup -qn %{gh_project}-%{gh_commit}
 
 %build
-make
+CFLAGS=-Wno-format-truncation make
 
 %install
 DESTDIR=%{buildroot}/usr make install

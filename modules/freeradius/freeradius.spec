@@ -170,9 +170,9 @@ find $RPM_BUILD_DIR/freeradius-server-%{version} \( -name '*.c' -o -name '*.h' \
 
 %build
 %ifarch s390 s390x
-export CFLAGS="$RPM_OPT_FLAGS -fPIC"
+export CFLAGS="$RPM_OPT_FLAGS -Wno-implicit-function-declaration -fPIC"
 %else
-export CFLAGS="$RPM_OPT_FLAGS -fpic"
+export CFLAGS="$RPM_OPT_FLAGS -Wno-implicit-function-declaration -fpic"
 %endif
 
 %configure \

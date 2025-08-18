@@ -25,7 +25,7 @@ Group:   Development/Libraries/C and C++
 %package -n %{name}%{soname}
 Summary: Non-blocking high-level wrapper for libcurl
 Group:   Development/Libraries/C and C++
-Requires: librd
+Requires: librd0
 %description -n %{name}%{soname}
 %{summary}.
 
@@ -33,6 +33,7 @@ Requires: librd
 Summary: Development files for %{name}
 Group:   Development/Libraries/C and C++
 Requires: %{name}%{soname} = %{version}-%{release}
+Requires: libcurl-devel >= 7.48.0
 %description -n %{name}-devel
 %{summary}.
 

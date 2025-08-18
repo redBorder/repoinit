@@ -6,14 +6,16 @@ VERSION=${VERSION:="v0.20"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="secor"}
 LIBVER=${LIBVER:="1"}
-CACHEDIR=${CACHEDIR:="/isos/redBorder"}
-REPODIR=${REPODIR:="/repos/redBorder"}
+CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
+REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
+REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 CORRECT_VERSION=$(echo $VERSION | tr -d 'v')
 
-list_of_packages="${REPODIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.src.rpm 
-		${REPODIR}/${PACKNAME}${LIBVER}-${CORRECT_VERSION}-${RELEASE}.el7.rb.noarch.rpm 
-		${REPODIR}/${PACKNAME}-devel-${CORRECT_VERSION}-${RELEASE}.el7.rb.noarch.rpm 
-		${CACHEDIR}/${PACKNAME}${LIBVER}-${CORRECT_VERSION}-${RELEASE}.el7.rb.noarch.rpm" 
+list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.src.rpm 
+		${REPODIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
+		${REPODIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
+		${CACHEDIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm
+		${CACHEDIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm" 
 
 if [ "x$1" != "xforce" ]; then
 	f_check "${list_of_packages}"
@@ -24,6 +26,7 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 # First we need to download source
+rm -rf SOURCES
 mkdir SOURCES
 git clone https://github.com/pinterest/secor.git
 pushd secor &> /dev/null
@@ -48,23 +51,20 @@ cp secor.service SOURCES/secor.service
 	--resultdir=pkgs --rebuild pkgs/${PACKNAME}*.src.rpm
 
 ret=$?
-
-# cleaning
-rm -rf SOURCES
-rm -rf secor-${CORRECT_VERSION}
-
 if [ $ret -ne 0 ]; then
         echo "Error in mock stage ... exiting"
         exit 1
 fi
 
 # sync to cache and repo
-#rsync -a pkgs/${PACKNAME}${LIBVER}-${CORRECT_VERSION}-${RELEASE}.el7.centos.x86_64.rpm ${CACHEDIR}
-#rsync -a pkgs/${PACKNAME}*.rpm ${REPODIR}
-#f_rsync_repo pkgs/${PACKNAME}*.rpm
-#f_rsync_iso pkgs/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.centos.x86_64.rpm
-#rm -rf pkgs
+f_rsync_repo pkgs/${PACKNAME}*x86_64.rpm
+f_rsync_repo_SRPMS pkgs/*.src.rpm
+f_rsync_iso pkgs/${PACKNAME}*x86_64.rpm
 
-# Update sdk7 repo
-#f_updaterepo
+rm -rf pkgs
+rm -rf SOURCES
+rm -rf secor-${CORRECT_VERSION}
 
+# Update sdk9 repo
+f_rupdaterepo ${REPODIR}
+f_rupdaterepo ${REPODIR_SRPMS}

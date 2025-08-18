@@ -3,7 +3,7 @@ f_usage() {
     echo "  -i isofile   : Path to ISO file containing a CentOS 7 minimal image (mandatory)"
     echo "  -o isofile   : Path to ISO file to be created (mandatory)"
     echo "  -h           : Print this help"
-    echo "This script must be executed in the SDK7 project directory"
+    echo "This script must be executed in the SDK9 project directory"
 }
 
 if [ ! -e .repoinit_project ]; then
