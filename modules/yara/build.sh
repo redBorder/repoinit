@@ -24,7 +24,6 @@ fi
 mkdir pkgs
 mkdir SOURCES
 wget http://rpmfind.net/linux/centos-stream/9-stream/AppStream/x86_64/os/Packages/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm -O pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
-wget http://mirror.stream.centos.org/9-stream/AppStream/source/tree/Packages/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm -O SOURCES/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm
 
 # sync to cache and repo
 f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
