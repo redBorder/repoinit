@@ -1,3 +1,6 @@
 # SOURCES and pkgs
 SOURCES
 pkgs
+
+# IDE personal config
+.vscode/*
