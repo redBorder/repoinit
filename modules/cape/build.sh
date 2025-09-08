@@ -2,9 +2,10 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="v0.0.1"}
+VERSION=${VERSION:="0.0.1"}
 RELEASE=${RELEASE:="1"}
-PACKNAME=${PACKNAME:="CAPEv2"}
+GITNAME=${GITNAME:="CAPEv2"}
+PACKNAME=${PACKNAME:="cape"}
 LIBVER=${LIBVER:="1"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
@@ -29,11 +30,15 @@ fi
 # rm -rf SOURCES
 # mkdir SOURCES
 # git clone https://github.com/kevoreilly/CAPEv2.git
-# pushd ${PACKNAME} &> /dev/null
+# pushd ${GITNAME} &> /dev/null
 # git checkout ${LAST_STABLE_COMMIT}
 # popd &> /dev/null
-# mv ${PACKNAME} ${PACKNAME}-${VERSION}
+# mv ${GITNAME} ${PACKNAME}-${VERSION}
 # tar czf SOURCES/${PACKNAME}-${VERSION}.tar.gz ${PACKNAME}-${VERSION}
+cp cape.service SOURCES/cape.service
+cp cape-rooter.service SOURCES/cape-rooter.service
+cp cape-processor.service SOURCES/cape-processor.service
+cp cape-web.service SOURCES/cape-web.service
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
@@ -62,6 +67,7 @@ fi
 # cleaning
 # rm -rf SOURCES
 # rm -rf pkgs
+# rm -rf ${PACKNAME}-${VERSION}
 
 # Update sdk9 repo
 # f_rupdaterepo ${REPODIR}
