@@ -1,0 +1,18 @@
+[Unit]
+Description=Apache Airflow Webserver
+After=network.target
+# Optional: After=postgresql.service mysql.service redis.service
+
+[Service]
+User=airflow
+Group=airflow
+Type=simple
+ExecStart=/opt/airflow/venv/bin/airflow api-server --pid /run/airflow/airflow-webserver.pid
+Restart=on-failure
+RestartSec=5s
+Environment=AIRFLOW_HOME=/var/lib/airflow
+Environment=AIRFLOW_CONFIG=/etc/airflow/airflow.cfg
+WorkingDirectory=/var/lib/airflow
+
+[Install]
+WantedBy=multi-user.target
