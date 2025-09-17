@@ -9,7 +9,7 @@ FULLPACKNAME=${FULLPACKNAME:="apache-airflow"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
-TARBALL_URL="https://downloads.apache.org/${PACKNAME}/${VERSION}/${FULLPACKNAME}-${VERSION}-source.tar.gz"
+URL="https://downloads.apache.org/${PACKNAME}/${VERSION}/${FULLPACKNAME}-${VERSION}-source.tar.gz"
 
 list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm \
 ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm \
@@ -24,8 +24,9 @@ if [ "x$1" != "xforce" ]; then
 fi
 
 echo "Download Apache Airflow ${VERSION}..."
-wget -O SOURCES/${FULLPACKNAME}-${VERSION}-source.tar.gz "${TARBALL_URL}" || {
-    echo "Error: No se pudo descargar el tarball."
+mkdir -p SOURCES
+wget -O SOURCES/${FULLPACKNAME}-${VERSION}-source.tar.gz "${URL}" || {
+    echo "Error: Could not download the tarball."
     exit 1
 }
 
