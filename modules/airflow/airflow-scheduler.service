@@ -8,8 +8,6 @@ User=airflow
 Group=airflow
 Type=simple
 ExecStart=/opt/airflow/venv/bin/airflow scheduler --pid /run/airflow/airflow-scheduler.pid
-Restart=on-failure
-RestartSec=5s
 Environment=AIRFLOW_HOME=/var/lib/airflow
 Environment=AIRFLOW_CONFIG=/etc/airflow/airflow.cfg
 WorkingDirectory=/var/lib/airflow

@@ -12,9 +12,6 @@ Environment="AIRFLOW_CONFIG=/etc/airflow/airflow.cfg"
 Environment="HOME=/opt/airflow"
 WorkingDirectory=/opt/airflow
 ExecStart=/opt/airflow/venv/bin/airflow api-server --pid /run/airflow/airflow-webserver.pid
-Restart=on-failure
-RestartSec=5s
-Slice=redborder-airflowwebserver.slice
 
 [Install]
 WantedBy=multi-user.target
