@@ -3,7 +3,7 @@
 source build_common.sh
 
 VERSION=${VERSION:="3.0.6"}
-RELEASE=${RELEASE:="1"}
+RELEASE=${RELEASE:="2"}
 PACKNAME=${PACKNAME:="airflow"}
 FULLPACKNAME=${FULLPACKNAME:="apache-airflow"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
@@ -33,6 +33,7 @@ wget -O SOURCES/${FULLPACKNAME}-${VERSION}-source.tar.gz "${URL}" || {
 echo "Copying service files to SOURCES..."
 cp airflow-webserver.service SOURCES/
 cp airflow-scheduler.service SOURCES/
+cp airflow-celery-worker.service SOURCES/
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
