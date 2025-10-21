@@ -29,7 +29,7 @@ cp -a * %{buildroot}/opt/airflow
 
 install -D -m 644 %{S:1} %{buildroot}/usr/lib/systemd/system/airflow-webserver.service
 install -D -m 644 %{S:2} %{buildroot}/usr/lib/systemd/system/airflow-scheduler.service
-install -D -m 644 %{S:2} %{buildroot}/usr/lib/systemd/system/airflow-celery-worker.service
+install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-celery-worker.service
 
 %clean
 rm -rf %{buildroot}

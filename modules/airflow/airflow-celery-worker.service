@@ -8,9 +8,9 @@ Group=airflow
 Type=simple
 Environment="AIRFLOW_HOME=/var/lib/airflow"
 Environment="AIRFLOW_CONFIG=/etc/airflow/airflow.cfg"
-Environment="HOME=/opt/airflow"
+Environment="HOME=/var/lib/airflow"
 WorkingDirectory=/var/lib/airflow
-ExecStart=/opt/airflow/venv/bin/airflow celery worker --pid /run/airflow/airflow-celery-worker.pid
+ExecStart=/opt/airflow/venv/bin/airflow celery worker --pid /var/run/airflow/airflow-celery-worker.pid
 Restart=always
 RestartSec=5s
 
