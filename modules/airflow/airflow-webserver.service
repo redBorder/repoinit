@@ -8,7 +8,7 @@ Group=airflow
 Type=simple
 EnvironmentFile=-/etc/sysconfig/airflow
 WorkingDirectory=/var/lib/airflow
-ExecStart=/opt/airflow/venv/bin/airflow webserver --pid /var/run/airflow/airflow-webserver.pid
+ExecStart=/opt/airflow/venv/bin/airflow api-server --pid /var/run/airflow/airflow-webserver.pid
 Restart=always
 RestartSec=5s
 
