@@ -13,6 +13,7 @@ Source1: airflow-webserver.service
 Source2: airflow-scheduler.service
 Source3: airflow-celery-worker.service
 Source4: airflow.env
+Source5: airflow-profile.sh
 
 BuildArch:      noarch
 
@@ -32,6 +33,7 @@ install -D -m 644 %{S:1} %{buildroot}/usr/lib/systemd/system/airflow-webserver.s
 install -D -m 644 %{S:2} %{buildroot}/usr/lib/systemd/system/airflow-scheduler.service
 install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-celery-worker.service
 install -D -m 644 %{S:4} %{buildroot}/etc/sysconfig/airflow
+install -D -m 755 %{S:5} %{buildroot}/etc/profile.d/airflow.sh
 
 %clean
 rm -rf %{buildroot}
@@ -49,9 +51,10 @@ fi
 /usr/lib/systemd/system/airflow-scheduler.service
 /usr/lib/systemd/system/airflow-celery-worker.service
 /etc/sysconfig/airflow
+/etc/profile.d/airflow.sh
 
 %changelog
 * Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
-- Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile using /etc/sysconfig/airflow
+- Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile using /etc/sysconfig/airflow and /etc/profile.d/airflow.sh
 * Wed Sep 10 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-1
 - first spec version
