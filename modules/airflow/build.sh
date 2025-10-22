@@ -34,6 +34,7 @@ echo "Copying service files to SOURCES..."
 cp airflow-webserver.service SOURCES/
 cp airflow-scheduler.service SOURCES/
 cp airflow-celery-worker.service SOURCES/
+cp airflow.env SOURCES/
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
