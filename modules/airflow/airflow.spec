@@ -44,6 +44,20 @@ if ! /usr/bin/getent passwd airflow >/dev/null ; then
     /usr/sbin/useradd -r -g airflow -d /opt/airflow -s /sbin/nologin -c "airflow" airflow
 fi
 
+%post
+
+# Delete any residual /root/airflow folders
+if [ -d /root/airflow ]; then
+    rm -rf /root/airflow
+fi
+
+# Load environment variables
+if [ -f /etc/profile.d/airflow.sh ]; then
+    . /etc/profile.d/airflow.sh
+fi
+
+systemctl daemon-reload
+
 %files
 %defattr(-,airflow,airflow)
 /opt/airflow
@@ -55,6 +69,7 @@ fi
 
 %changelog
 * Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
-- Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile using /etc/sysconfig/airflow and /etc/profile.d/airflow.sh
+- Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile
+- Added /etc/profile.d/airflow.sh for CLI, removed /root/airflow
 * Wed Sep 10 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-1
 - first spec version
