@@ -3,7 +3,7 @@
 source build_common.sh
 
 VERSION=${VERSION:="3.0.6"}
-RELEASE=${RELEASE:="2"}
+RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="airflow"}
 FULLPACKNAME=${FULLPACKNAME:="apache-airflow"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
