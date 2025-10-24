@@ -32,6 +32,8 @@ cp -a * %{buildroot}/opt/airflow
 install -D -m 644 %{S:1} %{buildroot}/usr/lib/systemd/system/airflow-webserver.service
 install -D -m 644 %{S:2} %{buildroot}/usr/lib/systemd/system/airflow-scheduler.service
 install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-celery-worker.service
+install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-triggerer.service
+install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-dag-processor.service
 install -D -m 644 %{S:4} %{buildroot}/etc/sysconfig/airflow
 install -D -m 755 %{S:5} %{buildroot}/etc/profile.d/airflow.sh
 
@@ -64,6 +66,8 @@ systemctl daemon-reload
 /usr/lib/systemd/system/airflow-webserver.service
 /usr/lib/systemd/system/airflow-scheduler.service
 /usr/lib/systemd/system/airflow-celery-worker.service
+/usr/lib/systemd/system/airflow-triggerer.service
+/usr/lib/systemd/system/airflow-dag-processor.service
 /etc/sysconfig/airflow
 /etc/profile.d/airflow.sh
 
