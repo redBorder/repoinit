@@ -8,7 +8,7 @@ Group=airflow
 Type=simple
 EnvironmentFile=-/etc/sysconfig/airflow
 WorkingDirectory=/var/lib/airflow
-ExecStart=/opt/airflow/venv/bin/airflow triggerer
+ExecStart=/opt/airflow/venv/bin/airflow triggerer --pid /var/run/airflow/airflow-triggerer.pid
 Restart=always
 RestartSec=5s
 
