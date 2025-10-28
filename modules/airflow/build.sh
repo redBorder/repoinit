@@ -2,7 +2,7 @@
 
 source build_common.sh
 
-VERSION=${VERSION:="3.1.0"}
+VERSION=${VERSION:="3.1.1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="airflow"}
 FULLPACKNAME=${FULLPACKNAME:="apache-airflow"}
