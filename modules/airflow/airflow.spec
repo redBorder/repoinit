@@ -74,6 +74,10 @@ systemctl daemon-reload
 /etc/profile.d/airflow.sh
 
 %changelog
+* Wed Oct 29 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-3
+- Add airflow-dag-processor.service systemd unit
+- Add airflow-triggerer.service systemd unit
+- Update airflow to 3.1.1
 * Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
 - Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile
 - Added /etc/profile.d/airflow.sh for CLI, removed /root/airflow
