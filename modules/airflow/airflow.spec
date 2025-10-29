@@ -74,8 +74,8 @@ systemctl daemon-reload
 /etc/profile.d/airflow.sh
 
 %changelog
-* Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
+- Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
 - Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile
 - Added /etc/profile.d/airflow.sh for CLI, removed /root/airflow
-* Wed Sep 10 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-1
+- Wed Sep 10 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-1
 - first spec version
