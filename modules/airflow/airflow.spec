@@ -13,7 +13,9 @@ Source1: airflow-webserver.service
 Source2: airflow-scheduler.service
 Source3: airflow-celery-worker.service
 Source4: airflow.env
-Source5: airflow-profile.sh
+Source5: airflow-triggerer.service
+Source6: airflow-dag-processor.service
+Source7: airflow-profile.sh
 
 BuildArch:      noarch
 
@@ -33,7 +35,9 @@ install -D -m 644 %{S:1} %{buildroot}/usr/lib/systemd/system/airflow-webserver.s
 install -D -m 644 %{S:2} %{buildroot}/usr/lib/systemd/system/airflow-scheduler.service
 install -D -m 644 %{S:3} %{buildroot}/usr/lib/systemd/system/airflow-celery-worker.service
 install -D -m 644 %{S:4} %{buildroot}/etc/sysconfig/airflow
-install -D -m 755 %{S:5} %{buildroot}/etc/profile.d/airflow.sh
+install -D -m 644 %{S:5} %{buildroot}/usr/lib/systemd/system/airflow-triggerer.service
+install -D -m 644 %{S:6} %{buildroot}/usr/lib/systemd/system/airflow-dag-processor.service
+install -D -m 755 %{S:7} %{buildroot}/etc/profile.d/airflow.sh
 
 %clean
 rm -rf %{buildroot}
@@ -64,10 +68,16 @@ systemctl daemon-reload
 /usr/lib/systemd/system/airflow-webserver.service
 /usr/lib/systemd/system/airflow-scheduler.service
 /usr/lib/systemd/system/airflow-celery-worker.service
+/usr/lib/systemd/system/airflow-triggerer.service
+/usr/lib/systemd/system/airflow-dag-processor.service
 /etc/sysconfig/airflow
 /etc/profile.d/airflow.sh
 
 %changelog
+* Wed Oct 29 2025 Vicente Mesa <vimesa@redborder.com> - 3.0.6-3
+- Add airflow-dag-processor.service systemd unit
+- Add airflow-triggerer.service systemd unit
+- Update airflow to 3.1.1
 * Mon Oct 20 2025 Rafael Gómez <rgomez@redborder.com> - 3.0.6-2
 - Add airflow-celery-worker.service, updated systemd units to use EnvironmentFile
 - Added /etc/profile.d/airflow.sh for CLI, removed /root/airflow
