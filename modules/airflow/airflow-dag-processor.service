@@ -1,5 +1,5 @@
 [Unit]
-Description=Apache Airflow Webserver
+Description=Apache Airflow DAG Processor
 After=network.target
 
 [Service]
@@ -8,7 +8,7 @@ Group=airflow
 Type=simple
 EnvironmentFile=-/etc/sysconfig/airflow
 WorkingDirectory=/var/lib/airflow
-ExecStart=/opt/airflow/venv/bin/airflow api-server --pid /var/run/airflow/airflow-webserver.pid
+ExecStart=/opt/airflow/venv/bin/airflow dag-processor --pid /var/run/airflow/airflow-dag-processor.pid
 Restart=always
 RestartSec=5s
 
