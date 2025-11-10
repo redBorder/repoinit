@@ -1,0 +1,19 @@
+[Unit]
+Description=CAPE report processor
+Documentation=https://github.com/kevoreilly/CAPEv2
+Wants=cape.service
+After=cape-rooter.service
+
+[Service]
+Environment=VIRTUAL_ENV=/opt/redborder-cape
+Environment=PATH=/opt/redborder-cape/bin:/usr/bin:/bin
+WorkingDirectory=/opt/CAPEv2/utils/
+ExecStart=/opt/redborder-cape/bin/poetry run python process.py -p7 auto -pt 900
+User=cape
+Group=cape
+Restart=always
+RestartSec=5m
+LimitNOFILE=100000
+
+[Install]
+WantedBy=multi-user.target
