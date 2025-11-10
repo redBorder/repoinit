@@ -5,7 +5,6 @@ f_ssh_rbrepo() {
 }
 
 f_rsync_repo() {
-  # Usa todos los args como lista de ficheros y luego el destino
   rsync -av -e "ssh ${SSHOPTS}" "$@" root@rbrepo.redborder.lan:/repos/ng/latest/rhel/9/x86_64/
 }
 
