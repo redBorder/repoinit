@@ -65,6 +65,19 @@ echo "Verifying Java version for build..."
 JAVA_BUILD_VERSION=$(java -version 2>&1 | head -n 1)
 echo "Build will use: $JAVA_BUILD_VERSION"
 
+# Copy spec file to SPECS directory
+if [ -f apache-drill.spec ]; then
+    cp apache-drill.spec SPECS/
+
+    sed -i "s/^Version:.*/Version: ${VERSION}/" SPECS/apache-drill.spec
+    sed -i "s/^Release:.*/Release: ${RELEASE}%{?dist}/" SPECS/apache-drill.spec
+    
+    echo "Spec file updated for version ${VERSION}"
+else
+    echo "Error: apache-drill.spec file not found!"
+    exit 1
+fi
+
 echo "Building RPM packages with Java 8..."
 rpmbuild -ba \
     --define "_topdir $(pwd)" \
