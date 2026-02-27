@@ -1,0 +1,16 @@
+[Unit]
+Description=Apache Airflow Celery Worker
+After=network.target
+
+[Service]
+User=airflow
+Group=airflow
+Type=simple
+EnvironmentFile=-/etc/sysconfig/airflow
+WorkingDirectory=/var/lib/airflow
+ExecStart=/opt/airflow/venv/bin/airflow celery worker --pid /var/run/airflow/airflow-celery-worker.pid
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
