@@ -2,21 +2,31 @@
 
 source build_common.sh
 
+# --- Package Configuration ---
 VERSION=${VERSION:="0.0.1"}
 RELEASE=${RELEASE:="1"}
-GITNAME=${GITNAME:="CAPEv2"}
 PACKNAME=${PACKNAME:="cape"}
 LIBVER=${LIBVER:="1"}
+# This is the version that the script will use to search for existing RPMs.
+CORRECT_VERSION="${VERSION}" 
+
+# --- Repository Configuration ---
+GIT_URL="https://github.com/redBorder/redborder-cape.git"
+# BRANCH="redborder"
+BRANCH="feature/#22343_integrate_cape"
+GITNAME="redborder-cape"
+
+# --- RHEL 9 Directories ---
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
-LAST_STABLE_COMMIT=${LAST_STABLE_COMMIT:="cfc97e71ad538366f5d87d36a0116c27dcc72988"} # Last tested commit
 
-list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.src.rpm 
-		${REPODIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
-		${REPODIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm 
-		${CACHEDIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm
-		${CACHEDIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el7.rb.x86_64.rpm" 
+# --- Package list ---
+list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el9.rb.src.rpm 
+		${REPODIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+		${REPODIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el9.rb.x86_64.rpm 
+		${CACHEDIR}/${PACKNAME}-${CORRECT_VERSION}-${RELEASE}.el9.rb.x86_64.rpm
+		${CACHEDIR}/${PACKNAME}-debuginfo-${CORRECT_VERSION}-${RELEASE}.el9.rb.x86_64.rpm" 
 
 if [ "x$1" != "xforce" ]; then
 	f_check "${list_of_packages}"
@@ -26,19 +36,19 @@ if [ "x$1" != "xforce" ]; then
 	fi
 fi
 
-# First we need to download source
-# rm -rf SOURCES
-# mkdir SOURCES
-# git clone https://github.com/kevoreilly/CAPEv2.git
-# pushd ${GITNAME} &> /dev/null
-# git checkout ${LAST_STABLE_COMMIT}
-# popd &> /dev/null
-# mv ${GITNAME} ${PACKNAME}-${VERSION}
-# tar czf SOURCES/${PACKNAME}-${VERSION}.tar.gz ${PACKNAME}-${VERSION}
-cp cape.service SOURCES/cape.service
-cp cape-rooter.service SOURCES/cape-rooter.service
-cp cape-processor.service SOURCES/cape-processor.service
-cp cape-web.service SOURCES/cape-web.service
+# Download
+rm -rf SOURCES ${GITNAME}
+mkdir SOURCES
+
+# We clone only the branch we are interested in
+git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
+
+# Rename so that the tarball has the format expected by the .spec
+mv "${GITNAME}" "${PACKNAME}-${VERSION}"
+tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
+
+# Copy the systemd unit files
+cp cape.service cape-rooter.service cape-processor.service cape-web.service SOURCES/
 
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
@@ -61,13 +71,13 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-# f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
-# f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
+f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.x86_64.rpm
 
 # cleaning
-# rm -rf SOURCES
-# rm -rf pkgs
-# rm -rf ${PACKNAME}-${VERSION}
+rm -rf SOURCES
+rm -rf pkgs
+rm -rf ${PACKNAME}-${VERSION}
 
 # Update sdk9 repo
-# f_rupdaterepo ${REPODIR}
+f_rupdaterepo ${REPODIR}
