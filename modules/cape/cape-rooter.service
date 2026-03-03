@@ -5,15 +5,13 @@ Wants=network-online.target
 After=syslog.target network.target
 
 [Service]
-Environment=VIRTUAL_ENV=/opt/redborder-cape
-Environment=PATH=/opt/redborder-cape/bin:/usr/bin:/bin
+Environment=VIRTUAL_ENV=/opt/redborder-cape/venv
+Environment=PATH=/opt/redborder-cape/venv/bin:/usr/bin:/bin
 WorkingDirectory=/opt/CAPEv2/utils/
-ExecStartPre=/opt/redborder-cape/bin/poetry config cache-dir /opt/CAPEv2/.cache/pypoetry
-ExecStart=/opt/redborder-cape/bin/poetry run python rooter.py -g cape
+ExecStartPre=/opt/redborder-cape/venv/bin/poetry config cache-dir /opt/CAPEv2/.cache/pypoetry
+ExecStart=/opt/redborder-cape/venv/bin/poetry run python rooter.py -g cape
 User=root
 Group=root
-Restart=always
-RestartSec=5m
 
 [Install]
 WantedBy=multi-user.target
