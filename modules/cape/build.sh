@@ -12,8 +12,7 @@ CORRECT_VERSION="${VERSION}"
 
 # --- Repository Configuration ---
 GIT_URL="https://github.com/redBorder/redborder-cape.git"
-# BRANCH="redborder"
-BRANCH="feature/#22343_integrate_cape"
+BRANCH="redborder"
 GITNAME="redborder-cape"
 
 # --- RHEL 9 Directories ---
