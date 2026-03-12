@@ -1,0 +1,18 @@
+[Unit]
+Description=CAPE
+Documentation=https://github.com/kevoreilly/CAPEv2
+Wants=cape-rooter.service
+After=cape-rooter.service
+
+[Service]
+Environment=VIRTUAL_ENV=/opt/redborder-cape/venv
+Environment=PATH=/opt/redborder-cape/venv/bin:/usr/bin:/bin
+WorkingDirectory=/opt/CAPEv2/
+ExecStart=/opt/redborder-cape/venv/bin/poetry run python cuckoo.py
+User=cape
+Group=cape
+TimeoutStopSec=4m
+LimitNOFILE=100000
+
+[Install]
+WantedBy=multi-user.target
