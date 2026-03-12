@@ -1,0 +1,17 @@
+[Unit]
+Description=CAPE rooter
+Documentation=https://github.com/kevoreilly/CAPEv2
+Wants=network-online.target
+After=syslog.target network.target
+
+[Service]
+Environment=VIRTUAL_ENV=/opt/redborder-cape/venv
+Environment=PATH=/opt/redborder-cape/venv/bin:/usr/bin:/bin
+WorkingDirectory=/opt/CAPEv2/utils/
+ExecStartPre=/opt/redborder-cape/venv/bin/poetry config cache-dir /opt/CAPEv2/.cache/pypoetry
+ExecStart=/opt/redborder-cape/venv/bin/poetry run python rooter.py -g cape
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
