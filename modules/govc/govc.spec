@@ -24,5 +24,5 @@ install -D -m 755 %{SOURCE0} %{buildroot}%{_bindir}/govc
 %{_bindir}/govc
 
 %changelog
-* Wed Jun 24 2026 Nils <nverschaeve@redborder.com> - 0.54.1-1
+* Wed Jun 24 2026 Nils <nverschaeve@redborder.com> - 0.0.1-1
 - first spec version
