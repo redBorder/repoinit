@@ -4,7 +4,6 @@ VERSION=${VERSION:="0.54.1"}
 RELEASE=${RELEASE:="1"}
 PACKNAME=${PACKNAME:="govc"}
 
-# First we need to download source
 rm -rf SOURCES
 rm -rf pkgs
 mkdir SOURCES
@@ -21,13 +20,11 @@ tar -xzf govc_Linux_x86_64.tar.gz
 rm -f govc_Linux_x86_64.tar.gz
 popd &>/dev/null
 
-# Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
         --resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 
-# with it, we can create rest of packages
 /usr/bin/mock -r sdk9 \
         --define "__version ${VERSION}" \
         --define "__release ${RELEASE}" \
@@ -39,5 +36,4 @@ if [ $ret -ne 0 ]; then
         exit 1
 fi
 
-# Clean up build sources, but keep build results in pkgs/
 rm -rf SOURCES
