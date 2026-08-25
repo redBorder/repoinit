@@ -1,0 +1,6 @@
+wheel
+six
+protobuf==3.20.3
+setuptools==58.3.0
+nodeenv
+grpcio-tools==1.43.0
