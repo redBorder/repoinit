@@ -177,7 +177,7 @@ ls -la %{_builddir}/grr-venv/lib/python3.9/site-packages/grr_response_proto/
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/api_client/python/.
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/client_builder/.
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/server/.
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/test/.
+# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/test/.
 
 # Fix Python executable shebangs so they point to the final installation path
 find %{build_venv}/bin -type f -exec sed -i \
