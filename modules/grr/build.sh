@@ -27,14 +27,7 @@ if [ "x$1" != "xforce" ]; then
 		exit 0
 	fi
 fi
-#
-#echo "Download Apache Airflow ${VERSION}..."
-#mkdir -p SOURCES
-#wget -O SOURCES/${FULLPACKNAME}-${VERSION}-source.tar.gz "${URL}" || {
-#    echo "Error: Could not download the tarball."
-#    exit 1
-#}
-#
+
 echo "Copying service files to SOURCES..."
 cp grr-fleetspeak.service SOURCES/
 cp grr-adminui.service SOURCES/
