@@ -3,6 +3,7 @@
 %global grr_venv_path %{grr_dir}/venv
 %global build_venv %{_builddir}/grr-venv
 %global _build_id_links none
+%global debug_package %{nil}
 
 Name:           grr
 Version:        3.4.7.1
@@ -23,6 +24,7 @@ Requires:       java-11-openjdk
 Requires:       nodejs
 Requires:       systemd
 
+BuildRequires: rsync
 BuildRequires:  python3
 BuildRequires:  python3-devel
 BuildRequires:  python3-pip
@@ -32,7 +34,9 @@ BuildRequires:  mariadb-connector-c-devel
 BuildRequires:  libffi-devel
 BuildRequires:  openssl-devel
 BuildRequires:  nodejs >= 18.20.8
-#BuildRequires:  npm >= 10.8.2
+BuildRequires:  npm >= 10.8.2
+BuildRequires:  java-11-openjdk
+
 
 %description
 GRR Rapid Response 3.4.7.1 server packaged for Rocky Linux 9.
@@ -42,17 +46,64 @@ GRR Rapid Response 3.4.7.1 server packaged for Rocky Linux 9.
 
 
 %build
-# GRR is installed into an application-local Python virtual environment.
 
-echo "========== node version =========="
+# Node.js / npm requirements:
+#   Node.js >= 18.20.8
+#   npm    >= 10.8.2
+#
+# The Node.js 18 module must be enabled in /etc/mock/sdk9.cfg:
+#   config_opts['module_enable'] = ['nodejs:18']
+
+echo "========== Node.js version =========="
 node --version
+
 echo "========== npm version =========="
-# npm --version
+npm --version
+
+echo "========== Node.js path =========="
+which node
+
+echo "========== npm path =========="
+which npm
+
+
+# Verify Node.js version
+NODE_VERSION="$(node --version | sed 's/^v//')"
+
+if ! printf '%s\n' "18.20.8" "$NODE_VERSION" | sort -V -C; then
+    echo "ERROR: Node.js >= 18.20.8 is required."
+    echo "ERROR: Found Node.js $NODE_VERSION"
+    exit 1
+fi
+
+
+# Verify npm version
+NPM_VERSION="$(npm --version)"
+
+if ! printf '%s\n' "10.8.2" "$NPM_VERSION" | sort -V -C; then
+    echo "ERROR: npm >= 10.8.2 is required."
+    echo "ERROR: Found npm $NPM_VERSION"
+    exit 1
+fi
+
+echo "========== Node.js/npm requirements satisfied =========="
+echo "Node.js: v${NODE_VERSION}"
+echo "npm:     ${NPM_VERSION}"
+
+
+echo "========== Building GRR's JS/CSS =========="
+
+cd %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static/
+
+echo "========== Installing frontend dependencies =========="
+npm install
+
+echo "========== Compiling frontend =========="
+npx gulp compile
 
 %install
 
 rm -rf %{buildroot}
-#rm -rf %{_builddir}
 
 mkdir -p %{buildroot}%{grr_dir}
 mkdir -p %{buildroot}/etc/grr
@@ -135,8 +186,20 @@ find %{build_venv}/bin -type f -exec sed -i \
 find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
+find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
+    "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
+
+find %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static -type f -exec sed -i \
+    "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
+
 # Copy completed venv into RPM buildroot
 cp -a %{build_venv} %{buildroot}%{grr_dir}/venv
+#cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
+rsync -a \
+    --exclude='node_modules' \
+    --exclude='tmp' \
+    %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static/ \
+    %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/static/
 
 # Install systemd units
 install -D -m 0644 %{SOURCE1} \
