@@ -21,7 +21,7 @@ Source4:        grr-worker.service
 Source5:        requirements.txt
 Requires:       python3
 Requires:       java-11-openjdk
-Requires:       nodejs
+# Requires:       nodejs
 Requires:       systemd
 
 BuildRequires: rsync
@@ -101,6 +101,25 @@ npm install
 echo "========== Compiling frontend =========="
 npx gulp compile
 
+
+echo "========== Building GRR Angular v2 UI =========="
+
+cd %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/ui/
+
+# Angular >= 13 no longer supports extractCss.
+sed -i '/"extractCss"[[:space:]]*:/d' angular.jsons
+
+# Increase Angular component style budgets.
+sed -i \
+    '/"type"[[:space:]]*:[[:space:]]*"anyComponentStyle"/,/^[[:space:]]*}/ {
+        s/"maximumWarning"[[:space:]]*:[[:space:]]*"6kb"/"maximumWarning": "120kb"/
+        s/"maximumError"[[:space:]]*:[[:space:]]*"10kb"/"maximumError": "150kb"/
+    }' angular.json
+
+npm install
+
+npm run build -- --configuration production
+
 %install
 
 rm -rf %{buildroot}
@@ -120,6 +139,9 @@ cp %{_builddir}/grr-3.4.7.1/version.ini \
 
 cp %{_builddir}/grr-3.4.7.1/version.ini \
    %{_builddir}/grr-3.4.7.1/grr/server/version.ini
+
+#cp %{_builddir}/grr-3.4.7.1/version.ini \
+#   %{_builddir}/grr-3.4.7.1/grr/config/grr_response_templates/version.ini
 
 # Rewrite shebangs
 find %{build_venv}/bin -type f \
@@ -177,6 +199,7 @@ ls -la %{_builddir}/grr-venv/lib/python3.9/site-packages/grr_response_proto/
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/api_client/python/.
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/client_builder/.
 %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/server/.
+# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/config/grr_response_templates/.
 # %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/test/.
 
 # Fix Python executable shebangs so they point to the final installation path
@@ -194,7 +217,7 @@ find %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static -type f 
 
 # Copy completed venv into RPM buildroot
 cp -a %{build_venv} %{buildroot}%{grr_dir}/venv
-#cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
+# cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
 rsync -a \
     --exclude='node_modules' \
     --exclude='tmp' \
