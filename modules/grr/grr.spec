@@ -107,14 +107,13 @@ echo "========== Building GRR Angular v2 UI =========="
 cd %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/ui/
 
 # Angular >= 13 no longer supports extractCss.
-sed -i '/"extractCss"[[:space:]]*:/d' angular.jsons
+sed -i '/"extractCss"[[:space:]]*:/d' angular.json
 
 # Increase Angular component style budgets.
 sed -i \
-    '/"type"[[:space:]]*:[[:space:]]*"anyComponentStyle"/,/^[[:space:]]*}/ {
-        s/"maximumWarning"[[:space:]]*:[[:space:]]*"6kb"/"maximumWarning": "120kb"/
-        s/"maximumError"[[:space:]]*:[[:space:]]*"10kb"/"maximumError": "150kb"/
-    }' angular.json
+    -e '/"type"[[:space:]]*:[[:space:]]*"anyComponentStyle"/,+3 s/"maximumWarning": "6kb"/"maximumWarning": "120kb"/' \
+    -e '/"type"[[:space:]]*:[[:space:]]*"anyComponentStyle"/,+3 s/"maximumError": "10kb"/"maximumError": "150kb"/' \
+    angular.json
 
 npm install
 
