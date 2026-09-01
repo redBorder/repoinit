@@ -1,0 +1,15 @@
+[Unit]
+Description=GRR Rapid Response Fleetspeak Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/grr/venv/
+ExecStart=/opt/grr/venv/bin/grr_server --component fleetspeak_server --verbose
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
