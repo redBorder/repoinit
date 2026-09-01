@@ -53,13 +53,12 @@ if [ $ret -ne 0 ]; then
         echo "Error in mock stage ... exiting"
         exit 1
 fi
-#
-## sync to cache and repo
-#f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
-#f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
-#
-##rm -rf SOURCES pkgs ${FULLPACKNAME}-${VERSION}
-#
-## Update sdk9 repo
-#f_rupdaterepo ${REPODIR}
-#
+
+# sync to cache and repo
+f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
+
+rm -rf SOURCES pkgs ${FULLPACKNAME}-${VERSION}
+
+# Update sdk9 repo
+f_rupdaterepo ${REPODIR}

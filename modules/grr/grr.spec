@@ -21,7 +21,7 @@ Source4:        grr-worker.service
 Source5:        requirements.txt
 Requires:       python3
 Requires:       java-11-openjdk
-# Requires:       nodejs
+Requires:       nodejs
 Requires:       systemd
 
 BuildRequires: rsync
