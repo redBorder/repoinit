@@ -1,0 +1,9 @@
+wheel
+six
+protobuf==3.20.3
+setuptools==58.3.0
+nodeenv
+grpcio==1.46.3
+grpcio-tools==1.43.0
+protobuf>=3.20.3,<4
+mysqlclient
