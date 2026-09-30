@@ -176,6 +176,9 @@ echo "========== INSTALLING PROTO =========="
 %{build_venv}/bin/python3 \
     %{_builddir}/grr-3.4.7.1/grr/proto/makefile.py --clean
 
+%{build_venv}/bin/python3 \
+    %{_builddir}/grr-3.4.7.1/grr/client/makefile.py
+
 # Verify generated protobuf files
 echo "========== GENERATED PROTO FILES =========="
 find %{_builddir}/grr-3.4.7.1/grr/proto \
@@ -186,6 +189,7 @@ find %{_builddir}/grr-3.4.7.1/grr/proto \
     --no-cache-dir \
     --force-reinstall \
     %{_builddir}/grr-3.4.7.1/grr/proto/.
+
 
 echo "========== AFTER PROTO INSTALL =========="
 %{build_venv}/bin/python3 -m pip show grr-response-proto || true
@@ -203,9 +207,6 @@ ls -la %{_builddir}/grr-venv/lib/python3.9/site-packages/grr_response_proto/
 
 # Fix Python executable shebangs so they point to the final installation path
 find %{build_venv}/bin -type f -exec sed -i \
-    "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
-
-find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
 find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \

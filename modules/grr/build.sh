@@ -9,10 +9,9 @@ FULLPACKNAME=${FULLPACKNAME:="grr"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
-URL="https://downloads.apache.org/${PACKNAME}/${VERSION}/${FULLPACKNAME}-${VERSION}-source.tar.gz"
 
 # First we need to download source
-URL="https://github.com/redBorder/${PACKNAME}/archive/v${VERSION}.tar.gz"
+URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
 mkdir SOURCES
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
