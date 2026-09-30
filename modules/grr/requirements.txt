@@ -7,3 +7,4 @@ grpcio==1.46.3
 grpcio-tools==1.43.0
 protobuf>=3.20.3,<4
 mysqlclient
+rpm-build
