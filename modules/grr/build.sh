@@ -11,24 +11,24 @@ REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 
 # First we need to download source
-URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
-mkdir SOURCES
-wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
+#URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
+#mkdir SOURCES
+#wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
-## ----- Develop mode ------
-#
-#GIT_URL="https://github.com/redBorder/grr.git"
-#BRANCH="feature/#26674_Integrate_grr_endpoints"
-#GITNAME="redborder-grr"
-#
-## We clone only the branch we are interested in
-#git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
-#
-## Rename so that the tarball has the format expected by the .spec
-#mv "${GITNAME}" "${PACKNAME}-${VERSION}"
-#tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
-#
-## ----- END Develop mode ------
+# ----- Develop mode ------
+
+GIT_URL="https://github.com/redBorder/grr.git"
+BRANCH="feature/#26674_Integrate_grr_endpoints"
+GITNAME="redborder-grr"
+
+# We clone only the branch we are interested in
+git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
+
+# Rename so that the tarball has the format expected by the .spec
+mv "${GITNAME}" "${PACKNAME}-${VERSION}"
+tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
+
+# ----- END Develop mode ------
 
 
 list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm \

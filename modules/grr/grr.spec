@@ -19,10 +19,16 @@ Source2:        grr-adminui.service
 Source3:        grr-frontend.service
 Source4:        grr-worker.service
 Source5:        requirements.txt
+Source6:        grr_3.4.7.1_amd64.rpm.zip
+
 Requires:       python3
 Requires:       java-11-openjdk
 Requires:       nodejs
 Requires:       systemd
+Requires:       rpm-build
+Requires:       mariadb-server
+Requires:       mariadb-connector-c-devel 
+Requires:       gcc
 
 BuildRequires: rsync
 BuildRequires:  python3
@@ -176,9 +182,6 @@ echo "========== INSTALLING PROTO =========="
 %{build_venv}/bin/python3 \
     %{_builddir}/grr-3.4.7.1/grr/proto/makefile.py --clean
 
-%{build_venv}/bin/python3 \
-    %{_builddir}/grr-3.4.7.1/grr/client/makefile.py
-
 # Verify generated protobuf files
 echo "========== GENERATED PROTO FILES =========="
 find %{_builddir}/grr-3.4.7.1/grr/proto \
@@ -189,7 +192,6 @@ find %{_builddir}/grr-3.4.7.1/grr/proto \
     --no-cache-dir \
     --force-reinstall \
     %{_builddir}/grr-3.4.7.1/grr/proto/.
-
 
 echo "========== AFTER PROTO INSTALL =========="
 %{build_venv}/bin/python3 -m pip show grr-response-proto || true
@@ -212,11 +214,15 @@ find %{build_venv}/bin -type f -exec sed -i \
 find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
+find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
+    "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
+
 find %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
 # Copy completed venv into RPM buildroot
 cp -a %{build_venv} %{buildroot}%{grr_dir}/venv
+mkdir %{buildroot}%{grr_dir}/venv/client_templates
 # cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
 rsync -a \
     --exclude='node_modules' \
@@ -236,6 +242,10 @@ install -D -m 0644 %{SOURCE3} \
 
 install -D -m 0644 %{SOURCE4} \
     %{buildroot}/usr/lib/systemd/system/grr-worker.service
+
+install -D -m 0644 %{SOURCE6} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.rpm.zip
+
 
 grep -R "/builddir/build" %{buildroot}%{grr_venv_path}/bin || true
 
