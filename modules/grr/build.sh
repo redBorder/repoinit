@@ -49,6 +49,7 @@ cp grr-adminui.service SOURCES/
 cp grr-frontend.service SOURCES/
 cp grr-worker.service SOURCES/
 cp requirements.txt SOURCES/
+cp grr_3.4.7.1_amd64.rpm.zip SOURCES/
 #
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
