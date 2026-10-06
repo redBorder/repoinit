@@ -182,6 +182,9 @@ echo "========== INSTALLING PROTO =========="
 %{build_venv}/bin/python3 \
     %{_builddir}/grr-3.4.7.1/grr/proto/makefile.py --clean
 
+%{build_venv}/bin/python3 \
+    %{_builddir}/grr-3.4.7.1/grr/client/makefile.py
+
 # Verify generated protobuf files
 echo "========== GENERATED PROTO FILES =========="
 find %{_builddir}/grr-3.4.7.1/grr/proto \
@@ -223,12 +226,14 @@ find %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static -type f 
 # Copy completed venv into RPM buildroot
 cp -a %{build_venv} %{buildroot}%{grr_dir}/venv
 mkdir %{buildroot}%{grr_dir}/venv/client_templates
-# cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
 rsync -a \
     --exclude='node_modules' \
     --exclude='tmp' \
     %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static/ \
     %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/static/
+
+cp %{_builddir}/grr-3.4.7.1/grr/client/grr_response_client/unprivileged/proto/memory_pb2.py %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_client/unprivileged/proto/memory_pb2.py
+cp %{_builddir}/grr-3.4.7.1/grr/client/grr_response_client/unprivileged/proto/filesystem_pb2.py %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_client/unprivileged/proto/filesystem_pb2.py
 
 # Install systemd units
 install -D -m 0644 %{SOURCE1} \
