@@ -20,6 +20,7 @@ Source3:        grr-frontend.service
 Source4:        grr-worker.service
 Source5:        requirements.txt
 Source6:        grr_3.4.7.1_amd64.rpm.zip
+Source7:        grr_3.4.7.1_amd64.exe.zip
 
 Requires:       python3
 Requires:       java-11-openjdk
@@ -29,6 +30,7 @@ Requires:       rpm-build
 Requires:       mariadb-server
 Requires:       mariadb-connector-c-devel 
 Requires:       gcc
+Requires:       dpkg-dev
 
 BuildRequires: rsync
 BuildRequires:  python3
@@ -251,6 +253,8 @@ install -D -m 0644 %{SOURCE4} \
 install -D -m 0644 %{SOURCE6} \
     %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.rpm.zip
 
+install -D -m 0644 %{SOURCE7} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.exe.zip
 
 grep -R "/builddir/build" %{buildroot}%{grr_venv_path}/bin || true
 
