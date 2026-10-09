@@ -21,6 +21,7 @@ Source4:        grr-worker.service
 Source5:        requirements.txt
 Source6:        grr_3.4.7.1_amd64.rpm.zip
 Source7:        grr_3.4.7.1_amd64.exe.zip
+Source8:        grr_3.4.7.1_amd64.deb.zip
 
 Requires:       python3
 Requires:       java-11-openjdk
@@ -255,6 +256,9 @@ install -D -m 0644 %{SOURCE6} \
 
 install -D -m 0644 %{SOURCE7} \
     %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.exe.zip
+
+install -D -m 0644 %{SOURCE8} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.deb.zip
 
 grep -R "/builddir/build" %{buildroot}%{grr_venv_path}/bin || true
 

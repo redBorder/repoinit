@@ -23,7 +23,7 @@ GITNAME="redborder-grr"
 
 # We clone only the branch we are interested in
 git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
-
+mkdir SOURCES
 # Rename so that the tarball has the format expected by the .spec
 mv "${GITNAME}" "${PACKNAME}-${VERSION}"
 tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
