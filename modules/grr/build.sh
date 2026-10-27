@@ -9,12 +9,27 @@ FULLPACKNAME=${FULLPACKNAME:="grr"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
 REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
-URL="https://downloads.apache.org/${PACKNAME}/${VERSION}/${FULLPACKNAME}-${VERSION}-source.tar.gz"
 
 # First we need to download source
-URL="https://github.com/redBorder/${PACKNAME}/archive/v${VERSION}.tar.gz"
+URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
 mkdir SOURCES
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
+
+# ----- Develop mode ------
+
+#GIT_URL="https://github.com/redBorder/grr.git"
+#BRANCH="feature/#26674_Integrate_grr_endpoints"
+#GITNAME="redborder-grr"
+#
+## We clone only the branch we are interested in
+#git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
+#mkdir SOURCES
+## Rename so that the tarball has the format expected by the .spec
+#mv "${GITNAME}" "${PACKNAME}-${VERSION}"
+#tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
+
+# ----- END Develop mode ------
+
 
 list_of_packages="${REPODIR_SRPMS}/${PACKNAME}-${VERSION}-${RELEASE}.el9.src.rpm \
 ${REPODIR}/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm \
@@ -34,6 +49,9 @@ cp grr-adminui.service SOURCES/
 cp grr-frontend.service SOURCES/
 cp grr-worker.service SOURCES/
 cp requirements.txt SOURCES/
+cp grr_3.4.7.1_amd64.rpm.zip SOURCES/
+cp grr_3.4.7.1_amd64.exe.zip SOURCES/
+cp grr_3.4.7.1_amd64.deb.zip SOURCES/
 #
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
