@@ -3,7 +3,7 @@
 source build_common.sh
 
 VERSION=${VERSION:="3.4.7.1"}
-RELEASE=${RELEASE:="1"}
+RELEASE=${RELEASE:="2"}
 PACKNAME=${PACKNAME:="grr"}
 FULLPACKNAME=${FULLPACKNAME:="grr"}
 CACHEDIR=${CACHEDIR:="/isos/ng/latest/rhel/9/x86_64"}
