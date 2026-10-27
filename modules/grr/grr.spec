@@ -7,7 +7,7 @@
 
 Name:           grr
 Version:        3.4.7.1
-Release:        1%{?dist}
+Release:        %{?__release}%{!?__release:1}%{?dist}
 Summary:        GRR Rapid Response server
 
 License:        Apache-2.0
