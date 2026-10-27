@@ -11,22 +11,22 @@ REPODIR=${REPODIR:="/repos/ng/latest/rhel/9/x86_64"}
 REPODIR_SRPMS=${REPODIR_SRPMS:="/repos/ng/latest/rhel/9/SRPMS"}
 
 # First we need to download source
-#URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
-#mkdir SOURCES
-#wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
+URL="https://github.com/redBorder/${PACKNAME}/archive/redborder.tar.gz"
+mkdir SOURCES
+wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # ----- Develop mode ------
 
-GIT_URL="https://github.com/redBorder/grr.git"
-BRANCH="feature/#26674_Integrate_grr_endpoints"
-GITNAME="redborder-grr"
-
-# We clone only the branch we are interested in
-git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
-mkdir SOURCES
-# Rename so that the tarball has the format expected by the .spec
-mv "${GITNAME}" "${PACKNAME}-${VERSION}"
-tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
+#GIT_URL="https://github.com/redBorder/grr.git"
+#BRANCH="feature/#26674_Integrate_grr_endpoints"
+#GITNAME="redborder-grr"
+#
+## We clone only the branch we are interested in
+#git clone -b "${BRANCH}" --depth 1 "${GIT_URL}" "${GITNAME}"
+#mkdir SOURCES
+## Rename so that the tarball has the format expected by the .spec
+#mv "${GITNAME}" "${PACKNAME}-${VERSION}"
+#tar czf "SOURCES/${PACKNAME}-${VERSION}.tar.gz" "${PACKNAME}-${VERSION}"
 
 # ----- END Develop mode ------
 
@@ -51,6 +51,7 @@ cp grr-worker.service SOURCES/
 cp requirements.txt SOURCES/
 cp grr_3.4.7.1_amd64.rpm.zip SOURCES/
 cp grr_3.4.7.1_amd64.exe.zip SOURCES/
+cp grr_3.4.7.1_amd64.deb.zip SOURCES/
 #
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
@@ -72,10 +73,10 @@ if [ $ret -ne 0 ]; then
 fi
 
 # sync to cache and repo
-#f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
-#f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
-#
-#rm -rf SOURCES pkgs ${FULLPACKNAME}-${VERSION}
-#
-## Update sdk9 repo
-#f_rupdaterepo ${REPODIR}
+f_rsync_repo pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
+f_rsync_iso pkgs/${PACKNAME}-${VERSION}-${RELEASE}.el9.noarch.rpm
+
+rm -rf SOURCES pkgs ${FULLPACKNAME}-${VERSION}
+
+# Update sdk9 repo
+f_rupdaterepo ${REPODIR}
