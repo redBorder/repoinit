@@ -187,6 +187,9 @@ echo "========== INSTALLING PROTO =========="
 %{build_venv}/bin/python3 \
     %{_builddir}/grr-redborder/grr/client/makefile.py
 
+%{build_venv}/bin/python3 \
+    %{_builddir}/grr-3.4.7.1/grr/client/makefile.py
+
 # Verify generated protobuf files
 echo "========== GENERATED PROTO FILES =========="
 find %{_builddir}/grr-redborder/grr/proto \
