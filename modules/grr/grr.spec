@@ -7,7 +7,7 @@
 
 Name:           grr
 Version:        3.4.7.1
-Release:        1%{?dist}
+Release:        %{?__release}%{!?__release:1}%{?dist}
 Summary:        GRR Rapid Response server
 
 License:        Apache-2.0
@@ -19,10 +19,19 @@ Source2:        grr-adminui.service
 Source3:        grr-frontend.service
 Source4:        grr-worker.service
 Source5:        requirements.txt
+Source6:        grr_3.4.7.1_amd64.rpm.zip
+Source7:        grr_3.4.7.1_amd64.exe.zip
+Source8:        grr_3.4.7.1_amd64.deb.zip
+
 Requires:       python3
 Requires:       java-11-openjdk
 Requires:       nodejs
 Requires:       systemd
+Requires:       rpm-build
+Requires:       mariadb-server
+Requires:       mariadb-connector-c-devel 
+Requires:       gcc
+# Requires:       dpkg-dev
 
 BuildRequires: rsync
 BuildRequires:  python3
@@ -42,8 +51,7 @@ BuildRequires:  java-11-openjdk
 GRR Rapid Response 3.4.7.1 server packaged for Rocky Linux 9.
 
 %prep
-%setup -q -n grr-3.4.7.1
-
+%setup -q -n grr-redborder
 
 %build
 
@@ -93,7 +101,7 @@ echo "npm:     ${NPM_VERSION}"
 
 echo "========== Building GRR's JS/CSS =========="
 
-cd %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static/
+cd %{_builddir}/grr-redborder/grr/server/grr_response_server/gui/static/
 
 echo "========== Installing frontend dependencies =========="
 npm install
@@ -104,7 +112,7 @@ npx gulp compile
 
 echo "========== Building GRR Angular v2 UI =========="
 
-cd %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/ui/
+cd %{_builddir}/grr-redborder/grr/server/grr_response_server/gui/ui/
 
 # Angular >= 13 no longer supports extractCss.
 sed -i '/"extractCss"[[:space:]]*:/d' angular.json
@@ -130,17 +138,17 @@ mkdir -p %{buildroot}/usr/lib/systemd/system
 # Build the Python virtual environment outside %{buildroot}
 python3 -m venv %{build_venv}
 
-cp %{_builddir}/grr-3.4.7.1/version.ini \
-   %{_builddir}/grr-3.4.7.1/grr/core/version.ini
+cp %{_builddir}/grr-redborder/version.ini \
+   %{_builddir}/grr-redborder/grr/core/version.ini
 
-cp %{_builddir}/grr-3.4.7.1/version.ini \
-   %{_builddir}/grr-3.4.7.1/grr/client_builder/version.ini
+cp %{_builddir}/grr-redborder/version.ini \
+   %{_builddir}/grr-redborder/grr/client_builder/version.ini
 
-cp %{_builddir}/grr-3.4.7.1/version.ini \
-   %{_builddir}/grr-3.4.7.1/grr/server/version.ini
+cp %{_builddir}/grr-redborder/version.ini \
+   %{_builddir}/grr-redborder/grr/server/version.ini
 
-#cp %{_builddir}/grr-3.4.7.1/version.ini \
-#   %{_builddir}/grr-3.4.7.1/grr/config/grr_response_templates/version.ini
+#cp %{_builddir}/grr-redborder/version.ini \
+#   %{_builddir}/grr-redborder/grr/config/grr_response_templates/version.ini
 
 # Rewrite shebangs
 find %{build_venv}/bin -type f \
@@ -169,37 +177,40 @@ echo "========== BEFORE PROTO INSTALL =========="
 
 echo "========== PROTO SOURCE =========="
 pwd
-ls -la %{_builddir}/grr-3.4.7.1/grr/proto/
+ls -la %{_builddir}/grr-redborder/grr/proto/
 
 echo "========== INSTALLING PROTO =========="
 # Generate GRR protobuf Python sources
 %{build_venv}/bin/python3 \
-    %{_builddir}/grr-3.4.7.1/grr/proto/makefile.py --clean
+    %{_builddir}/grr-redborder/grr/proto/makefile.py --clean
+
+%{build_venv}/bin/python3 \
+    %{_builddir}/grr-redborder/grr/client/makefile.py
 
 # Verify generated protobuf files
 echo "========== GENERATED PROTO FILES =========="
-find %{_builddir}/grr-3.4.7.1/grr/proto \
+find %{_builddir}/grr-redborder/grr/proto \
     -name '*_pb2.py' -type f | sort
 
 # Install GRR proto package
 %{build_venv}/bin/python3 -m pip install \
     --no-cache-dir \
     --force-reinstall \
-    %{_builddir}/grr-3.4.7.1/grr/proto/.
+    %{_builddir}/grr-redborder/grr/proto/.
 
 echo "========== AFTER PROTO INSTALL =========="
 %{build_venv}/bin/python3 -m pip show grr-response-proto || true
-find %{_builddir}/grr-3.4.7.1/grr/proto -maxdepth 1 -type f | sort
+find %{_builddir}/grr-redborder/grr/proto -maxdepth 1 -type f | sort
 ls -la %{_builddir}/grr-venv/lib/python3.9/site-packages/grr_response_proto/
 
 
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/core/.
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/client/.
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/api_client/python/.
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/client_builder/.
-%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/server/.
-# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/config/grr_response_templates/.
-# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-3.4.7.1/grr/test/.
+%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/core/.
+%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/client/.
+%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/api_client/python/.
+%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/client_builder/.
+%{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/server/.
+# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/config/grr_response_templates/.
+# %{build_venv}/bin/python3 -m pip install %{_builddir}/grr-redborder/grr/test/.
 
 # Fix Python executable shebangs so they point to the final installation path
 find %{build_venv}/bin -type f -exec sed -i \
@@ -211,17 +222,20 @@ find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
 find %{build_venv}/fleetspeak-server-bin/usr/bin -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
-find %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static -type f -exec sed -i \
+find %{_builddir}/grr-redborder/grr/server/grr_response_server/gui/static -type f -exec sed -i \
     "1s|^#!%{build_venv}/bin/python.*$|#!/opt/grr/venv/bin/python|" {} +
 
 # Copy completed venv into RPM buildroot
 cp -a %{build_venv} %{buildroot}%{grr_dir}/venv
-# cp -a %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/
+mkdir %{buildroot}%{grr_dir}/venv/client_templates
 rsync -a \
     --exclude='node_modules' \
     --exclude='tmp' \
-    %{_builddir}/grr-3.4.7.1/grr/server/grr_response_server/gui/static/ \
+    %{_builddir}/grr-redborder/grr/server/grr_response_server/gui/static/ \
     %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_server/gui/static/
+
+cp %{_builddir}/grr-redborder/grr/client/grr_response_client/unprivileged/proto/memory_pb2.py %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_client/unprivileged/proto/memory_pb2.py
+cp %{_builddir}/grr-redborder/grr/client/grr_response_client/unprivileged/proto/filesystem_pb2.py %{buildroot}%{grr_dir}/venv/lib64/python3.9/site-packages/grr_response_client/unprivileged/proto/filesystem_pb2.py
 
 # Install systemd units
 install -D -m 0644 %{SOURCE1} \
@@ -235,6 +249,15 @@ install -D -m 0644 %{SOURCE3} \
 
 install -D -m 0644 %{SOURCE4} \
     %{buildroot}/usr/lib/systemd/system/grr-worker.service
+
+install -D -m 0644 %{SOURCE6} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.rpm.zip
+
+install -D -m 0644 %{SOURCE7} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.exe.zip
+
+install -D -m 0644 %{SOURCE8} \
+    %{buildroot}%{grr_dir}/venv/client_templates/grr_3.4.7.1_amd64.deb.zip
 
 grep -R "/builddir/build" %{buildroot}%{grr_venv_path}/bin || true
 
