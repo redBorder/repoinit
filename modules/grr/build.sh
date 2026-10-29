@@ -16,7 +16,6 @@ mkdir SOURCES
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # ----- Develop mode ------
-
 #GIT_URL="https://github.com/redBorder/grr.git"
 #BRANCH="feature/#26674_Integrate_grr_endpoints"
 #GITNAME="redborder-grr"
