@@ -16,7 +16,6 @@ mkdir SOURCES
 wget ${URL} -O SOURCES/${PACKNAME}-${VERSION}.tar.gz
 
 # ----- Develop mode ------
-
 #GIT_URL="https://github.com/redBorder/grr.git"
 #BRANCH="feature/#26674_Integrate_grr_endpoints"
 #GITNAME="redborder-grr"
@@ -53,6 +52,9 @@ cp grr_3.4.7.1_amd64.rpm.zip SOURCES/
 cp grr_3.4.7.1_amd64.exe.zip SOURCES/
 cp grr_3.4.7.1_amd64.deb.zip SOURCES/
 #
+rm -rf pkgs
+mkdir -p pkgs
+
 # Now it is time to create the source rpm
 /usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
@@ -60,6 +62,7 @@ cp grr_3.4.7.1_amd64.deb.zip SOURCES/
 	--resultdir=pkgs --buildsrpm --spec=${PACKNAME}.spec --sources=SOURCES
 echo "Finish"
 #
+
 ## with it, we can create rest of packages
 /usr/bin/mock -r sdk9 \
 	--define "__version ${VERSION}" \
